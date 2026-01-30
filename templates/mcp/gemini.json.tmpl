@@ -1,0 +1,22 @@
+{
+  "platform": "gemini",
+  "config_version": "1.0",
+  "servers": {
+    "context7": {
+      "enabled": true,
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "Documentation and code examples"
+    },
+    "serena": {
+      "enabled": true,
+      "command": "uvx",
+      "args": ["serena", "--project={{PROJECT_PATH:./}}"],
+      "description": "Intelligent code navigation"
+    }
+  },
+  "project": {
+    "name": "{{PROJECT_NAME:my-project}}",
+    "stack": "{{STACK:generic}}"
+  }
+}

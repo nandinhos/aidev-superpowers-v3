@@ -19,6 +19,7 @@ AIDEV_LIB_DIR="$AIDEV_ROOT_DIR/lib"
 source "$AIDEV_LIB_DIR/loader.sh"
 load_essential_modules
 load_module "templates"
+load_module "mcp"
 
 # ============================================================================
 # Subcomandos
@@ -521,13 +522,16 @@ install_rules() {
     fi
 }
 
-# Configura MCP (placeholder)
+# Configura MCP
 configure_mcp() {
     local path="$1"
     local platform="$2"
     
-    # TODO: Implementar configuração MCP na Sprint 5
-    print_debug "MCP será configurado na Sprint 5"
+    # Carrega módulo MCP se não carregado
+    load_module "mcp" 2>/dev/null || true
+    
+    # Setup completo do MCP Engine
+    setup_mcp_engine "$path" "$platform"
 }
 
 # ============================================================================

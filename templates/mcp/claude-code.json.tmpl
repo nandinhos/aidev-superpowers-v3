@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "Context7 server for documentation lookups"
+    },
+    "serena": {
+      "command": "uvx",
+      "args": ["serena", "--project={{PROJECT_PATH:./}}"],
+      "description": "Serena server for intelligent code navigation"
+    }
+  },
+  "projectConfig": {
+    "name": "{{PROJECT_NAME:my-project}}",
+    "stack": "{{STACK:generic}}",
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,35 @@
+# AI Dev Superpowers V3 - Gitignore
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test output
+/tmp/
+/coverage/
+
+# Environment
+.env
+.env.local
+
+# Node modules (if any tooling is added later)
+node_modules/
+
+# Build artifacts
+/dist/
+/build/
+
+# Backup files
+*.bak
+*.backup

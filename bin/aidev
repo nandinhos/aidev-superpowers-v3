@@ -10,8 +10,14 @@
 
 set -euo pipefail
 
-# Detecta diretório do script
-AIDEV_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Detecta diretório do script (resolve symlinks)
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+AIDEV_BIN_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 AIDEV_ROOT_DIR="$(dirname "$AIDEV_BIN_DIR")"
 AIDEV_LIB_DIR="$AIDEV_ROOT_DIR/lib"
 

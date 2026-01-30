@@ -1,0 +1,91 @@
+# ============================================================================
+# AI Dev Superpowers V3 - Configuração Padrão
+# ============================================================================
+# Valores default para todas as configurações
+# Hierarquia: CLI > .aidev.yaml (projeto) > defaults.yaml
+# ============================================================================
+
+# Versão
+version: "3.0.0"
+
+# Configurações gerais
+mode: full
+language: pt-BR
+force: false
+dry_run: false
+
+# Detecção automática
+auto_detect:
+  stack: true
+  platform: true
+  language: true
+
+# Plataforma
+platform:
+  name: auto
+  mcp_enabled: true
+  hooks_enabled: true
+
+# Debugging
+debug:
+  enabled: false
+  verbose: false
+  log_file: ".aidev/logs/aidev.log"
+
+# Componentes a instalar
+components:
+  agents: true
+  skills: true
+  rules: true
+  workflows: true
+  mcp: true
+
+# Agentes padrão
+agents:
+  - orchestrator
+  - architect
+  - backend
+  - frontend
+  - qa
+  - devops
+  - legacy-analyzer
+  - security-guardian
+
+# Skills padrão
+skills:
+  - brainstorming
+  - writing-plans
+  - test-driven-development
+  - systematic-debugging
+
+# Paths de output
+paths:
+  base: ".aidev"
+  agents: ".aidev/agents"
+  skills: ".aidev/skills"
+  rules: ".aidev/rules"
+  state: ".aidev/state"
+  analysis: ".aidev/analysis"
+  logs: ".aidev/logs"
+
+# Configurações por stack
+stacks:
+  laravel:
+    test_command: "php artisan test"
+    lint_command: "vendor/bin/pint"
+  node:
+    test_command: "npm test"
+    lint_command: "npm run lint"
+  python:
+    test_command: "pytest"
+    lint_command: "ruff check ."
+  generic:
+    test_command: ""
+    lint_command: ""
+
+# Templates
+templates:
+  variables:
+    PROJECT_NAME: ""
+    STACK: "generic"
+    PLATFORM: "auto"

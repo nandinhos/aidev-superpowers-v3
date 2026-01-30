@@ -48,6 +48,10 @@ process_template() {
     
     # Escreve output
     if [ -n "$output_file" ]; then
+        if [ "${AIDEV_DRY_RUN:-false}" = "true" ]; then
+            print_info "[DRY-RUN] Criaria arquivo: $output_file"
+            return 0
+        fi
         ensure_dir "$(dirname "$output_file")"
         printf '%s' "$content" > "$output_file"
         increment_files

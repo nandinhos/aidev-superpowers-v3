@@ -1,0 +1,579 @@
+#!/bin/bash
+
+# ============================================================================
+# AI Dev Superpowers V3 - CLI Principal
+# ============================================================================
+# Comando unificado 'aidev' para gestão de projetos com AI
+# 
+# Uso: aidev <comando> [opções]
+# ============================================================================
+
+set -euo pipefail
+
+# Detecta diretório do script
+AIDEV_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AIDEV_ROOT_DIR="$(dirname "$AIDEV_BIN_DIR")"
+AIDEV_LIB_DIR="$AIDEV_ROOT_DIR/lib"
+
+# Carrega módulos essenciais
+source "$AIDEV_LIB_DIR/loader.sh"
+load_essential_modules
+load_module "templates"
+
+# ============================================================================
+# Subcomandos
+# ============================================================================
+
+# Subcomando: init
+# Inicializa AI Dev em um projeto
+cmd_init() {
+    parse_args "$@"
+    
+    if ! validate_args; then
+        exit 1
+    fi
+    
+    # Diretório de instalação
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    print_header "AI Dev Superpowers"
+    print_mode "$CLI_MODE" "Inicializando em $install_path"
+    
+    # Auto-detecção de stack
+    if [ "$CLI_AUTO_DETECT" = "true" ]; then
+        CLI_STACK=$(detect_stack "$install_path")
+        print_info "Stack detectada: $CLI_STACK"
+    fi
+    
+    # Auto-detecção de plataforma
+    if [ "$CLI_PLATFORM" = "auto" ]; then
+        CLI_PLATFORM=$(detect_platform)
+        print_info "Plataforma detectada: $CLI_PLATFORM"
+    fi
+    
+    # Mostra configuração
+    if [ "${AIDEV_DEBUG:-false}" = "true" ]; then
+        show_config_summary
+    fi
+    
+    # Dry run apenas mostra o que seria feito
+    if [ "$AIDEV_DRY_RUN" = "true" ]; then
+        print_info "[DRY-RUN] Simulando instalação..."
+    fi
+    
+    # Reseta contadores
+    reset_counters
+    
+    # Cria estrutura base
+    print_step "Criando estrutura de diretórios..."
+    create_base_structure "$install_path"
+    
+    # Instala agentes
+    print_step "Instalando agentes..."
+    install_agents "$install_path"
+    
+    # Instala skills
+    print_step "Instalando skills..."
+    install_skills "$install_path"
+    
+    # Instala rules
+    print_step "Instalando rules..."
+    install_rules "$install_path" "$CLI_STACK"
+    
+    # Configura plataforma
+    if [ "$CLI_NO_MCP" != "true" ]; then
+        print_step "Configurando MCP..."
+        configure_mcp "$install_path" "$CLI_PLATFORM"
+    fi
+    
+    # Sumário final
+    print_summary "$CLI_MODE" "$CLI_STACK"
+    
+    print_success "AI Dev Superpowers instalado com sucesso!"
+}
+
+# Subcomando: upgrade
+# Atualiza instalação existente
+cmd_upgrade() {
+    parse_args "$@"
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev não está instalado neste diretório"
+        print_info "Use 'aidev init' para instalar"
+        exit 1
+    fi
+    
+    print_header "AI Dev Superpowers"
+    print_mode "upgrade" "Atualizando em $install_path"
+    
+    # Backup antes de atualizar
+    print_step "Criando backup..."
+    local backup_dir="$install_path/.aidev/backups/$(date +%Y%m%d%H%M%S)"
+    ensure_dir "$backup_dir"
+    cp -r "$install_path/.aidev/agents" "$backup_dir/" 2>/dev/null || true
+    cp -r "$install_path/.aidev/skills" "$backup_dir/" 2>/dev/null || true
+    
+    reset_counters
+    AIDEV_FORCE=true
+    
+    # Reinstala componentes
+    print_step "Atualizando agentes..."
+    install_agents "$install_path"
+    
+    print_step "Atualizando skills..."
+    install_skills "$install_path"
+    
+    print_summary "upgrade" "$(detect_stack "$install_path")"
+    print_success "Atualização concluída!"
+    print_info "Backup salvo em: $backup_dir"
+}
+
+# Subcomando: add-skill
+# Adiciona skill customizada
+cmd_add_skill() {
+    local skill_name="${1:-}"
+    shift || true
+    parse_args "$@"
+    
+    if [ -z "$skill_name" ]; then
+        print_error "Nome da skill é obrigatório"
+        echo "Uso: aidev add-skill <nome>"
+        exit 1
+    fi
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local skill_dir="$install_path/.aidev/skills/$skill_name"
+    
+    if [ -d "$skill_dir" ] && [ "$AIDEV_FORCE" != "true" ]; then
+        print_warning "Skill '$skill_name' já existe (use --force)"
+        exit 1
+    fi
+    
+    print_step "Criando skill '$skill_name'..."
+    
+    ensure_dir "$skill_dir"
+    
+    # Cria SKILL.md template
+    cat > "$skill_dir/SKILL.md" << EOF
+---
+name: $skill_name
+description: Descrição da skill $skill_name
+triggers:
+  - "trigger1"
+  - "trigger2"
+globs:
+  - "**/*.md"
+---
+
+# $skill_name Skill
+
+## When to Use
+[Descreva quando usar esta skill]
+
+## Purpose
+[Descreva o propósito]
+
+## Process
+1. [Passo 1]
+2. [Passo 2]
+3. [Passo 3]
+
+## Key Principles
+- [Princípio 1]
+- [Princípio 2]
+EOF
+    
+    print_success "Skill '$skill_name' criada em $skill_dir"
+    print_info "Edite o arquivo SKILL.md para customizar"
+}
+
+# Subcomando: add-rule
+# Adiciona regra customizada
+cmd_add_rule() {
+    local rule_name="${1:-}"
+    shift || true
+    parse_args "$@"
+    
+    if [ -z "$rule_name" ]; then
+        print_error "Nome da rule é obrigatório"
+        echo "Uso: aidev add-rule <nome>"
+        exit 1
+    fi
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local rule_file="$install_path/.aidev/rules/${rule_name}.md"
+    
+    if [ -f "$rule_file" ] && [ "$AIDEV_FORCE" != "true" ]; then
+        print_warning "Rule '$rule_name' já existe (use --force)"
+        exit 1
+    fi
+    
+    print_step "Criando rule '$rule_name'..."
+    
+    ensure_dir "$(dirname "$rule_file")"
+    
+    cat > "$rule_file" << EOF
+# $rule_name Rules
+
+## Conventions
+[Descreva as convenções]
+
+## Patterns
+[Descreva os patterns a seguir]
+
+## Anti-Patterns
+[Descreva o que evitar]
+
+## Examples
+\`\`\`
+// Exemplo de código
+\`\`\`
+EOF
+    
+    print_success "Rule '$rule_name' criada: $rule_file"
+}
+
+# Subcomando: add-agent
+# Adiciona agente customizado
+cmd_add_agent() {
+    local agent_name="${1:-}"
+    shift || true
+    parse_args "$@"
+    
+    if [ -z "$agent_name" ]; then
+        print_error "Nome do agente é obrigatório"
+        echo "Uso: aidev add-agent <nome>"
+        exit 1
+    fi
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local agent_file="$install_path/.aidev/agents/${agent_name}.md"
+    
+    if [ -f "$agent_file" ] && [ "$AIDEV_FORCE" != "true" ]; then
+        print_warning "Agent '$agent_name' já existe (use --force)"
+        exit 1
+    fi
+    
+    print_step "Criando agent '$agent_name'..."
+    
+    ensure_dir "$(dirname "$agent_file")"
+    
+    cat > "$agent_file" << EOF
+# $agent_name Agent
+
+## Role
+[Descreva o papel deste agente]
+
+## Responsibilities
+- [Responsabilidade 1]
+- [Responsabilidade 2]
+- [Responsabilidade 3]
+
+## Guidelines
+- [Guideline 1]
+- [Guideline 2]
+
+## Tools
+- [Tool 1]
+- [Tool 2]
+EOF
+    
+    print_success "Agent '$agent_name' criado: $agent_file"
+}
+
+# Subcomando: status
+# Mostra status da instalação
+cmd_status() {
+    parse_args "$@"
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    print_header "AI Dev Superpowers"
+    
+    if ! has_aidev_installed "$install_path"; then
+        print_warning "AI Dev não está instalado neste diretório"
+        exit 0
+    fi
+    
+    print_success "AI Dev instalado: $install_path/.aidev/"
+    
+    # Detecta contexto
+    local stack=$(detect_stack "$install_path")
+    local platform=$(detect_platform)
+    local project_name=$(detect_project_name "$install_path")
+    
+    print_section "Contexto"
+    echo "  Projeto:    $project_name"
+    echo "  Stack:      $stack"
+    echo "  Plataforma: $platform"
+    
+    # Lista agentes
+    print_section "Agentes Instalados"
+    local agents_dir="$install_path/.aidev/agents"
+    if [ -d "$agents_dir" ]; then
+        local count=0
+        for agent in "$agents_dir"/*.md; do
+            if [ -f "$agent" ]; then
+                echo "  • $(basename "$agent" .md)"
+                ((count++)) || true
+            fi
+        done
+        echo "  Total: $count agentes"
+    else
+        echo "  Nenhum agente instalado"
+    fi
+    
+    # Lista skills
+    print_section "Skills Instaladas"
+    local skills_dir="$install_path/.aidev/skills"
+    if [ -d "$skills_dir" ]; then
+        local count=0
+        for skill in "$skills_dir"/*/SKILL.md; do
+            if [ -f "$skill" ]; then
+                local skill_name=$(dirname "$skill")
+                echo "  • $(basename "$skill_name")"
+                ((count++)) || true
+            fi
+        done
+        echo "  Total: $count skills"
+    else
+        echo "  Nenhuma skill instalada"
+    fi
+    
+    # Lista rules
+    print_section "Rules Instaladas"
+    local rules_dir="$install_path/.aidev/rules"
+    if [ -d "$rules_dir" ]; then
+        local count=0
+        for rule in "$rules_dir"/*.md; do
+            if [ -f "$rule" ]; then
+                echo "  • $(basename "$rule" .md)"
+                ((count++)) || true
+            fi
+        done
+        echo "  Total: $count rules"
+    else
+        echo "  Nenhuma rule instalada"
+    fi
+    
+    echo ""
+}
+
+# Subcomando: doctor
+# Diagnóstico da instalação
+cmd_doctor() {
+    parse_args "$@"
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    print_header "AI Dev Doctor"
+    
+    local issues=0
+    local warnings=0
+    
+    # Verifica instalação
+    print_section "Verificando Instalação"
+    
+    if has_aidev_installed "$install_path"; then
+        print_success ".aidev/ existe"
+    else
+        print_error ".aidev/ não encontrado"
+        ((issues++))
+    fi
+    
+    # Verifica diretórios
+    local dirs=("agents" "skills" "rules" "state")
+    for dir in "${dirs[@]}"; do
+        if [ -d "$install_path/.aidev/$dir" ]; then
+            print_success ".aidev/$dir/ existe"
+        else
+            print_warning ".aidev/$dir/ não encontrado"
+            ((warnings++))
+        fi
+    done
+    
+    # Verifica plataforma
+    print_section "Verificando Plataforma"
+    
+    local platform=$(detect_platform)
+    if [ "$platform" != "generic" ]; then
+        print_success "Plataforma detectada: $platform"
+    else
+        print_warning "Nenhuma plataforma AI detectada"
+        ((warnings++))
+    fi
+    
+    # Verifica stack
+    print_section "Verificando Stack"
+    
+    local stack=$(detect_stack "$install_path")
+    print_success "Stack detectada: $stack"
+    
+    # Verifica arquivo de config
+    print_section "Verificando Configuração"
+    
+    if [ -f "$install_path/.aidev.yaml" ]; then
+        print_success ".aidev.yaml encontrado"
+    else
+        print_info ".aidev.yaml não encontrado (usando defaults)"
+    fi
+    
+    # Relatório final
+    print_separator
+    echo ""
+    if [ $issues -eq 0 ] && [ $warnings -eq 0 ]; then
+        print_success "Tudo OK! Nenhum problema encontrado."
+    elif [ $issues -eq 0 ]; then
+        print_warning "$warnings avisos encontrados"
+    else
+        print_error "$issues problemas e $warnings avisos encontrados"
+    fi
+    echo ""
+}
+
+# ============================================================================
+# Funções de Instalação
+# ============================================================================
+
+# Cria estrutura base de diretórios
+create_base_structure() {
+    local path="$1"
+    
+    ensure_dir "$path/.aidev"
+    ensure_dir "$path/.aidev/agents"
+    ensure_dir "$path/.aidev/skills"
+    ensure_dir "$path/.aidev/rules"
+    ensure_dir "$path/.aidev/state"
+    ensure_dir "$path/.aidev/state/lessons"
+    ensure_dir "$path/.aidev/analysis"
+}
+
+# Instala agentes a partir dos templates
+install_agents() {
+    local path="$1"
+    local agents_dir="$path/.aidev/agents"
+    
+    # Exporta variáveis para os templates
+    export PROJECT_NAME=$(detect_project_name "$path")
+    export STACK="$CLI_STACK"
+    
+    for template in "$AIDEV_ROOT_DIR/templates/agents"/*.md.tmpl; do
+        if [ -f "$template" ]; then
+            local name=$(basename "$template" .md.tmpl)
+            local output="$agents_dir/${name}.md"
+            
+            if should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_debug "Instalado: $name"
+            fi
+        fi
+    done
+}
+
+# Instala skills a partir dos templates
+install_skills() {
+    local path="$1"
+    local skills_dir="$path/.aidev/skills"
+    
+    for skill_template_dir in "$AIDEV_ROOT_DIR/templates/skills"/*/; do
+        if [ -d "$skill_template_dir" ]; then
+            local skill_name=$(basename "$skill_template_dir")
+            local output_dir="$skills_dir/$skill_name"
+            
+            ensure_dir "$output_dir"
+            
+            for template in "$skill_template_dir"/*.tmpl; do
+                if [ -f "$template" ]; then
+                    local name=$(basename "$template" .tmpl)
+                    local output="$output_dir/$name"
+                    
+                    if should_write_file "$output"; then
+                        process_template "$template" "$output"
+                    fi
+                fi
+            done
+        fi
+    done
+}
+
+# Instala rules a partir dos templates
+install_rules() {
+    local path="$1"
+    local stack="$2"
+    local rules_dir="$path/.aidev/rules"
+    
+    # Sempre instala generic
+    local generic_template="$AIDEV_ROOT_DIR/templates/rules/generic.md.tmpl"
+    if [ -f "$generic_template" ]; then
+        process_template "$generic_template" "$rules_dir/generic.md"
+    fi
+    
+    # Instala rule específica da stack
+    local stack_template="$AIDEV_ROOT_DIR/templates/rules/${stack}.md.tmpl"
+    if [ -f "$stack_template" ]; then
+        process_template "$stack_template" "$rules_dir/${stack}.md"
+    fi
+}
+
+# Configura MCP (placeholder)
+configure_mcp() {
+    local path="$1"
+    local platform="$2"
+    
+    # TODO: Implementar configuração MCP na Sprint 5
+    print_debug "MCP será configurado na Sprint 5"
+}
+
+# ============================================================================
+# Main
+# ============================================================================
+
+main() {
+    local command="${1:-help}"
+    shift || true
+    
+    case "$command" in
+        init)
+            cmd_init "$@"
+            ;;
+        upgrade)
+            cmd_upgrade "$@"
+            ;;
+        add-skill)
+            cmd_add_skill "$@"
+            ;;
+        add-rule)
+            cmd_add_rule "$@"
+            ;;
+        add-agent)
+            cmd_add_agent "$@"
+            ;;
+        status)
+            cmd_status "$@"
+            ;;
+        doctor)
+            cmd_doctor "$@"
+            ;;
+        -h|--help|help)
+            show_help
+            ;;
+        -v|--version|version)
+            show_version
+            ;;
+        *)
+            print_error "Comando desconhecido: $command"
+            echo ""
+            echo "Use 'aidev --help' para ver comandos disponíveis"
+            exit 1
+            ;;
+    esac
+}
+
+# Executa
+main "$@"

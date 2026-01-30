@@ -93,7 +93,11 @@ cmd_init() {
         print_step "Configurando MCP..."
         configure_mcp "$install_path" "$CLI_PLATFORM"
     fi
-    
+
+    # Instala instruções de ativação para a plataforma
+    print_step "Configurando instruções de plataforma..."
+    install_platform_instructions "$install_path" "$CLI_PLATFORM"
+
     # Sumário final
     print_summary "$CLI_MODE" "$CLI_STACK"
     
@@ -532,12 +536,79 @@ install_rules() {
 configure_mcp() {
     local path="$1"
     local platform="$2"
-    
+
     # Carrega módulo MCP se não carregado
     load_module "mcp" 2>/dev/null || true
-    
+
     # Setup completo do MCP Engine
     setup_mcp_engine "$path" "$platform"
+}
+
+# Instala instruções de plataforma (lembrete de ativação)
+install_platform_instructions() {
+    local path="$1"
+    local platform="$2"
+
+    # Exporta variáveis para templates
+    export PROJECT_NAME=$(detect_project_name "$path")
+    export STACK="$CLI_STACK"
+
+    local templates_dir="$AIDEV_ROOT_DIR/templates/platform"
+
+    # Sempre instala o arquivo genérico AI_INSTRUCTIONS.md em .aidev/
+    local generic_template="$templates_dir/AI_INSTRUCTIONS.md.tmpl"
+    if [ -f "$generic_template" ]; then
+        local output="$path/.aidev/AI_INSTRUCTIONS.md"
+        if should_write_file "$output"; then
+            process_template "$generic_template" "$output"
+            print_debug "Instruções genéricas: AI_INSTRUCTIONS.md"
+        fi
+    fi
+
+    # Instala arquivo específico da plataforma na raiz do projeto
+    case "$platform" in
+        "claude-code")
+            local template="$templates_dir/CLAUDE.md.tmpl"
+            local output="$path/CLAUDE.md"
+            if [ -f "$template" ] && should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_success "Criado: CLAUDE.md (lembrete de ativação)"
+            fi
+            ;;
+        "cursor")
+            local template="$templates_dir/cursorrules.tmpl"
+            local output="$path/.cursorrules"
+            if [ -f "$template" ] && should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_success "Criado: .cursorrules (lembrete de ativação)"
+            fi
+            ;;
+        "gemini")
+            local template="$templates_dir/GEMINI.md.tmpl"
+            local output="$path/GEMINI.md"
+            if [ -f "$template" ] && should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_success "Criado: GEMINI.md (lembrete de ativação)"
+            fi
+            ;;
+        "aider")
+            local template="$templates_dir/AIDER.md.tmpl"
+            local output="$path/AIDER.md"
+            if [ -f "$template" ] && should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_success "Criado: AIDER.md (lembrete de ativação)"
+            fi
+            ;;
+        *)
+            # Para plataformas genéricas, cria um arquivo na raiz
+            local template="$templates_dir/AI_INSTRUCTIONS.md.tmpl"
+            local output="$path/AI_INSTRUCTIONS.md"
+            if [ -f "$template" ] && should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_success "Criado: AI_INSTRUCTIONS.md (lembrete de ativação)"
+            fi
+            ;;
+    esac
 }
 
 # ============================================================================

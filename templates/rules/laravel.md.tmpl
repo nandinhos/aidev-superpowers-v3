@@ -1,0 +1,101 @@
+# Laravel Stack Rules
+
+## Project Structure
+```
+app/
+├── Http/Controllers/
+├── Models/
+├── Services/
+├── Repositories/
+├── Actions/
+resources/views/
+tests/Feature/
+tests/Unit/
+```
+
+## Naming Conventions
+- **Controllers**: `UserController`, `PostController`
+- **Models**: `User`, `Post` (singular)
+- **Services**: `UserService`, `PaymentService`
+- **Repositories**: `UserRepository`
+- **Actions**: `CreateUser`, `DeletePost`
+- **Requests**: `StoreUserRequest`, `UpdatePostRequest`
+- **Resources**: `UserResource`, `PostCollection`
+
+## Coding Patterns
+
+### Controllers
+- Single responsibility
+- Use Form Requests for validation
+- Use Resources for API responses
+- Thin controllers, fat models/services
+
+```php
+public function store(StoreUserRequest $request): JsonResponse
+{
+    $user = $this->userService->create($request->validated());
+    
+    return new UserResource($user);
+}
+```
+
+### Models
+- Use relationships
+- Define accessors/mutators
+- Use scopes for common queries
+- Soft deletes when appropriate
+
+### Services
+- Business logic layer
+- Single responsibility
+- Dependency injection
+- Return DTOs or Models
+
+### Testing
+- Feature tests for HTTP endpoints
+- Unit tests for services/actions
+- Use factories for test data
+- Database transactions for isolation
+
+```php
+public function test_user_can_be_created(): void
+{
+    $response = $this->postJson('/api/users', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+    ]);
+
+    $response->assertCreated()
+        ->assertJsonStructure(['data' => ['id', 'name', 'email']]);
+}
+```
+
+## Artisan Commands
+```bash
+# Testing
+php artisan test --filter=UserTest
+
+# Migrations
+php artisan migrate
+php artisan migrate:fresh --seed
+
+# Cache
+php artisan config:clear
+php artisan cache:clear
+```
+
+{{#if USE_LIVEWIRE}}
+## Livewire Patterns
+- Component per feature
+- Wire:model for binding
+- Emit events for communication
+- AlpineJS for client interactivity
+{{/if}}
+
+{{#if USE_FILAMENT}}
+## Filament Patterns
+- Resources for CRUD
+- Pages for custom views
+- Widgets for dashboard
+- Actions for operations
+{{/if}}

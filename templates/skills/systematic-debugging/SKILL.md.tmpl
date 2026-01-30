@@ -1,0 +1,117 @@
+---
+name: systematic-debugging
+description: 4-phase root cause process for debugging
+triggers:
+  - "bug"
+  - "erro"
+  - "debug"
+  - "não funciona"
+globs:
+  - "**/*.log"
+  - ".aidev/state/lessons/**"
+---
+
+# Systematic Debugging Skill
+
+## When to Use
+When encountering bugs, errors, or unexpected behavior.
+
+## The 4 Phases
+
+### Phase 1: REPRODUCE
+Make the bug happen reliably.
+
+1. **Minimal Reproduction**
+   - Simplest steps to trigger
+   - Isolate from other factors
+   - Document exact steps
+
+2. **Capture Evidence**
+   - Error messages
+   - Stack traces
+   - Logs
+   - Screenshots/videos
+
+3. **Create Failing Test**
+   - Write test that exposes bug
+   - Test MUST fail currently
+   - Test will validate fix
+
+### Phase 2: ISOLATE
+Find where the bug originates.
+
+1. **Binary Search**
+   - Divide code in half
+   - Check which half has bug
+   - Repeat until found
+
+2. **Add Logging**
+   - Strategic console.log/var_dump
+   - Track data flow
+   - Identify transformation point
+
+3. **Check Assumptions**
+   - Validate inputs
+   - Verify state
+   - Confirm expectations
+
+### Phase 3: ROOT CAUSE
+Understand WHY it's happening.
+
+1. **Trace Backwards**
+   - From symptom to cause
+   - Follow data flow
+   - Check each transformation
+
+2. **Ask "Why?" 5 Times**
+   - Surface issue: "Form doesn't submit"
+   - Why? "Validation fails"
+   - Why? "Field value is null"
+   - Why? "Not bound correctly"
+   - Why? "Missing wire:model"
+   - Root cause found!
+
+3. **Document Understanding**
+   - What is happening
+   - What should happen
+   - What causes the difference
+
+### Phase 4: FIX & PREVENT
+Fix the bug and prevent recurrence.
+
+1. **Verify Test Fails**
+   - Run the failing test
+   - Confirm it fails for right reason
+
+2. **Implement Fix**
+   - Minimal change to fix
+   - Don't refactor while fixing
+
+3. **Verify Test Passes**
+   - Run test again
+   - Confirm it passes
+
+4. **Run Full Suite**
+   - No regressions
+   - All tests pass
+
+5. **Document Lesson**
+   - Save to `.aidev/state/lessons/`
+   - Prevent future occurrences
+
+## Lesson Format
+```markdown
+## [Date] - [Bug Title]
+
+### Symptom
+[What was observed]
+
+### Root Cause
+[Why it happened]
+
+### Fix
+[What was changed]
+
+### Prevention
+[How to avoid in future]
+```

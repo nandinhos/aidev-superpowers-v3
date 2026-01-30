@@ -108,37 +108,49 @@ cmd_init() {
 # Atualiza instalação existente
 cmd_upgrade() {
     parse_args "$@"
-    
+
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
-    
+
     if ! has_aidev_installed "$install_path"; then
         print_error "AI Dev não está instalado neste diretório"
         print_info "Use 'aidev init' para instalar"
         exit 1
     fi
-    
+
     print_header "AI Dev Superpowers"
     print_mode "upgrade" "Atualizando em $install_path"
-    
+
+    # Detecta stack e plataforma
+    CLI_STACK=$(detect_stack "$install_path")
+    local platform="${CLI_PLATFORM:-auto}"
+    if [ "$platform" = "auto" ]; then
+        platform=$(detect_platform)
+    fi
+    print_info "Stack: $CLI_STACK | Plataforma: $platform"
+
     # Backup antes de atualizar
     print_step "Criando backup..."
     local backup_dir="$install_path/.aidev/backups/$(date +%Y%m%d%H%M%S)"
     ensure_dir "$backup_dir"
     cp -r "$install_path/.aidev/agents" "$backup_dir/" 2>/dev/null || true
     cp -r "$install_path/.aidev/skills" "$backup_dir/" 2>/dev/null || true
-    
+
     reset_counters
     AIDEV_FORCE=true
-    
+
     # Reinstala componentes
     print_step "Atualizando agentes..."
     install_agents "$install_path"
-    
+
     print_step "Atualizando skills..."
     install_skills "$install_path"
-    
-    print_summary "upgrade" "$(detect_stack "$install_path")"
+
+    # Atualiza instruções de plataforma
+    print_step "Atualizando instruções de plataforma..."
+    install_platform_instructions "$install_path" "$platform"
+
+    print_summary "upgrade" "$CLI_STACK"
     print_success "Atualização concluída!"
     print_info "Backup salvo em: $backup_dir"
 }

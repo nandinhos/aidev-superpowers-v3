@@ -237,8 +237,22 @@ main() {
             run_test_file "$test_file"
         done
     else
-        # Executa todos os testes em tests/unit/
+        # Executa testes unitários
         for test_file in "$SCRIPT_DIR"/unit/test-*.sh; do
+            if [ -f "$test_file" ]; then
+                run_test_file "$test_file"
+            fi
+        done
+        
+        # Executa testes de integração
+        for test_file in "$SCRIPT_DIR"/integration/test-*.sh; do
+            if [ -f "$test_file" ]; then
+                run_test_file "$test_file"
+            fi
+        done
+        
+        # Executa testes E2E
+        for test_file in "$SCRIPT_DIR"/e2e/test-*.sh; do
             if [ -f "$test_file" ]; then
                 run_test_file "$test_file"
             fi

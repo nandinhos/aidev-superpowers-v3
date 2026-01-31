@@ -419,7 +419,7 @@ cmd_status() {
 }
 
 # Subcomando: doctor
-# Diagnóstico da instalação
+# Diagnóstico da instalação e ambiente com sugestões de reparo
 cmd_doctor() {
     parse_args "$@"
     
@@ -430,63 +430,88 @@ cmd_doctor() {
     
     local issues=0
     local warnings=0
-    
-    # Verifica instalação
-    print_section "Verificando Instalação"
-    
-    if has_aidev_installed "$install_path"; then
-        print_success ".aidev/ existe"
-    else
-        print_error ".aidev/ não encontrado"
-        ((issues++))
-    fi
-    
-    # Verifica diretórios
-    local dirs=("agents" "skills" "rules" "state")
-    for dir in "${dirs[@]}"; do
-        if [ -d "$install_path/.aidev/$dir" ]; then
-            print_success ".aidev/$dir/ existe"
+
+    # 1. Dependências do Sistema
+    print_section "Dependências do Sistema"
+    local deps=("git" "jq" "bash" "sed" "grep")
+    for dep in "${deps[@]}"; do
+        if command -v "$dep" >/dev/null 2>&1; then
+            print_success "$dep: $(command -v "$dep")"
         else
-            print_warning ".aidev/$dir/ não encontrado"
-            ((warnings++))
+            if [ "$dep" == "jq" ]; then
+                print_warning "$dep: NÃO ENCONTRADO (usando fallback Bash)"
+                ((warnings++)) || true
+            else
+                print_error "$dep: NÃO ENCONTRADO"
+                ((issues++)) || true
+            fi
         fi
     done
     
-    # Verifica plataforma
-    print_section "Verificando Plataforma"
+    # 2. Verifica instalação
+    print_section "Verificando Instalação"
+    if has_aidev_installed "$install_path"; then
+        print_success ".aidev/ existe"
+        
+        # Verifica diretórios
+        local dirs=("agents" "skills" "rules" "state")
+        for dir in "${dirs[@]}"; do
+            if [ -d "$install_path/.aidev/$dir" ]; then
+                print_success ".aidev/$dir/ existe"
+            else
+                print_warning ".aidev/$dir/ não encontrado"
+                ((warnings++)) || true
+            fi
+        done
+    else
+        print_error ".aidev/ não encontrado em $install_path"
+        ((issues++)) || true
+    fi
     
+    # 3. Estado da Sessão
+    print_section "Estado da Sessão"
+    local state_file="$install_path/.aidev/state/session.json"
+    if [ -f "$state_file" ]; then
+        if command -v jq >/dev/null 2>&1 && ! jq . "$state_file" >/dev/null 2>&1; then
+            print_error "Arquivo session.json corrompido"
+            ((issues++)) || true
+        else
+            print_success "Arquivo session.json íntegro"
+        fi
+    else
+        print_info "session.json ainda não inicializado"
+    fi
+    
+    # 4. Contexto
+    print_section "Contexto Detectado"
     local platform=$(detect_platform)
-    if [ "$platform" != "generic" ]; then
-        print_success "Plataforma detectada: $platform"
-    else
-        print_warning "Nenhuma plataforma AI detectada"
-        ((warnings++))
-    fi
-    
-    # Verifica stack
-    print_section "Verificando Stack"
-    
     local stack=$(detect_stack "$install_path")
-    print_success "Stack detectada: $stack"
-    
-    # Verifica arquivo de config
-    print_section "Verificando Configuração"
-    
-    if [ -f "$install_path/.aidev.yaml" ]; then
-        print_success ".aidev.yaml encontrado"
-    else
-        print_info ".aidev.yaml não encontrado (usando defaults)"
+    print_info "Plataforma: $platform"
+    print_info "Stack:      $stack"
+
+    # 5. Sugestões de Reparo
+    if [ $issues -gt 0 ] || [ $warnings -gt 0 ]; then
+        print_section "Sugestões de Reparo"
+        if ! command -v jq >/dev/null 2>&1; then
+            echo -e "  • ${YELLOW}Instalar jq:${NC} sudo apt install jq  (ou brew install jq)"
+        fi
+        if ! command -v git >/dev/null 2>&1; then
+            echo -e "  • ${RED}Instalar git:${NC} sudo apt install git"
+        fi
+        if [ ! -d "$install_path/.aidev" ]; then
+            echo -e "  • ${CYAN}Inicializar Projeto:${NC} aidev init"
+        fi
     fi
-    
-    # Relatório final
-    print_separator
+
     echo ""
-    if [ $issues -eq 0 ] && [ $warnings -eq 0 ]; then
-        print_success "Tudo OK! Nenhum problema encontrado."
-    elif [ $issues -eq 0 ]; then
-        print_warning "$warnings avisos encontrados"
+    if [ $issues -eq 0 ]; then
+        if [ $warnings -eq 0 ]; then
+            print_success "Tudo limpo! Seu ambiente está saudável."
+        else
+            print_info "Ambiente operacional, mas com $warnings avisos."
+        fi
     else
-        print_error "$issues problemas e $warnings avisos encontrados"
+        print_error "Encontrados $issues problemas críticos. Verifique as mensagens acima."
     fi
     echo ""
 }

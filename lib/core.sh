@@ -167,10 +167,27 @@ set_state_value() {
         echo "{}" > "$state_file"
     fi
     
-    # Atualiza via jq
-    local tmp_file
-    tmp_file=$(mktemp)
-    jq --arg key "$key" --arg val "$value" '.[$key] = $val' "$state_file" > "$tmp_file" && mv "$tmp_file" "$state_file"
+    # Atualiza via jq ou fallback
+    if command -v jq >/dev/null 2>&1; then
+        local tmp_file
+        tmp_file=$(mktemp)
+        jq --arg key "$key" --arg val "$value" '.[$key] = $val' "$state_file" > "$tmp_file" && mv "$tmp_file" "$state_file"
+    else
+        # Fallback via sed/grep para casos ultra-mínimos (apenas para strings simples)
+        # ALERTA: Não suporta arrays ou objetos complexos, apenas pares chave-valor simples
+        local tmp_file=$(mktemp)
+        if grep -q "\"$key\":" "$state_file"; then
+            # Atualiza existente
+            sed "s/\"$key\": \".*\"/\"$key\": \"$value\"/" "$state_file" > "$tmp_file"
+        else
+            # Adiciona novo (antes do último })
+            sed "s/}$/  \"$key\": \"$value\",\n}/" "$state_file" > "$tmp_file"
+            # Limpa vírgula extra se for o caso
+            sed -i 's/,\n}/\n}/g' "$tmp_file"
+        fi
+        mv "$tmp_file" "$state_file"
+        print_warning "JQ não encontrado. Usando fallback básico para persistência."
+    fi
     
     print_debug "Estado atualizado: $key=$value"
 }
@@ -189,7 +206,12 @@ get_state_value() {
     fi
     
     local value
-    value=$(jq -r --arg key "$key" '.[$key] // empty' "$state_file")
+    if command -v jq >/dev/null 2>&1; then
+        value=$(jq -r --arg key "$key" '.[$key] // empty' "$state_file")
+    else
+        # Fallback simples via grep/sed
+        value=$(grep "\"$key\":" "$state_file" | sed "s/.*\"$key\": \"\(.*\)\".*/\1/" | head -n 1)
+    fi
     
     if [ -z "$value" ]; then
         echo "$default"

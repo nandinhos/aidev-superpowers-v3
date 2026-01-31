@@ -67,9 +67,10 @@ process_conditionals() {
     local content="$1"
     local result="$content"
     
-    # Regex para {{#if VAR}}...{{/if}}
-    # Usando sed para processar
-    while [[ "$result" =~ \{\{#if\ ([A-Za-z_][A-Za-z0-9_]*)\}\}(.*)\{\{/if\}\} ]]; do
+    # Processa condicional por condicional para evitar gulodice (greediness)
+    # A regex [^{]* garante que pegamos o conteúdo até o PRÓXIMO {{, ou o mais curto possível
+    # Nota: Bash não suporta non-greedy (.*?), então usamos exclusão de caracteres.
+    while [[ "$result" =~ \{\{#if\ ([A-Za-z_][A-Za-z0-9_]*)\}\}([^\{\}]*)\{\{/if\}\} ]]; do
         local var_name="${BASH_REMATCH[1]}"
         local inner_content="${BASH_REMATCH[2]}"
         local var_value="${!var_name:-}"
@@ -80,6 +81,26 @@ process_conditionals() {
         else
             # Variável não definida ou false - remove conteúdo
             result="${result/\{\{#if $var_name\}\}$inner_content\{\{\/if\}\}/}"
+        fi
+    done
+    
+    # Caso para conteúdo que contenha chaves internas (um nível de profundidade)
+    while [[ "$result" =~ \{\{#if\ ([A-Za-z_][A-Za-z0-9_]*)\}\}(.*)\{\{/if\}\} ]]; do
+        local var_name="${BASH_REMATCH[1]}"
+        # Se chegamos aqui, inner_content pode ser guloso. 
+        # Vamos tentar encontrar o PRIMEIRO {{/if}} correspondente via sed
+        local pattern="\{\{#if $var_name\}\}"
+        # Extração via sed é mais confiável para "primeira ocorrência"
+        local match_block=$(echo "$result" | sed -n "s/.*\($pattern.*{{\/if}}\).*/\1/p" | head -n 1)
+        [ -z "$match_block" ] && break
+        
+        local inner_content=$(echo "$match_block" | sed "s/^$pattern//" | sed "s/{{\/if}}$//")
+        local var_value="${!var_name:-}"
+
+        if [ -n "$var_value" ] && [ "$var_value" != "false" ] && [ "$var_value" != "0" ]; then
+            result="${result/"$match_block"/$inner_content}"
+        else
+            result="${result/"$match_block"/}"
         fi
     done
     

@@ -161,6 +161,12 @@ detect_stack() {
 # Uso: detect_platform
 # Retorna: nome da plataforma detectada
 detect_platform() {
+    # Antigravity (prioridade - ambiente atual)
+    if [ -d "$HOME/.gemini/antigravity" ]; then
+        echo "antigravity"
+        return
+    fi
+    
     # Claude Code
     if command -v claude &> /dev/null; then
         echo "claude-code"

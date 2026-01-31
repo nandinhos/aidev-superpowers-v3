@@ -128,6 +128,7 @@ load_modules() {
 # Uso: load_essential_modules
 load_essential_modules() {
     load_module "core"
+    load_module "i18n"
     load_module "file-ops"
     load_module "detection"
     load_module "cli"
@@ -189,9 +190,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     exit 1
 fi
 
-# Tenta carregar core se existir
+# Tenta carregar core e i18n se existirem
 if [ -f "$AIDEV_LIB_DIR/core.sh" ] && ! module_loaded "core"; then
     # shellcheck source=/dev/null
     source "$AIDEV_LIB_DIR/core.sh"
     LOADED_MODULES+=("core")
+fi
+
+if [ -f "$AIDEV_LIB_DIR/i18n.sh" ] && ! module_loaded "i18n"; then
+    # shellcheck source=/dev/null
+    source "$AIDEV_LIB_DIR/i18n.sh"
+    LOADED_MODULES+=("i18n")
 fi

@@ -222,3 +222,52 @@ get_state_value() {
         echo "$value"
     fi
 }
+
+# ============================================================================
+# Gestão de Segredos (.env)
+# ============================================================================
+
+# Carrega variáveis de um arquivo .env se ele existir
+# Uso: load_env ["path/to/.env"]
+load_env() {
+    local env_file="${1:-${CLI_INSTALL_PATH:-.}/.env}"
+    
+    if [ -f "$env_file" ]; then
+        print_debug "Carregando variáveis de $env_file"
+        # Lê linha por linha ignorando comentários e exportando
+        while IFS='=' read -r key value || [ -n "$key" ]; do
+            # Remove whitespace
+            key=$(echo "$key" | xargs)
+            # Ignora linhas vazias ou comentários
+            [[ -z "$key" || "$key" =~ ^# ]] && continue
+            
+            # Remove aspas do valor se existirem
+            value=$(echo "$value" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+            
+            export "$key"="$value"
+        done < "$env_file"
+    fi
+}
+
+# Define ou atualiza uma variável no arquivo .env
+# Uso: set_env_value "KEY" "VALUE" ["path/to/.env"]
+set_env_value() {
+    local key="$1"
+    local value="$2"
+    local env_file="${3:-${CLI_INSTALL_PATH:-.}/.env}"
+    
+    mkdir -p "$(dirname "$env_file")"
+    [ ! -f "$env_file" ] && touch "$env_file"
+    
+    if grep -q "^$key=" "$env_file"; then
+        # Atualiza existente
+        sed -i "s|^$key=.*|$key=\"$value\"|" "$env_file"
+    else
+        # Adiciona novo
+        echo "$key=\"$value\"" >> "$env_file"
+    fi
+    
+    # Exporta para a sessão atual também
+    export "$key"="$value"
+    print_debug "Variável $key definida em $env_file"
+}

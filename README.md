@@ -56,9 +56,10 @@ seu-projeto/
 │   │   ├── generic.md
 │   │   └── [sua-stack].md
 │   │
-│   └── state/            # Estado persistente
+│   └── state/            # Estado persistente (sessão)
 │
-└── .mcp.json             # Configuração MCP
+├── .gitignore            # Configurado para ignorar estado local
+└── .mcp.json             # Configuração MCP global (se aplicável)
 ```
 
 ## 🛠️ Comandos CLI
@@ -68,8 +69,8 @@ seu-projeto/
 | `aidev init` | Inicializa AI Dev no projeto |
 | `aidev init --mode minimal` | Instalação mínima |
 | `aidev upgrade` | Atualiza para versão mais recente |
-| `aidev status` | Mostra status da instalação |
-| `aidev doctor` | Diagnóstico da instalação |
+| `aidev status` | Dashboard de progresso e contexto Git |
+| `aidev doctor` | Diagnóstico e sugestões de reparo (Auto-Cura) |
 | `aidev add-skill <nome>` | Adiciona skill customizada |
 | `aidev add-agent <nome>` | Adiciona agente customizado |
 | `aidev add-rule <nome>` | Adiciona regra customizada |
@@ -161,16 +162,29 @@ agents:
 rules:
   tdd: mandatory
   documentation: required
+
+# Segredos (Gerenciados via .env, não via YAML)
+# Crie um arquivo .env na raiz:
+# CONTEXT7_API_KEY=sua_chave_aqui
 ```
+
+## 🔐 Gestão de Segredos
+
+O AI Dev utiliza um arquivo `.env` para gerenciar chaves de API e tokens sensíveis de forma segura:
+
+1.  O arquivo `.env` é automaticamente ignorado pelo Git.
+2.  Tokens são injetados dinamicamente nas configurações de MCP.
+3.  Para o **Context7**, obtenha sua chave em [context7.com/dashboard](https://context7.com/dashboard).
 
 ## 🔌 MCP (Model Context Protocol)
 
 O AI Dev configura automaticamente servidores MCP:
 
-- **context7**: Acesso a documentação atualizada
-- **serena**: Navegação inteligente de código
+- **context7**: Documentação técnica atualizada
+- **serena**: Navegação e análise de símbolos de código
+- **basic-memory**: Memória de longo prazo para projetos
 
-O arquivo `.mcp.json` é gerado automaticamente no `aidev init`.
+O arquivo de configuração MCP é gerado dinamicamente para cada plataforma (ex: `.aidev/mcp/antigravity-config.json`).
 
 ## 📖 Documentação Completa
 

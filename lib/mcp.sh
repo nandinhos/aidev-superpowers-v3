@@ -49,12 +49,18 @@ generate_claude_mcp_config() {
     project_name=$(detect_project_name "$project_path")
     
     if should_write_file "$mcp_file"; then
+        # Obtém API Key se disponível
+        local context7_key="${CONTEXT7_API_KEY:-}"
+        
         cat > "$mcp_file" << EOF
 {
   "mcpServers": {
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "$context7_key"
+      },
       "description": "Context7 server for documentation lookups"
     },
     "serena": {
@@ -91,6 +97,9 @@ generate_antigravity_mcp_config() {
     stack=$(detect_stack "$project_path")
     
     if should_write_file "$config_file"; then
+        # Obtém API Key se disponível
+        local context7_key="${CONTEXT7_API_KEY:-}"
+
         cat > "$config_file" << EOF
 {
   "platform": "antigravity",
@@ -110,6 +119,9 @@ generate_antigravity_mcp_config() {
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "$context7_key"
+      },
       "description": "Documentacao de bibliotecas"
     }
   }

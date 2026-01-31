@@ -40,12 +40,20 @@ cmd_init() {
         exit 1
     fi
     
-    # Diretório de instalação
-    local install_path="${CLI_INSTALL_PATH:-.}"
-    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
-    
+    # Seleção de Idioma Interativa
+    if [ "${AIDEV_INTERACTIVE:-true}" = "true" ] && [ -z "${CLI_LANGUAGE:-}" ]; then
+        echo -n "$(_ "select_lang")"
+        read -r selected_lang
+        case "$selected_lang" in
+            en|EN) CLI_LANGUAGE="en" ;;
+            pt|PT|pt-BR|PT-BR) CLI_LANGUAGE="pt-BR" ;;
+            *) CLI_LANGUAGE="pt-BR" ;; # Default
+        esac
+    fi
+    set_language "${CLI_LANGUAGE:-pt-BR}"
+
     print_header "AI Dev Superpowers"
-    print_mode "$CLI_MODE" "Inicializando em $install_path"
+    print_mode "$CLI_MODE" "$(_ "init_header") $install_path"
     
     # Auto-detecção de stack
     if [ "$CLI_AUTO_DETECT" = "true" ]; then
@@ -73,32 +81,39 @@ cmd_init() {
     reset_counters
     
     # Cria estrutura base
-    print_step "Criando estrutura de diretórios..."
+    print_step "$(_ "step_structure")"
     create_base_structure "$install_path"
     
     # Instala agentes
-    print_step "Instalando agentes..."
+    print_step "$(_ "step_agents")"
     install_agents "$install_path"
     
     # Instala skills
-    print_step "Instalando skills..."
+    print_step "$(_ "step_skills")"
     install_skills "$install_path"
     
     # Instala rules
-    print_step "Instalando rules..."
+    print_step "$(_ "step_rules")"
     install_rules "$install_path" "$CLI_STACK"
     
     # Configura plataforma
     if [ "$CLI_NO_MCP" != "true" ]; then
-        print_step "Configurando MCP..."
+        print_step "$(_ "step_mcp")"
         configure_mcp "$install_path" "$CLI_PLATFORM"
     fi
 
     # Instala instruções de ativação para a plataforma
-    print_step "Configurando instruções de plataforma..."
+    print_step "$(_ "step_platform")"
     install_platform_instructions "$install_path" "$CLI_PLATFORM"
 
+    # Configura segredos (interativo)
+    if [ "$CLI_NO_MCP" != "true" ]; then
+        print_step "$(_ "step_secrets")"
+        setup_secrets "$install_path"
+    fi
+
     # Configura gitignore
+    print_step "$(_ "step_gitignore")"
     setup_gitignore "$install_path"
 
     # Persiste estado inicial
@@ -107,12 +122,13 @@ cmd_init() {
     set_state_value "current_sprint" "4"
     set_state_value "current_platform" "$CLI_PLATFORM"
     set_state_value "current_stack" "$CLI_STACK"
+    set_state_value "language" "$CLI_LANGUAGE"
     set_state_value "initialized_at" "$(date -Iseconds)"
 
     # Sumário final
     print_summary "$CLI_MODE" "$CLI_STACK"
     
-    print_success "AI Dev Superpowers instalado com sucesso!"
+    print_success "$(_ "init_success")"
 }
 
 # Subcomando: upgrade
@@ -476,7 +492,32 @@ cmd_doctor() {
         print_info "session.json ainda não inicializado"
     fi
     
-    # 4. Contexto
+    # 4. Segredos e Segurança
+    print_section "Segredos e Seguranca"
+    local env_file="$install_path/.env"
+    if [ -f "$env_file" ]; then
+        load_env "$env_file"
+        if [ -n "${CONTEXT7_API_KEY:-}" ]; then
+            print_success "Context7 API Key configurada"
+        else
+            print_warning "Context7 API Key ausente no .env"
+            ((warnings++)) || true
+        fi
+        
+        # Verifica se .env está no gitignore
+        if [ -f "$install_path/.gitignore" ]; then
+            if grep -q "^\.env" "$install_path/.gitignore" || grep -q "/\.env" "$install_path/.gitignore"; then
+                print_success ".env protegido no .gitignore"
+            else
+                print_error ".env NÃO está no .gitignore (RISCO DE EXPOSIÇÃO)"
+                ((issues++)) || true
+            fi
+        fi
+    else
+        print_info ".env não encontrado (opcional, mas recomendado para MCP)"
+    fi
+    
+    # 5. Contexto
     print_section "Contexto Detectado"
     local platform=$(detect_platform)
     local stack=$(detect_stack "$install_path")
@@ -494,6 +535,9 @@ cmd_doctor() {
         fi
         if [ ! -d "$install_path/.aidev" ]; then
             echo -e "  • ${CYAN}Inicializar Projeto:${NC} aidev init"
+        fi
+        if [ -f "$install_path/.env" ] && [ -z "${CONTEXT7_API_KEY:-}" ]; then
+            echo -e "  • ${YELLOW}Context7:${NC} Adicione CONTEXT7_API_KEY ao seu arquivo .env"
         fi
     fi
 
@@ -697,7 +741,33 @@ setup_gitignore() {
             echo "" >> "$gitignore"
             echo "# AI Dev State (dynamic session data)" >> "$gitignore"
             echo ".aidev/state/" >> "$gitignore"
-            print_debug "Adicionado .aidev/state/ ao .gitignore"
+            echo ".env" >> "$gitignore"
+            print_debug "Adicionado .aidev/state/ e .env ao .gitignore"
+        fi
+    fi
+}
+
+# Configura segredos interativamente
+setup_secrets() {
+    local path="$1"
+    local env_file="$path/.env"
+    
+    # Carrega env existente se houver
+    load_env "$env_file"
+    
+    # Context7 API Key
+    if [ -z "$CONTEXT7_API_KEY" ]; then
+        print_header "Configuracão de Segredos"
+        print_info "O MCP Context7 requer uma API Key para funcionar."
+        print_info "Crie uma em: https://context7.com/dashboard"
+        echo -n "🔑 Cole sua Context7 API Key (ou Enter para pular): "
+        read -r key
+        
+        if [ -n "$key" ]; then
+            set_env_value "CONTEXT7_API_KEY" "$key" "$env_file"
+            print_success "Chave configurada com sucesso!"
+        else
+            print_warning "Chave não configurada. O Context7 pode não funcionar."
         fi
     fi
 }

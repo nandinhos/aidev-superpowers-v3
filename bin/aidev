@@ -8,7 +8,25 @@
 # Uso: aidev <comando> [opções]
 # ============================================================================
 
-set -euo pipefail
+set -eEo pipefail
+
+# Handler de erro para Auto-Cura (Fase 4)
+error_handler() {
+    local exit_code=$?
+    local line_no=$1
+    
+    # Ignora erros se já estivermos dentro do doctor para evitar loop infinito
+    if [[ "${BASH_COMMAND:-}" == *"doctor"* ]]; then
+        return
+    fi
+
+    echo ""
+    echo "❌ Ops! O comando falhou (Erro: $exit_code na linha $line_no)"
+    echo "🔍 Sugestão: Tente rodar 'aidev doctor --fix' para resolver problemas de ambiente."
+    echo ""
+}
+
+trap 'error_handler $LINENO' ERR
 
 # Detecta diretório do script (resolve symlinks)
 SOURCE="${BASH_SOURCE[0]}"
@@ -168,6 +186,9 @@ cmd_upgrade() {
 
     reset_counters
     AIDEV_FORCE=true
+
+    # Garante estrutura base (novos diretórios)
+    create_base_structure "$install_path"
 
     # Reinstala componentes
     print_step "Atualizando agentes..."
@@ -517,6 +538,13 @@ cmd_snapshot() {
 cmd_doctor() {
     parse_args "$@"
     
+    local fix_mode=false
+    for arg in "$@"; do
+        if [ "$arg" == "--fix" ]; then
+            fix_mode=true
+        fi
+    done
+
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
     
@@ -548,18 +576,30 @@ cmd_doctor() {
         print_success ".aidev/ existe"
         
         # Verifica diretórios
-        local dirs=("agents" "skills" "rules" "state")
+        local dirs=("agents" "skills" "rules" "state" "memory/kb")
         for dir in "${dirs[@]}"; do
             if [ -d "$install_path/.aidev/$dir" ]; then
                 print_success ".aidev/$dir/ existe"
             else
-                print_warning ".aidev/$dir/ não encontrado"
-                ((warnings++)) || true
+                if [ "$fix_mode" = "true" ]; then
+                    print_info "Recriando diretório: .aidev/$dir/"
+                    ensure_dir "$install_path/.aidev/$dir"
+                    print_success ".aidev/$dir/ criado"
+                else
+                    print_warning ".aidev/$dir/ não encontrado"
+                    ((warnings++)) || true
+                fi
             fi
         done
     else
         print_error ".aidev/ não encontrado em $install_path"
-        ((issues++)) || true
+        if [ "$fix_mode" = "true" ]; then
+            print_info "Tentando reconstruir estrutura base..."
+            create_base_structure "$install_path"
+            print_success "Estrutura recriada."
+        else
+            ((issues++)) || true
+        fi
     fi
     
     # 3. Estado da Sessão
@@ -593,8 +633,14 @@ cmd_doctor() {
             if grep -q "^\.env" "$install_path/.gitignore" || grep -q "/\.env" "$install_path/.gitignore"; then
                 print_success ".env protegido no .gitignore"
             else
-                print_error ".env NÃO está no .gitignore (RISCO DE EXPOSIÇÃO)"
-                ((issues++)) || true
+                if [ "$fix_mode" = "true" ]; then
+                    print_info "Protegendo .env no .gitignore..."
+                    echo ".env" >> "$install_path/.gitignore"
+                    print_success ".env protegido"
+                else
+                    print_error ".env NÃO está no .gitignore (RISCO DE EXPOSIÇÃO)"
+                    ((issues++)) || true
+                fi
             fi
         fi
     else
@@ -664,6 +710,7 @@ create_base_structure() {
     ensure_dir "$path/.aidev/rules"
     ensure_dir "$path/.aidev/state"
     ensure_dir "$path/.aidev/state/lessons"
+    ensure_dir "$path/.aidev/memory/kb"
     ensure_dir "$path/.aidev/analysis"
 }
 

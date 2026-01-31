@@ -15,21 +15,41 @@ AI Dev Superpowers é um framework que configura **agentes especializados**, **s
 - ✅ **DRY** - Não repita código
 - ✅ **Evidências** - Prove que funciona, não apenas afirme
 
-## 🎯 Instalação Rápida
+## 🎯 Instalação
 
+### Método 1: One-Liner (Recomendado) ⚡
+Ideal para quem busca rapidez e configuração automática de PATH.
 ```bash
-# Clone o repositório
+curl -sSL https://raw.githubusercontent.com/nandinhos/aidev-superpowers-v3/main/install.sh | bash
+```
+
+### Método 2: Manual (Expert) 🛠️
+Ideal para desenvolvedores que desejam manter o repositório em um local específico.
+```bash
+# 1. Clone o repositório
 git clone https://github.com/nandinhos/aidev-superpowers-v3.git
 
-# Adicione ao PATH
+# 2. Adicione os binários ao seu PATH (exemplo no .bashrc)
 export PATH="$PATH:$(pwd)/aidev-superpowers-v3/bin"
 
-# Inicialize em seu projeto
+# 3. Inicialize seu projeto
 cd seu-projeto
 aidev init
 ```
 
-**Pronto!** Sua IA agora tem superpoderes. 🦸
+---
+
+## ⚡ Novidades da V3.1
+Esta versão introduz a **Fase 4: Automação e Inteligência**, focada em proatividade e economia de tokens.
+
+### 🧠 Knowledge Base Engine (Lições Aprendidas)
+O framework agora possui uma **Memória Semântica**. Erros corrigidos uma vez são memorizados local e globalmente via MCP, evitando que a IA repita os mesmos erros e economizando milhares de tokens.
+
+### 🏥 Auto-Cura Proativa (Self-Healing)
+O comando `aidev doctor --fix` agora detecta falhas de ambiente, permissões ou infraestrutura e sugere reparos automáticos. O CLI intercepta erros comuns e te orienta proativamente.
+
+### 🛰️ Context Snapshotter
+Use `aidev snapshot` ao final de uma sessão para gerar um "Passaporte de Contexto". Cole esse snapshot em qualquer novo chat de IA (Claude, Gemini, Antigravity) para continuidade instantânea sem perda de foco.
 
 ## 📁 O que é instalado?
 
@@ -67,13 +87,13 @@ seu-projeto/
 | Comando | Descrição |
 |---------|-----------|
 | `aidev init` | Inicializa AI Dev no projeto |
-| `aidev init --mode minimal` | Instalação mínima |
 | `aidev upgrade` | Atualiza para versão mais recente |
 | `aidev status` | Dashboard de progresso e contexto Git |
-| `aidev doctor` | Diagnóstico e sugestões de reparo (Auto-Cura) |
+| `aidev doctor` | Diagnóstico de saúde do ambiente |
+| `aidev doctor --fix` | **Auto-Cura**: Tenta reparar problemas detectados |
+| `aidev snapshot` | Gera um resumo de contexto para migração de IA |
 | `aidev add-skill <nome>` | Adiciona skill customizada |
 | `aidev add-agent <nome>` | Adiciona agente customizado |
-| `aidev add-rule <nome>` | Adiciona regra customizada |
 
 ### Opções Globais
 

@@ -39,7 +39,10 @@ cmd_init() {
     if ! validate_args; then
         exit 1
     fi
-    
+    # Diretório de instalação
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
     # Seleção de Idioma Interativa
     if [ "${AIDEV_INTERACTIVE:-true}" = "true" ] && [ -z "${CLI_LANGUAGE:-}" ]; then
         echo -n "$(_ "select_lang")"
@@ -363,17 +366,17 @@ cmd_status() {
     echo "  Plataforma: $platform"
     
     # Progresso da Sessão (usa variáveis globais sincronizadas em sync_session_state)
-    echo "  Progresso:  Fase ${current_fase:-1} | Sprint ${current_sprint:-0}"
+    # Exibe dashboard
+    print_section "Progresso"
+    echo "  Fase:       ${current_fase:-1}"
+    echo "  Sprint:     ${current_sprint:-0}"
     echo "  Tarefa:     ${current_task:-Pendente}"
+    echo "  Última Ativ: ${initialized_at:-N/A}"
     
-    if [ -n "${initialized_at:-}" ] && [ "$initialized_at" != "N/A" ]; then
-        echo "  Última Ativ: $initialized_at"
-    fi
-
     # Histórico Git Recente
     if [ -d "$install_path/.git" ]; then
         print_section "Histórico Recente (Git)"
-        git -C "$install_path" log -n 3 --oneline --no-decorate --color=always | sed 's/^/  /'
+        git -C "$install_path" log -n 3 --oneline | sed 's/^/  /'
     fi
     
     # Lista agentes
@@ -426,6 +429,87 @@ cmd_status() {
     fi
     
     echo ""
+}
+
+# Subcomando: snapshot
+# Gera um resumo do contexto atual para migração entre IAs
+cmd_snapshot() {
+    parse_args "$@"
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev não está instalado neste diretório"
+        exit 1
+    fi
+
+    print_header "AI Dev Snapshot (Context Passport)"
+    print_info "Gerando resumo técnico para migração de modelo..."
+    echo ""
+
+    # Coleta dados
+    local fase=$(get_state_value "current_fase" "1")
+    local sprint=$(get_state_value "current_sprint" "0")
+    local task=$(get_state_value "current_task" "Pendente")
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+    local platform=$(detect_platform)
+
+    # Início do bloco de snapshot
+    echo "--- SNAPSHOT START ---"
+    echo "Crie um novo chat de IA e cole o conteúdo abaixo:"
+    echo "------------------------------------------------"
+    echo ""
+    echo "# 🛰️ AI DEV CONTEXT SNAPSHOT: $project_name"
+    echo ""
+    echo "## 📍 Estado Operacional"
+    echo "- **Fase**: $fase"
+    echo "- **Sprint**: $sprint"
+    echo "- **Tarefa Atual**: $task"
+    echo "- **Stack**: $stack"
+    echo "- **Origem**: $platform"
+    echo ""
+
+    echo "## 📜 Histórico Recente (Git)"
+    if [ -d "$install_path/.git" ]; then
+        git log -n 5 --oneline | sed 's/^/- /'
+    else
+        echo "- (Git não disponível ou não inicializado)"
+    fi
+    echo ""
+
+    echo "## 📋 Decisões e Planos Ativos"
+    local plans=""
+    [ -f "$install_path/implementation_plan.md" ] && plans="$plans- ./implementation_plan.md\n"
+    [ -d "$install_path/docs/plans" ] && plans="$plans$(ls "$install_path/docs/plans"/*.md 2>/dev/null | sed "s|$install_path/||" | sed 's/^/- /')\n"
+    
+    if [ -n "$plans" ]; then
+        echo -e "$plans"
+    else
+        echo "- Nenhum plano de implementação detectado."
+    fi
+    echo ""
+
+    echo "## 🧠 Lições Aprendidas Recentes"
+    local lessons_dir="$install_path/.aidev/state/lessons"
+    if [ -d "$lessons_dir" ]; then
+        ls -F "$lessons_dir" 2>/dev/null | grep -v "/" | head -n 5 | sed 's/^/- /' || echo "- Nenhuma lição registrada nesta sessão."
+    else
+        echo "- Nenhuma lição registrada nesta sessão."
+    fi
+    echo ""
+
+    echo "## 🚀 Instruções para o Próximo Modelo"
+    echo "1. Leia o arquivo \`task.md\` e \`implementation_plan.md\` se existirem."
+    echo "2. O projeto usa o framework AI Dev Superpowers V3."
+    echo "3. Continue a partir da tarefa: **$task**."
+    echo ""
+    echo "------------------------------------------------"
+    echo "--- SNAPSHOT END ---"
+    echo ""
+
+    print_success "Snapshot gerado com sucesso! Copie o bloco acima."
 }
 
 # Subcomando: doctor
@@ -523,6 +607,18 @@ cmd_doctor() {
     local stack=$(detect_stack "$install_path")
     print_info "Plataforma: $platform"
     print_info "Stack:      $stack"
+
+    # 6. Verificação de Integridade Crítica
+    print_section "Integridade do Sistema"
+    local critical_dirs=(".aidev/agents" ".aidev/skills" ".aidev/rules" "bin")
+    for dir in "${critical_dirs[@]}"; do
+        if [ -d "$install_path/$dir" ]; then
+            print_success "Diretório vital ok: $dir"
+        else
+            print_error "DIRETÓRIO VITAL AUSENTE: $dir"
+            ((issues++)) || true
+        fi
+    done
 
     # 5. Sugestões de Reparo
     if [ $issues -gt 0 ] || [ $warnings -gt 0 ]; then
@@ -756,7 +852,7 @@ setup_secrets() {
     load_env "$env_file"
     
     # Context7 API Key
-    if [ -z "$CONTEXT7_API_KEY" ]; then
+    if [ -z "${CONTEXT7_API_KEY:-}" ]; then
         print_header "Configuracão de Segredos"
         print_info "O MCP Context7 requer uma API Key para funcionar."
         print_info "Crie uma em: https://context7.com/dashboard"
@@ -801,6 +897,12 @@ main() {
             ;;
         doctor)
             cmd_doctor "$@"
+            ;;
+        snapshot)
+            cmd_snapshot "$@"
+            ;;
+        integrity)
+            cmd_doctor "$@" # Por enquanto usa doctor como base, mas focado em reparo automático futuramente
             ;;
         -h|--help|help)
             show_help

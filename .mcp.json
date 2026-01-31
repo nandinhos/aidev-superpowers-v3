@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "Context7 server for documentation lookups"
+    },
+    "serena": {
+      "command": "uvx",
+      "args": ["serena", "--project=/home/nandodev/projects/aidev-superpowers-v3-1"],
+      "description": "Serena server for intelligent code navigation"
+    }
+  },
+  "projectConfig": {
+    "name": "aidev-superpowers-v3-1",
+    "stack": "generic",
+    "version": "1.0.0"
+  }
+}

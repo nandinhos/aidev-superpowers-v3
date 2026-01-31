@@ -148,3 +148,52 @@ increment_files() {
 increment_dirs() {
     ((AIDEV_DIRS_CREATED++)) || true
 }
+# ============================================================================
+# Persistência de Estado (Sessão)
+# ============================================================================
+
+# Define um valor no estado persistente (JSON)
+# Uso: set_state_value "key" "value"
+set_state_value() {
+    local key="$1"
+    local value="$2"
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local state_file="$install_path/.aidev/state/session.json"
+    
+    mkdir -p "$(dirname "$state_file")"
+    
+    # Inicializa arquivo se não existir
+    if [ ! -f "$state_file" ]; then
+        echo "{}" > "$state_file"
+    fi
+    
+    # Atualiza via jq
+    local tmp_file
+    tmp_file=$(mktemp)
+    jq --arg key "$key" --arg val "$value" '.[$key] = $val' "$state_file" > "$tmp_file" && mv "$tmp_file" "$state_file"
+    
+    print_debug "Estado atualizado: $key=$value"
+}
+
+# Obtém um valor do estado persistente (JSON)
+# Uso: value=$(get_state_value "key" ["default"])
+get_state_value() {
+    local key="$1"
+    local default="${2:-}"
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local state_file="$install_path/.aidev/state/session.json"
+    
+    if [ ! -f "$state_file" ]; then
+        echo "$default"
+        return 0
+    fi
+    
+    local value
+    value=$(jq -r --arg key "$key" '.[$key] // empty' "$state_file")
+    
+    if [ -z "$value" ]; then
+        echo "$default"
+    else
+        echo "$value"
+    fi
+}

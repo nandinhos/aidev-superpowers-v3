@@ -19,6 +19,9 @@ CLI_LANGUAGE="pt-BR"
 CLI_AUTO_DETECT=true
 CLI_NO_MCP=false
 CLI_NO_HOOKS=false
+AIDEV_COMMAND=""
+AIDEV_FORCE=false
+AIDEV_DRY_RUN=false
 
 # ============================================================================
 # Exibição de Ajuda
@@ -116,6 +119,7 @@ parse_args() {
     CLI_AUTO_DETECT=true
     CLI_NO_MCP=false
     CLI_NO_HOOKS=false
+    AIDEV_COMMAND=""
     AIDEV_FORCE=false
     AIDEV_DRY_RUN=false
     

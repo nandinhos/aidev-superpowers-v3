@@ -98,6 +98,14 @@ cmd_init() {
     print_step "Configurando instruções de plataforma..."
     install_platform_instructions "$install_path" "$CLI_PLATFORM"
 
+    # Persiste estado inicial
+    export CLI_INSTALL_PATH="$install_path"
+    set_state_value "current_fase" "3"
+    set_state_value "current_sprint" "4"
+    set_state_value "current_platform" "$CLI_PLATFORM"
+    set_state_value "current_stack" "$CLI_STACK"
+    set_state_value "initialized_at" "$(date -Iseconds)"
+
     # Sumário final
     print_summary "$CLI_MODE" "$CLI_STACK"
     
@@ -477,23 +485,33 @@ create_base_structure() {
     ensure_dir "$path/.aidev/analysis"
 }
 
-# Instala agentes a partir dos templates
+# Instala agentes a partir dos templates com suporte a overrides por plataforma
 install_agents() {
     local path="$1"
     local agents_dir="$path/.aidev/agents"
+    local platform_agents_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents"
     
     # Exporta variáveis para os templates
     export PROJECT_NAME=$(detect_project_name "$path")
     export STACK="$CLI_STACK"
+    export PLATFORM="$CLI_PLATFORM"
     
+    # Itera sobre os templates globais primeiro para garantir que todos os básicos existam
     for template in "$AIDEV_ROOT_DIR/templates/agents"/*.md.tmpl; do
         if [ -f "$template" ]; then
             local name=$(basename "$template" .md.tmpl)
             local output="$agents_dir/${name}.md"
             
+            # Verifica se existe override na plataforma
+            local template_to_use="$template"
+            if [ -n "$CLI_PLATFORM" ] && [ -f "$platform_agents_dir/${name}.md.tmpl" ]; then
+                template_to_use="$platform_agents_dir/${name}.md.tmpl"
+                print_debug "Usando override de plataforma para: $name"
+            fi
+            
             if should_write_file "$output"; then
-                process_template "$template" "$output"
-                print_debug "Instalado: $name"
+                process_template "$template_to_use" "$output"
+                print_debug "Instalado: $name (de $(basename "$(dirname "$template_to_use")"))"
             fi
         fi
     done
@@ -629,7 +647,7 @@ install_platform_instructions() {
 
 main() {
     local command="${1:-help}"
-    shift || true
+    # shift || true # Deixa o comando original para o parse_args identificar
     
     case "$command" in
         init)

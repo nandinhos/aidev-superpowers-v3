@@ -36,26 +36,25 @@ These rules apply to ALL projects regardless of stack.
 - Branch per feature
 - Review before merge
 
-## Commit Message Format (Padrão de Governança)
-Todo commit deve seguir o padrão:
+## Commit Message Format
 ```
-Sprint X (Fase Y): Descrição curta em português
+type(scope): short description
 
-- Detalhe 1 (opcional)
-- Detalhe 2 (opcional)
+- Detail 1
+- Detail 2
+
+Refs: #issue-number
 ```
 
-### Regras de Ouro
-1. **Sem emojis**: Não use emojis no título (subject) do commit.
-2. **Fase e Sprint**: Identifique sempre a Fase e o Sprint atual.
-3. **Idioma**: Sempre em Português Brasil.
-4. **Sem Co-autoria**: Não insira "Co-authored-by" nos commits.
-5. **Contexto**: A descrição deve ser curta e direta no título, detalhes no corpo.
+### Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code change (no new feature)
+- `test`: Adding tests
+- `docs`: Documentation
+- `chore`: Maintenance
 
-### Fases Atuais
-- **Fase 1**: Desenvolvimento Core Initial (Sprints 0-11)
-- **Fase 2**: Recuperação e Hardening de Ambiente (Sprints 1-5)
-- **Fase 3**: Evolução do Orquestrador e Multicliente (Atual)
+## File Organization
 - Group by feature, not type
 - Clear naming conventions
 - Consistent structure

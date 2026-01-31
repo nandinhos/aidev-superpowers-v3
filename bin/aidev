@@ -343,6 +343,29 @@ cmd_status() {
     echo "  Stack:      $stack"
     echo "  Plataforma: $platform"
     
+    # Progresso da Sessão
+    local fase
+    fase=$(get_state_value "current_fase" "1")
+    local sprint
+    sprint=$(get_state_value "current_sprint" "0")
+    local task
+    task=$(get_state_value "current_task" "Pendente")
+    
+    echo "  Progresso:  Fase $fase | Sprint $sprint"
+    echo "  Tarefa:     $task"
+    
+    local last_init
+    last_init=$(get_state_value "initialized_at" "N/A")
+    if [ "$last_init" != "N/A" ]; then
+        echo "  Última Ativ: $last_init"
+    fi
+
+    # Histórico Git Recente
+    if [ -d "$install_path/.git" ]; then
+        print_section "Histórico Recente (Git)"
+        git -C "$install_path" log -n 3 --oneline --no-decorate --color=always | sed 's/^/  /'
+    fi
+    
     # Lista agentes
     print_section "Agentes Instalados"
     local agents_dir="$install_path/.aidev/agents"

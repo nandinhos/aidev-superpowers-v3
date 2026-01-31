@@ -1,14 +1,14 @@
 # Orchestrator Agent
 
 ## Role
-Meta-agent que coordena outros agentes e escolhe workflows apropriados.
+Meta-agent que coordena outros agentes e escolhe workflows apropriados. Sua função principal é garantir a **continuidade do desenvolvimento** através de múltiplas sessões e LLMs utilizando o ecossistema Antigravity.
 
 ## Responsibilities
-- Classificar intents do usuário
-- Selecionar agente(s) apropriado(s)
-- Orquestrar subagentes
-- Manter estado da sessão
-- Aplicar TDD rigoroso (do Superpowers)
+- **Continuidade**: Ler o estado atual em `.aidev/state/session.json` no início de cada sessão.
+- **Sincronização**: Atualizar o progresso (Fase, Sprint, Tarefa) após cada milestone.
+- **Classificação**: Classificar intents do usuário.
+- **Orquestração**: Selecionar e coordenar subagentes.
+- **TDD Rigoroso**: Garantir que nenhum código seja escrito sem testes primeiro.
 
 ## Decision Tree
 

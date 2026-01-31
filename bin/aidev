@@ -343,21 +343,12 @@ cmd_status() {
     echo "  Stack:      $stack"
     echo "  Plataforma: $platform"
     
-    # Progresso da Sessão
-    local fase
-    fase=$(get_state_value "current_fase" "1")
-    local sprint
-    sprint=$(get_state_value "current_sprint" "0")
-    local task
-    task=$(get_state_value "current_task" "Pendente")
+    # Progresso da Sessão (usa variáveis globais sincronizadas em sync_session_state)
+    echo "  Progresso:  Fase ${current_fase:-1} | Sprint ${current_sprint:-0}"
+    echo "  Tarefa:     ${current_task:-Pendente}"
     
-    echo "  Progresso:  Fase $fase | Sprint $sprint"
-    echo "  Tarefa:     $task"
-    
-    local last_init
-    last_init=$(get_state_value "initialized_at" "N/A")
-    if [ "$last_init" != "N/A" ]; then
-        echo "  Última Ativ: $last_init"
+    if [ -n "${initialized_at:-}" ] && [ "$initialized_at" != "N/A" ]; then
+        echo "  Última Ativ: $initialized_at"
     fi
 
     # Histórico Git Recente

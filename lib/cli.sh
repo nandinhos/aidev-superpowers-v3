@@ -23,6 +23,22 @@ AIDEV_COMMAND=""
 AIDEV_FORCE=false
 AIDEV_DRY_RUN=false
 
+# Sincroniza estado da sessão se disponível
+# Deve ser chamado após parse_args
+sync_session_state() {
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    if has_aidev_installed "$install_path"; then
+        # Variáveis globais de progresso (lidas do estado)
+        current_fase=$(get_state_value "current_fase" "1")
+        current_sprint=$(get_state_value "current_sprint" "0")
+        current_task=$(get_state_value "current_task" "Pendente")
+        initialized_at=$(get_state_value "initialized_at" "$(date -Iseconds)")
+        
+        # Exporta para subprocessos se necessário
+        export current_fase current_sprint current_task initialized_at
+    fi
+}
+
 # ============================================================================
 # Exibição de Ajuda
 # ============================================================================
@@ -199,6 +215,10 @@ parse_args() {
     if [ -z "$CLI_INSTALL_PATH" ]; then
         CLI_INSTALL_PATH="."
     fi
+    export CLI_INSTALL_PATH
+    
+    # Sincroniza estado após determinar o path
+    sync_session_state
 }
 
 # ============================================================================

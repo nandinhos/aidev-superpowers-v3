@@ -205,10 +205,13 @@ get_state_value() {
         return 0
     fi
     
-    local value
+    local value=""
     if command -v jq >/dev/null 2>&1; then
-        value=$(jq -r --arg key "$key" '.[$key] // empty' "$state_file")
-    else
+        value=$(jq -r --arg key "$key" '.[$key] // empty' "$state_file" 2>/dev/null || echo "")
+    fi
+    
+    # Se JQ falhou ou não retornou nada, tenta o fallback
+    if [ -z "$value" ]; then
         # Fallback simples via grep/sed
         value=$(grep "\"$key\":" "$state_file" | sed "s/.*\"$key\": \"\(.*\)\".*/\1/" | head -n 1)
     fi

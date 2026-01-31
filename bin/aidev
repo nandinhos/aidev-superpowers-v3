@@ -21,8 +21,8 @@ error_handler() {
     fi
 
     echo ""
-    echo "❌ Ops! O comando falhou (Erro: $exit_code na linha $line_no)"
-    echo "🔍 Sugestão: Tente rodar 'aidev doctor --fix' para resolver problemas de ambiente."
+    echo "❌ $(_ "error_ops") (Erro: $exit_code na linha $line_no)"
+    echo "🔍 $(_ "suggest_doctor")"
     echo ""
 }
 
@@ -582,9 +582,9 @@ cmd_doctor() {
                 print_success ".aidev/$dir/ existe"
             else
                 if [ "$fix_mode" = "true" ]; then
-                    print_info "Recriando diretório: .aidev/$dir/"
+                    print_info "$(_ "fix_recreating_dir") .aidev/$dir/"
                     ensure_dir "$install_path/.aidev/$dir"
-                    print_success ".aidev/$dir/ criado"
+                    print_success ".aidev/$dir/ $(_ "fix_created")"
                 else
                     print_warning ".aidev/$dir/ não encontrado"
                     ((warnings++)) || true
@@ -594,9 +594,9 @@ cmd_doctor() {
     else
         print_error ".aidev/ não encontrado em $install_path"
         if [ "$fix_mode" = "true" ]; then
-            print_info "Tentando reconstruir estrutura base..."
+            print_info "$(_ "fix_restoring_base")"
             create_base_structure "$install_path"
-            print_success "Estrutura recriada."
+            print_success "$(_ "fix_restored")"
         else
             ((issues++)) || true
         fi
@@ -634,9 +634,9 @@ cmd_doctor() {
                 print_success ".env protegido no .gitignore"
             else
                 if [ "$fix_mode" = "true" ]; then
-                    print_info "Protegendo .env no .gitignore..."
+                    print_info "$(_ "fix_protecting_env")"
                     echo ".env" >> "$install_path/.gitignore"
-                    print_success ".env protegido"
+                    print_success "$(_ "fix_protected_env")"
                 else
                     print_error ".env NÃO está no .gitignore (RISCO DE EXPOSIÇÃO)"
                     ((issues++)) || true

@@ -11,55 +11,36 @@ globs:
   - "tests/**"
 ---
 
-# Test-Driven Development Skill
+## Safe-Guard & Backup (PROTEÇÃO DE DADOS)
 
-## When to Use
-During ALL implementation work. Non-negotiable.
+> [!IMPORTANT]
+> **SEGURANÇA EM PRIMEIRO LUGAR**: Antes de qualquer operação de deleção ou refatoração profunda, você DEVE garantir a integridade dos dados.
 
-## The Cycle
+1. **Snapshots Obrigatórios**: Use o comando `aidev snapshot` antes de mudanças estruturais.
+2. **Double-Check de Deleção**: Se o ciclo RED-GREEN-REFACTOR exigir a deleção de código sem teste, você deve:
+   - Listar exatamente o que será deletado.
+   - Confirmar se não há arquivos vitais do projeto ou de outros projetos no caminho.
+3. **Isolamento**: Nunca execute comandos de deleção (`rm -rf`) em caminhos genéricos ou raízes de projetos sem verificação tripla.
+
+## THE CYCLE (RED-GREEN-REFACTOR)
 
 ### RED Phase
-1. Write a failing test
-2. Test MUST fail for the right reason
-3. Verify the failure message
-
-```bash
-npm test -- feature.spec.js
-# Expected: FAIL - feature not implemented
-```
+1. Write a failing test.
+2. Test MUST fail for the right reason.
+3. Verify the failure message.
 
 ### GREEN Phase
-1. Write MINIMAL code to pass
-2. No extra features
-3. No premature optimization
-4. Just make it pass
-
-```bash
-npm test -- feature.spec.js
-# Expected: PASS
-```
+1. Write MINIMAL code to pass.
+2. No extra features.
 
 ### REFACTOR Phase
-1. Improve code quality
-2. Remove duplication
-3. Enhance readability
-4. Tests MUST still pass
+1. Improve code quality.
+2. **Snapshot Before Refactor**: Execute `aidev snapshot` if the change is high-risk.
+3. All tests MUST pass.
 
-```bash
-npm test
-# Expected: All PASS
-```
-
-### COMMIT Phase
-```bash
-git add .
-git commit -m "feat: add feature X with tests"
-```
-
-## CRITICAL RULE
-**If code exists without tests: DELETE IT and start over!**
-
-This is non-negotiable. Code without tests is technical debt.
+## CRITICAL RULES
+- **Code without tests = Technical Debt**.
+- **Accidental Deletion = Critical Failure**. Se houver risco de deleção acidental, PARE e peça confirmação humana.
 
 ## Testing Anti-Patterns to Avoid
 

@@ -9,6 +9,7 @@ triggers:
 globs:
   - "**/*.log"
   - ".aidev/state/lessons/**"
+  - ".aidev/memory/kb/**"
 ---
 
 # Systematic Debugging Skill
@@ -95,9 +96,10 @@ Fix the bug and prevent recurrence.
    - No regressions
    - All tests pass
 
-5. **Document Lesson**
-   - Save to `.aidev/state/lessons/`
-   - Prevent future occurrences
+5. **Document Lesson** (RECOMENDADO)
+   - Ative a skill `learned-lesson` para salvar este conhecimento permanentemente.
+   - Salve localmente em `.aidev/memory/kb/`.
+   - Salve globalmente via `basic-memory` MCP se for uma solução genérica.
 
 ## Lesson Format
 ```markdown

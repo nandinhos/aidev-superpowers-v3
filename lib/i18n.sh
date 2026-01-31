@@ -30,6 +30,14 @@ TRANSLATIONS_PT["step_secrets"]="Configurando segredos..."
 TRANSLATIONS_PT["step_gitignore"]="Configurando gitignore..."
 TRANSLATIONS_PT["error_no_install"]="AI Dev não está instalado neste diretório"
 TRANSLATIONS_PT["error_required_arg"]="Argumento obrigatório ausente: "
+TRANSLATIONS_PT["error_ops"]="Ops! O comando falhou"
+TRANSLATIONS_PT["suggest_doctor"]="Sugestão: Tente rodar 'aidev doctor --fix' para resolver problemas de ambiente."
+TRANSLATIONS_PT["fix_recreating_dir"]="Recriando diretório: "
+TRANSLATIONS_PT["fix_created"]=" criado"
+TRANSLATIONS_PT["fix_restoring_base"]="Tentando reconstruir estrutura base..."
+TRANSLATIONS_PT["fix_restored"]="Estrutura recriada."
+TRANSLATIONS_PT["fix_protecting_env"]="Protegendo .env no .gitignore..."
+TRANSLATIONS_PT["fix_protected_env"]=".env protegido"
 
 # ----------------------------------------------------------------------------
 # Traduções em Inglês
@@ -48,6 +56,14 @@ TRANSLATIONS_EN["step_secrets"]="Configuring secrets..."
 TRANSLATIONS_EN["step_gitignore"]="Configuring gitignore..."
 TRANSLATIONS_EN["error_no_install"]="AI Dev is not installed in this directory"
 TRANSLATIONS_EN["error_required_arg"]="Missing required argument: "
+TRANSLATIONS_EN["error_ops"]="Ops! Command failed"
+TRANSLATIONS_EN["suggest_doctor"]="Suggestion: Try running 'aidev doctor --fix' to resolve environment issues."
+TRANSLATIONS_EN["fix_recreating_dir"]="Recreating directory: "
+TRANSLATIONS_EN["fix_created"]=" created"
+TRANSLATIONS_EN["fix_restoring_base"]="Attempting to rebuild base structure..."
+TRANSLATIONS_EN["fix_restored"]="Structure recreated."
+TRANSLATIONS_EN["fix_protecting_env"]="Protecting .env in .gitignore..."
+TRANSLATIONS_EN["fix_protected_env"]=".env protected"
 
 # Função de tradução
 # Uso: t "chave" [base_string_se_nao_encontrar]

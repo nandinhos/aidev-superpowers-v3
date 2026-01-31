@@ -13,16 +13,19 @@ A Fase 4 foca em transformar o **AI Dev Superpowers** de um framework passivo pa
 ## 📅 Roadmap Detalhado
 
 ### Sprint 1: Context Snapshotter (O "Salto Quântico")
-*   **Problema**: Ao trocar de chat (ex: atingiu limite no Claude e vai para o Gemini), perde-se o fio da meada.
+*   **Problema**: Migração entre chats de IA perde o contexto operacional.
 *   **Solução**: `aidev snapshot`.
-    *   Gera um bloco de Markdown denso contendo:
-        - Meta-contexto (Fase/Sprint atual).
-        - Resumo dos últimos 5 planos de implementação.
-        - Grafo de dependências atualizado.
-        - "Lições aprendidas" da sessão atual.
-*   **Resultado**: O usuário cola esse snapshot no novo chat e a IA assume o controle imediatamente.
+    *   Gera um resumo Markdown denso com o estado atual, tarefas pendentes e decisões de design recentes.
 
-### Sprint 2: Doctor Autônomo e Reparo Proativo
+### Sprint 2: Knowledge Base Engine (Lições Aprendidas V2)
+*   **Problema**: Erros repetitivos consomem tokens e tempo de análise.
+*   **Solução**: Skill `knowledge-base` + Integração MCP.
+    *   **Local**: Armazenamento semântico no projeto (`.aidev/memory/kb/`) visível pelo `serena`.
+    *   **Global**: Sincronização com o `basic-memory` MCP para reaproveitar lições entre diferentes projetos.
+    *   **Formato Estruturado**: [Exception] -> [Sintomas] -> [Causa Raiz] -> [Correção Exata].
+*   **Benefício**: Economia drástica de tokens; a IA consulta a memória antes de "pensar" no erro.
+
+### Sprint 3: Auto-Cura Proativa e Reparo Proativo
 *   **Problema**: O usuário roda um comando, falha por falta de dependência, e ele tem que lembrar de rodar o `doctor`.
 *   **Solução**: Integração do `doctor` no loop de feedback do CLI.
     *   Monitoramento de permissões em tempo de execução.

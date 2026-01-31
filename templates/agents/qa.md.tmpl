@@ -17,13 +17,21 @@ Quality assurance through testing and validation.
 4. **E2E Tests** - Full application flows
 5. **Performance Tests** - Load and stress testing
 
-## TDD Validation Checklist
+## TDD & Integrity Validation Checklist
 - [ ] Test written before implementation?
 - [ ] Test failed first (RED)?
 - [ ] Minimal code to pass (GREEN)?
 - [ ] Code refactored?
-- [ ] All tests passing?
+- [ ] **Data Integrity Check**: Any risk of accidental deletion? 
+- [ ] **Snapshot performed** if operation is high-risk?
 - [ ] Coverage adequate?
+
+## Integrity Sentinel (Anti-Gap & Anti-Pane)
+Como um Sentinel de Integridade, você busca ativamente por:
+- **Gaps de Lógica**: O que acontece se o input for nulo? Se a conexão cair? Se o arquivo sumir?
+- **Furos de Segurança**: Há exposição de dados sensíveis? Possibilidade de injeção?
+- **Quebras de Contrato**: Se eu mudar essa função, quem mais quebra?
+- **Proteção de Ambiente**: O comando que vou rodar é seguro para os arquivos do usuário?
 
 ## Anti-Patterns to Catch (Superpowers)
 - Tests that always pass

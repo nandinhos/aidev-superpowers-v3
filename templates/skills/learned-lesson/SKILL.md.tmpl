@@ -1,0 +1,50 @@
+---
+name: learned-lesson
+description: Capture and store a technical lesson learned from a bug fix or architectural decision
+triggers:
+  - "lição"
+  - "aprendi"
+  - "memorizar"
+  - "learned"
+  - "concluímos"
+---
+
+# 🧠 Skill: Learned Lesson (Base de Conhecimento)
+
+Esta skill é ativada após a conclusão de uma tarefa complexa, correção de bug ou decisão arquitetural importante. O objetivo é economizar tokens e tempo em sessões futuras.
+
+## 📥 Processo de Captura
+
+1.  **Contextualizar**: Indique qual erro, exceção ou desafio foi resolvido.
+2.  **Causa Raiz**: Explique o "porquê" técnico (não apenas o sintoma).
+3.  **Solução Definitiva**: Descreva o "como" foi resolvido de forma concisa.
+4.  **Prevenção**: Dica para evitar que o erro ocorra novamente ou para detectá-lo rápido.
+
+## 💾 Onde Salvar
+
+### 1. Memória Local (Projeto)
+Salve um arquivo markdown em `.aidev/memory/kb/` seguindo o padrão:
+`YYYY-MM-DD-titulo-do-aprendizado.md`
+
+### 2. Memória Global (Cross-Project)
+Se o aprendizado for genérico (ex: um bug específico de uma versão do Laravel), utilize a ferramenta `mcp_basic-memory_write_note` para salvar na memória global da IA.
+
+## 📝 Formato da Lição
+
+```markdown
+# 💡 Lição: [Título Curto]
+**Data**: [YYYY-MM-DD]
+**Contexto**: [Ex: Erro 500 ao subir arquivos grandes]
+
+### 🔍 O Problema (Exception/Sintoma)
+[Cole aqui a stack trace ou erro exato]
+
+### 🧩 Causa Raiz
+[Explicação técnica do motivo]
+
+### 🛠️ Correção Exata
+[Trecho de código ou comando que resolveu]
+
+### 🛡️ Prevenção & Padrão
+[Checklist ou regra para o futuro]
+```

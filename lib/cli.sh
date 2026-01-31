@@ -54,7 +54,7 @@ ${YELLOW:-}Opções do 'init':${NC:-}
   --mode <modo>         Modo de operação: new, refactor, minimal, full
   --stack <stack>       Stack: laravel, filament, livewire, node, react, nextjs, python, generic
   --detect              Auto-detecta stack (padrão)
-  --platform <plat>     Plataforma: claude-code, gemini, opencode, codex, generic
+  --platform <plat>     Plataforma: antigravity, claude-code, gemini, opencode, codex, generic
   --prd <path>          Caminho para PRD (obrigatório em --mode new)
   --no-mcp              Não configura MCP Engine
   --no-hooks            Não configura hooks automáticos
@@ -234,7 +234,7 @@ validate_args() {
     fi
     
     # Validar plataforma
-    local valid_platforms="auto|claude-code|gemini|opencode|codex|rovo|aider|cursor|continue|generic"
+    local valid_platforms="auto|antigravity|claude-code|gemini|opencode|codex|rovo|aider|cursor|continue|generic"
     if [[ ! "$CLI_PLATFORM" =~ ^($valid_platforms)$ ]]; then
         print_error "Plataforma inválida: $CLI_PLATFORM"
         ((errors++))

@@ -23,6 +23,9 @@ generate_mcp_config() {
         "claude-code")
             generate_claude_mcp_config "$project_path"
             ;;
+        "antigravity")
+            generate_antigravity_mcp_config "$project_path"
+            ;;
         "gemini"|"opencode")
             generate_generic_mcp_config "$project_path" "$platform"
             ;;
@@ -69,6 +72,51 @@ generate_claude_mcp_config() {
 EOF
         increment_files
         print_success "Configuração MCP criada: $mcp_file"
+    fi
+}
+
+# Gera configuração MCP para Antigravity
+generate_antigravity_mcp_config() {
+    local project_path="$1"
+    local config_dir="$project_path/.aidev/mcp"
+    
+    ensure_dir "$config_dir"
+    
+    local config_file="$config_dir/antigravity-config.json"
+    
+    local project_name
+    project_name=$(detect_project_name "$project_path")
+    
+    local stack
+    stack=$(detect_stack "$project_path")
+    
+    if should_write_file "$config_file"; then
+        cat > "$config_file" << EOF
+{
+  "platform": "antigravity",
+  "project": "$project_name",
+  "stack": "$stack",
+  "mcpServers": {
+    "serena": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"],
+      "description": "Analise semantica de codigo"
+    },
+    "basic-memory": {
+      "command": "uvx",
+      "args": ["basic-memory", "mcp"],
+      "description": "Memoria persistente"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "Documentacao de bibliotecas"
+    }
+  }
+}
+EOF
+        increment_files
+        print_success "Configuração MCP Antigravity: $config_file"
     fi
 }
 

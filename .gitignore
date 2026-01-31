@@ -33,3 +33,6 @@ node_modules/
 # Backup files
 *.bak
 *.backup
+
+# AI Dev State (dynamic session data)
+.aidev/state/

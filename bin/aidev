@@ -98,6 +98,9 @@ cmd_init() {
     print_step "Configurando instruções de plataforma..."
     install_platform_instructions "$install_path" "$CLI_PLATFORM"
 
+    # Configura gitignore
+    setup_gitignore "$install_path"
+
     # Persiste estado inicial
     export CLI_INSTALL_PATH="$install_path"
     set_state_value "current_fase" "3"
@@ -678,6 +681,25 @@ install_platform_instructions() {
             fi
             ;;
     esac
+}
+
+# Adiciona .aidev/state ao .gitignore do projeto se existir
+setup_gitignore() {
+    local path="$1"
+    local gitignore="$path/.gitignore"
+    
+    if [ -d "$path/.git" ] || [ -f "$gitignore" ]; then
+        if [ ! -f "$gitignore" ]; then
+            echo "# AI Dev Superpowers" > "$gitignore"
+        fi
+        
+        if ! grep -q ".aidev/state/" "$gitignore"; then
+            echo "" >> "$gitignore"
+            echo "# AI Dev State (dynamic session data)" >> "$gitignore"
+            echo ".aidev/state/" >> "$gitignore"
+            print_debug "Adicionado .aidev/state/ ao .gitignore"
+        fi
+    fi
 }
 
 # ============================================================================

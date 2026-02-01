@@ -148,15 +148,21 @@ is_writable() {
 # Uso: should_write_file "/path" && write_file "$path" "content"
 should_write_file() {
     local file="$1"
-    
+
+    # Em modo dry-run, apenas simula
+    if [ "$AIDEV_DRY_RUN" = "true" ]; then
+        print_info "[DRY-RUN] Verificaria arquivo: $file"
+        return 1  # Não escreve em dry-run
+    fi
+
     if [ ! -f "$file" ]; then
         return 0  # Não existe, pode escrever
     fi
-    
+
     if [ "$AIDEV_FORCE" = "true" ]; then
         return 0  # Force está ativo
     fi
-    
+
     return 1  # Existe e force não está ativo
 }
 

@@ -117,7 +117,16 @@ cmd_init() {
     print_step "$(_ "step_rules")"
     install_rules "$install_path" "$CLI_STACK"
     
-    # Configura plataforma
+    # Configura segredos PRIMEIRO (antes do MCP para ter API Keys disponíveis)
+    if [ "$CLI_NO_MCP" != "true" ]; then
+        print_step "$(_ "step_secrets")"
+        setup_secrets "$install_path"
+
+        # Carrega as variáveis do .env para usar na configuração MCP
+        load_env "$install_path/.env"
+    fi
+
+    # Configura MCP (agora com API Keys já definidas)
     if [ "$CLI_NO_MCP" != "true" ]; then
         print_step "$(_ "step_mcp")"
         configure_mcp "$install_path" "$CLI_PLATFORM"
@@ -126,12 +135,6 @@ cmd_init() {
     # Instala instruções de ativação para a plataforma
     print_step "$(_ "step_platform")"
     install_platform_instructions "$install_path" "$CLI_PLATFORM"
-
-    # Configura segredos (interativo)
-    if [ "$CLI_NO_MCP" != "true" ]; then
-        print_step "$(_ "step_secrets")"
-        setup_secrets "$install_path"
-    fi
 
     # Configura gitignore
     print_step "$(_ "step_gitignore")"
@@ -553,22 +556,59 @@ cmd_doctor() {
     local issues=0
     local warnings=0
 
-    # 1. Dependências do Sistema
-    print_section "Dependências do Sistema"
+    # 1. Dependências do Sistema (Core)
+    print_section "Dependencias do Sistema"
     local deps=("git" "jq" "bash" "sed" "grep")
     for dep in "${deps[@]}"; do
         if command -v "$dep" >/dev/null 2>&1; then
             print_success "$dep: $(command -v "$dep")"
         else
             if [ "$dep" == "jq" ]; then
-                print_warning "$dep: NÃO ENCONTRADO (usando fallback Bash)"
+                print_warning "$dep: NAO ENCONTRADO (usando fallback Bash)"
                 ((warnings++)) || true
             else
-                print_error "$dep: NÃO ENCONTRADO"
+                print_error "$dep: NAO ENCONTRADO"
                 ((issues++)) || true
             fi
         fi
     done
+
+    # 1.1 Dependências MCP (para servidores MCP funcionarem)
+    print_section "Dependencias MCP"
+
+    # Node.js / npx (para Context7)
+    if command -v node >/dev/null 2>&1; then
+        local node_version=$(node --version 2>/dev/null)
+        print_success "node: $node_version"
+        if command -v npx >/dev/null 2>&1; then
+            print_success "npx: $(command -v npx)"
+        else
+            print_warning "npx: NAO ENCONTRADO (Context7 MCP nao funcionara)"
+            ((warnings++)) || true
+        fi
+    else
+        print_warning "node: NAO ENCONTRADO (Context7 MCP nao funcionara)"
+        ((warnings++)) || true
+    fi
+
+    # Python / uvx (para Serena e basic-memory)
+    if command -v python3 >/dev/null 2>&1; then
+        local python_version=$(python3 --version 2>/dev/null)
+        print_success "python3: $python_version"
+    else
+        print_warning "python3: NAO ENCONTRADO"
+        ((warnings++)) || true
+    fi
+
+    if command -v uvx >/dev/null 2>&1; then
+        print_success "uvx: $(command -v uvx)"
+    elif command -v uv >/dev/null 2>&1; then
+        print_success "uv: $(command -v uv) (uvx disponivel via 'uv tool run')"
+    else
+        print_warning "uvx/uv: NAO ENCONTRADO (Serena e basic-memory MCP nao funcionarao)"
+        print_info "Instale com: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        ((warnings++)) || true
+    fi
     
     # 2. Verifica instalação
     print_section "Verificando Instalação"
@@ -644,9 +684,51 @@ cmd_doctor() {
             fi
         fi
     else
-        print_info ".env não encontrado (opcional, mas recomendado para MCP)"
+        print_info ".env nao encontrado (opcional, mas recomendado para MCP)"
     fi
-    
+
+    # 4.1 Verificacao de sincronizacao MCP
+    print_section "Sincronizacao MCP"
+    local mcp_file="$install_path/.mcp.json"
+    if [ -f "$mcp_file" ]; then
+        if command -v jq >/dev/null 2>&1; then
+            local mcp_key=$(jq -r '.mcpServers.context7.env.CONTEXT7_API_KEY // empty' "$mcp_file" 2>/dev/null)
+            local env_key="${CONTEXT7_API_KEY:-}"
+
+            if [ -n "$env_key" ] && [ -n "$mcp_key" ]; then
+                if [ "$env_key" = "$mcp_key" ]; then
+                    print_success ".mcp.json sincronizado com .env"
+                else
+                    print_warning ".mcp.json desatualizado (API Key diferente do .env)"
+                    if [ "$fix_mode" = "true" ]; then
+                        print_info "Regenerando .mcp.json..."
+                        AIDEV_FORCE=true
+                        configure_mcp "$install_path" "$(detect_platform)"
+                        print_success ".mcp.json atualizado!"
+                    else
+                        print_info "Execute 'aidev doctor --fix' para sincronizar"
+                    fi
+                    ((warnings++)) || true
+                fi
+            elif [ -n "$env_key" ] && [ -z "$mcp_key" ]; then
+                print_warning ".mcp.json nao tem API Key configurada"
+                if [ "$fix_mode" = "true" ]; then
+                    print_info "Regenerando .mcp.json..."
+                    AIDEV_FORCE=true
+                    configure_mcp "$install_path" "$(detect_platform)"
+                    print_success ".mcp.json atualizado!"
+                fi
+                ((warnings++)) || true
+            elif [ -z "$env_key" ]; then
+                print_info "API Key nao configurada (Context7 pode nao funcionar)"
+            fi
+        else
+            print_info ".mcp.json existe (jq nao disponivel para validar sincronizacao)"
+        fi
+    else
+        print_info ".mcp.json nao encontrado"
+    fi
+
     # 5. Contexto
     print_section "Contexto Detectado"
     local platform=$(detect_platform)

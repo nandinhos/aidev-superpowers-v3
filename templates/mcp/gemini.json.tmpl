@@ -6,6 +6,9 @@
       "enabled": true,
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "{{CONTEXT7_API_KEY}}"
+      },
       "description": "Documentation and code examples"
     },
     "serena": {
@@ -13,6 +16,12 @@
       "command": "uvx",
       "args": ["serena", "--project={{PROJECT_PATH:./}}"],
       "description": "Intelligent code navigation"
+    },
+    "basic-memory": {
+      "enabled": true,
+      "command": "uvx",
+      "args": ["basic-memory", "mcp"],
+      "description": "Persistent memory for cross-session knowledge"
     }
   },
   "project": {

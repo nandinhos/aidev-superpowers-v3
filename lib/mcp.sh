@@ -40,19 +40,29 @@ generate_mcp_config() {
 generate_claude_mcp_config() {
     local project_path="$1"
     local mcp_file="$project_path/.mcp.json"
-    
+
     # Detecta stack para personalização
     local stack
     stack=$(detect_stack "$project_path")
-    
+
     local project_name
     project_name=$(detect_project_name "$project_path")
-    
+
     if should_write_file "$mcp_file"; then
-        # Obtém API Key se disponível
-        local context7_key="${CONTEXT7_API_KEY:-}"
-        
-        cat > "$mcp_file" << EOF
+        # Exporta variáveis para o template
+        export CONTEXT7_API_KEY="${CONTEXT7_API_KEY:-}"
+        export PROJECT_PATH="$project_path"
+        export PROJECT_NAME="$project_name"
+        export STACK="$stack"
+
+        # Usa template se disponível, senão fallback para heredoc
+        local template_file="$AIDEV_ROOT_DIR/templates/mcp/claude-code.json.tmpl"
+        if [ -f "$template_file" ]; then
+            process_template "$template_file" "$mcp_file"
+        else
+            # Fallback: gera diretamente
+            local context7_key="${CONTEXT7_API_KEY:-}"
+            cat > "$mcp_file" << EOF
 {
   "mcpServers": {
     "context7": {
@@ -67,6 +77,11 @@ generate_claude_mcp_config() {
       "command": "uvx",
       "args": ["serena", "--project=$project_path"],
       "description": "Serena server for intelligent code navigation"
+    },
+    "basic-memory": {
+      "command": "uvx",
+      "args": ["basic-memory", "mcp"],
+      "description": "Persistent memory for cross-session knowledge"
     }
   },
   "projectConfig": {
@@ -76,7 +91,8 @@ generate_claude_mcp_config() {
   }
 }
 EOF
-        increment_files
+            increment_files
+        fi
         print_success "Configuração MCP criada: $mcp_file"
     fi
 }
@@ -137,23 +153,34 @@ generate_generic_mcp_config() {
     local project_path="$1"
     local platform="$2"
     local config_dir="$project_path/.aidev/mcp"
-    
+
     ensure_dir "$config_dir"
-    
+
     local config_file="$config_dir/${platform}-config.json"
-    
+
     if should_write_file "$config_file"; then
+        local context7_key="${CONTEXT7_API_KEY:-}"
         cat > "$config_file" << EOF
 {
   "platform": "$platform",
   "servers": {
     "context7": {
       "enabled": true,
-      "command": "npx -y @upstash/context7-mcp@latest"
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "$context7_key"
+      }
     },
     "serena": {
       "enabled": true,
-      "command": "uvx serena --project=."
+      "command": "uvx",
+      "args": ["serena", "--project=$project_path"]
+    },
+    "basic-memory": {
+      "enabled": true,
+      "command": "uvx",
+      "args": ["basic-memory", "mcp"]
     }
   }
 }

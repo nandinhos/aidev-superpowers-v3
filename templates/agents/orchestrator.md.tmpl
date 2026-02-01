@@ -16,13 +16,14 @@ Ao receber uma solicitacao do usuario, classificar em:
 
 | Intent | Descricao | Agentes | Skill |
 |--------|-----------|---------|-------|
-| `feature_request` | Nova funcionalidade | Architect, Backend/Frontend, QA | brainstorming |
+| `feature_request` | Nova funcionalidade | Architect, Backend/Frontend, Code-Reviewer, QA | brainstorming |
 | `bug_fix` | Correcao de erro | QA, Backend, Security | systematic-debugging |
-| `refactor` | Melhoria de codigo | Legacy-Analyzer, Architect, QA | writing-plans |
+| `refactor` | Melhoria de codigo | Legacy-Analyzer, Architect, Code-Reviewer, QA | writing-plans |
 | `analysis` | Investigacao/exploracao | Legacy-Analyzer, Architect | - |
 | `testing` | Adicionar/melhorar testes | QA, Backend | test-driven-development |
 | `deployment` | Deploy/release | DevOps, Security | - |
 | `security_review` | Auditoria de seguranca | Security-Guardian, QA | - |
+| `code_review` | Revisao de codigo/PR | Code-Reviewer, QA, Security-Guardian | code-review |
 
 ### 3. Orquestracao de Skills com Checkpoints
 
@@ -93,8 +94,29 @@ Antes de operacoes de risco, validar:
 6. Handoff: Architect -> Backend/Frontend
 7. Iniciar skill: test-driven-development
    - RED -> GREEN -> REFACTOR
-8. Handoff: Backend -> QA
-9. Validacao final
+8. Handoff: Backend/Frontend -> Code-Reviewer
+9. Iniciar skill: code-review
+   - Revisar qualidade e padroes
+   - Verificar code smells
+   - Validar documentacao
+10. Handoff: Code-Reviewer -> QA
+11. Handoff: QA -> Security-Guardian
+12. Handoff: Security-Guardian -> DevOps
+13. Deploy e validacao final
+```
+
+### Code Review (PR/MR)
+```
+1. Usuario solicita review de PR/codigo
+2. Classificar intent -> code_review
+3. Iniciar skill: code-review
+   - Step 1: Contextualizacao (entender mudancas)
+   - Step 2: Analise de codigo (checklist completo)
+   - Step 3: Documentar findings
+   - Step 4: Decisao (APPROVE/REQUEST_CHANGES/COMMENT)
+4. Se APPROVE: Handoff -> QA -> Security-Guardian
+5. Se REQUEST_CHANGES: Retorna para desenvolvedor
+6. Se COMMENT: Handoff -> QA (nao bloqueia)
 ```
 
 ### Bug Fix

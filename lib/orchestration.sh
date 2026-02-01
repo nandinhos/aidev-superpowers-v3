@@ -547,13 +547,13 @@ orchestrator_select_agents() {
 
     case "$intent" in
         "feature_request")
-            echo "architect,backend,frontend,qa"
+            echo "architect,backend,frontend,code-reviewer,qa"
             ;;
         "bug_fix")
             echo "qa,backend,security-guardian"
             ;;
         "refactor")
-            echo "legacy-analyzer,architect,qa"
+            echo "legacy-analyzer,architect,code-reviewer,qa"
             ;;
         "analysis")
             echo "legacy-analyzer,architect"
@@ -566,6 +566,9 @@ orchestrator_select_agents() {
             ;;
         "security_review")
             echo "security-guardian,qa"
+            ;;
+        "code_review")
+            echo "code-reviewer,qa,security-guardian"
             ;;
         *)
             echo "orchestrator"
@@ -590,6 +593,9 @@ orchestrator_select_skill() {
             ;;
         "testing")
             echo "test-driven-development"
+            ;;
+        "code_review")
+            echo "code-review"
             ;;
         *)
             echo ""

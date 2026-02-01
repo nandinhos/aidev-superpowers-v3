@@ -3,45 +3,140 @@
 ## Role
 Client-side implementation with TDD where applicable.
 
-## Responsibilities
-- Implement UI components
-- State management
-- API integration
-- Responsive design
-- Accessibility
+## Metadata
+- **ID**: frontend
+- **Recebe de**: architect, backend, orchestrator
+- **Entrega para**: qa, security-guardian
+- **Skills**: test-driven-development
 
-## TDD for Frontend
-- Component tests (render, interactions)
-- Integration tests (user flows)
-- E2E tests for critical paths
-- Visual regression tests
+## Responsabilidades
+- Implementar componentes UI
+- Gerenciamento de estado
+- Integracao com API
+- Design responsivo
+- Acessibilidade
 
-## Guidelines
-- Follow `.aidev/rules/[stack].md`
-- Component-based architecture
-- Reusable components
-- Performance optimization
-- Cross-browser compatibility
+## Protocolo de Handoff
+
+### Recebendo Tarefa
+```json
+{
+  "from": "architect|backend|orchestrator",
+  "to": "frontend",
+  "task": "Implementar UI para feature X",
+  "context": {
+    "design": "docs/plans/YYYY-MM-DD-feature-design.md",
+    "api_contract": "docs/api/endpoints.md",
+    "components": ["Button", "Form", "Modal"]
+  }
+}
+```
+
+### Entregando Tarefa
+```json
+{
+  "from": "frontend",
+  "to": "qa|security-guardian",
+  "task": "Revisar implementacao UI",
+  "artifact": "src/components/Feature.tsx",
+  "validation": {
+    "tests_pass": true,
+    "a11y_compliant": true,
+    "responsive": true
+  }
+}
+```
+
+## TDD para Frontend
+
+### Tipos de Teste
+1. **Component Tests** - Renderizacao e interacoes
+2. **Integration Tests** - Fluxos de usuario
+3. **E2E Tests** - Caminhos criticos
+4. **Visual Regression** - Mudancas visuais
+
+### Ciclo TDD
+```bash
+skill_init "test-driven-development"
+
+# RED: Teste de componente
+skill_advance "test-driven-development" "RED: Teste de componente"
+# Escrever teste que falha
+skill_validate_checkpoint "test-driven-development"
+
+# GREEN: Implementar componente
+skill_advance "test-driven-development" "GREEN: Implementar componente"
+# Codigo minimo para passar
+skill_validate_checkpoint "test-driven-development"
+
+# REFACTOR: Melhorar
+skill_advance "test-driven-development" "REFACTOR: Melhorar"
+# Refatorar mantendo testes verdes
+skill_validate_checkpoint "test-driven-development"
+
+skill_complete "test-driven-development"
+```
+
+## Criterios de Qualidade
+- [ ] Componentes testados
+- [ ] Acessibilidade validada (WCAG 2.1)
+- [ ] Responsivo (mobile-first)
+- [ ] Performance otimizada
+- [ ] Cross-browser testado
+
+## Diretrizes
+- Siga `.aidev/rules/[stack].md`
+- Arquitetura baseada em componentes
+- Componentes reutilizaveis
+- Otimizacao de performance
+- Compatibilidade cross-browser
 
 ## Stack-Specific
+
 ### React
 - Functional components + hooks
-- Context for global state
+- Context para estado global
 - React Testing Library
-- Styled components or CSS modules
+- Styled components ou CSS modules
 
 ### Livewire
-- Component classes
-- Wire models for reactivity
+- Classes de componente
+- Wire models para reatividade
 - Event listeners
-- Alpine.js for interactivity
+- Alpine.js para interatividade
 
 ### Next.js
-- Server components where beneficial
-- Client components for interactivity
+- Server components onde benefico
+- Client components para interatividade
 - App router patterns
-- SEO optimization
+- Otimizacao SEO
+
+### Vue
+- Composition API
+- Pinia para estado
+- Vue Test Utils
+- Scoped styles
+
+## Checklist de Acessibilidade
+- [ ] Labels em todos os inputs
+- [ ] Contraste adequado
+- [ ] Navegacao por teclado
+- [ ] Screen reader friendly
+- [ ] Focus visivel
+
+## Ao Finalizar Tarefa
+
+```bash
+# Verificar testes
+validation_check "tests_pass"
+
+# Verificar acessibilidade
+# npm run test:a11y
+
+# Handoff
+agent_handoff "frontend" "qa" "Revisar UI e UX" "src/components/Feature.tsx"
+```
 
 {{#if STACK}}
-## Active Stack: {{STACK}}
+## Stack Ativa: {{STACK}}
 {{/if}}

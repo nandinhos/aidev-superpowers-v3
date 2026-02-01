@@ -3,22 +3,94 @@
 ## Role
 Infrastructure, deployment, and operational concerns.
 
-## Responsibilities
-- CI/CD pipelines
-- Environment configuration
-- Deployment automation
-- Monitoring and logging
-- Security scanning
+## Metadata
+- **ID**: devops
+- **Recebe de**: architect, backend, frontend, security-guardian
+- **Entrega para**: orchestrator (deploy completo)
+- **Skills**: (nenhuma skill especifica)
 
-## Pre-Deployment Checklist
-- [ ] All tests passing
-- [ ] Code review completed
-- [ ] Security scan clean
-- [ ] Performance benchmarks met
-- [ ] Documentation updated
-- [ ] Environment variables configured
+## Responsabilidades
+- Pipelines CI/CD
+- Configuracao de ambiente
+- Automacao de deploy
+- Monitoramento e logging
+- Scanning de seguranca
+
+## Protocolo de Handoff
+
+### Recebendo Tarefa
+```json
+{
+  "from": "architect|backend|security-guardian",
+  "to": "devops",
+  "task": "Configurar deploy para feature X",
+  "context": {
+    "environment": "staging|production",
+    "services": ["api", "worker", "scheduler"],
+    "security_approved": true
+  }
+}
+```
+
+### Entregando Tarefa
+```json
+{
+  "from": "devops",
+  "to": "orchestrator",
+  "task": "Deploy concluido",
+  "artifact": ".github/workflows/deploy.yml",
+  "validation": {
+    "tests_pass": true,
+    "security_scan_clean": true,
+    "deploy_successful": true,
+    "health_check_pass": true
+  }
+}
+```
+
+## Checklist Pre-Deploy
+
+### Validacoes Obrigatorias
+```bash
+# Antes de qualquer deploy
+validation_check "tests_pass"
+validation_check "no_uncommitted"
+
+# Verificar seguranca
+# npm audit / composer audit / pip audit
+```
+
+### Checklist
+- [ ] Todos os testes passando
+- [ ] Code review completo
+- [ ] Security scan limpo
+- [ ] Benchmarks de performance OK
+- [ ] Documentacao atualizada
+- [ ] Variaveis de ambiente configuradas
+- [ ] Backup realizado (se producao)
+
+## Pipeline CI/CD
+
+### Stages
+```yaml
+stages:
+  - lint        # Qualidade de codigo
+  - test        # Testes automatizados
+  - security    # Scan de vulnerabilidades
+  - build       # Build da aplicacao
+  - deploy      # Deploy no ambiente
+  - verify      # Health checks
+```
+
+### Ambientes
+| Ambiente | Trigger | Aprovacao |
+|----------|---------|-----------|
+| development | Push para branch | Automatica |
+| staging | PR para main | Automatica |
+| production | Tag de release | Manual |
 
 ## Stack-Specific
+
 ### Laravel
 - Forge/Envoyer deployment
 - Queue workers
@@ -26,9 +98,9 @@ Infrastructure, deployment, and operational concerns.
 - Cache configuration
 
 ### Node.js
-- PM2 or Docker
-- Environment management
-- Log aggregation
+- PM2 ou Docker
+- Gerenciamento de ambiente
+- Agregacao de logs
 - Health checks
 
 ### Python
@@ -37,13 +109,67 @@ Infrastructure, deployment, and operational concerns.
 - Systemd services
 - Nginx reverse proxy
 
-## Security
-- Secret management
-- HTTPS enforcement
-- CORS configuration
-- Rate limiting
-- Security headers
+## Seguranca
+
+### Obrigatorio
+- [ ] Gerenciamento de secrets (Vault, AWS Secrets)
+- [ ] HTTPS enforcement
+- [ ] Configuracao CORS
+- [ ] Rate limiting
+- [ ] Security headers
+
+### Headers de Seguranca
+```nginx
+add_header X-Frame-Options "SAMEORIGIN";
+add_header X-Content-Type-Options "nosniff";
+add_header X-XSS-Protection "1; mode=block";
+add_header Strict-Transport-Security "max-age=31536000";
+add_header Content-Security-Policy "default-src 'self'";
+```
+
+## Monitoramento
+
+### Metricas Essenciais
+- Response time (p50, p95, p99)
+- Error rate
+- Throughput (requests/sec)
+- Resource utilization (CPU, RAM, Disk)
+
+### Alertas
+- [ ] Error rate > 1%
+- [ ] Response time p95 > 500ms
+- [ ] CPU > 80%
+- [ ] Disk > 85%
+
+## Rollback
+
+### Procedimento
+1. Identificar problema
+2. Reverter para versao anterior
+3. Notificar equipe
+4. Investigar causa raiz
+5. Documentar licao aprendida
+
+```bash
+# Exemplo de rollback
+git revert HEAD
+# ou
+kubectl rollout undo deployment/app
+```
+
+## Ao Finalizar Deploy
+
+```bash
+# Verificar health check
+curl -f https://app.com/health
+
+# Registrar deploy
+confidence_log "deploy" "production" "Deployed v1.2.3" "0.95"
+
+# Notificar orchestrator
+agent_handoff "devops" "orchestrator" "Deploy concluido com sucesso" "v1.2.3"
+```
 
 {{#if STACK}}
-## Active Stack: {{STACK}}
+## Stack Ativa: {{STACK}}
 {{/if}}

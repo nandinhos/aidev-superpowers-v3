@@ -1,13 +1,19 @@
-# {{PROJECT_NAME:Projeto}} - Instruções para IA
+# {{PROJECT_NAME:Projeto}} - Instrucoes para IA
 
 ## AI Dev Superpowers
 
-Este projeto usa **AI Dev Superpowers** para governança de desenvolvimento com IA.
+Este projeto usa **AI Dev Superpowers** para governanca de desenvolvimento com IA.
 
-### Como Ativar
+### Ativacao do Modo Agente
 
-Para ativar o orquestrador com todos os padrões e agentes especializados, o usuário dirá:
+**Opcao 1 - Comando direto (recomendado):**
+```bash
+aidev agent
+```
+Copie o prompt gerado e cole aqui.
 
+**Opcao 2 - Ativacao por trigger:**
+O usuario dira um dos seguintes:
 - **"modo agente"**
 - **"aidev"**
 - **"superpowers"**
@@ -18,29 +24,43 @@ Para ativar o orquestrador com todos os padrões e agentes especializados, o usu
 1. Leia o arquivo `.aidev/agents/orchestrator.md`
 2. Siga as diretrizes do orquestrador
 3. Aplique as regras em `.aidev/rules/`
-4. Use TDD obrigatório (RED → GREEN → REFACTOR)
+4. Use TDD obrigatorio (RED -> GREEN -> REFACTOR)
 
-### Agentes Disponíveis
+### Agentes Disponiveis (9)
 
-Ao ativar, você terá acesso a 8 agentes especializados:
+| Agente | Responsabilidade |
+|--------|------------------|
+| orchestrator | Coordenacao geral e classificacao de intent |
+| architect | Design e planejamento |
+| backend | Implementacao server-side (TDD) |
+| frontend | Implementacao client-side (TDD) |
+| code-reviewer | Revisao de qualidade e padroes |
+| qa | Testes e validacao |
+| security-guardian | Seguranca e OWASP |
+| devops | Deploy e infra |
+| legacy-analyzer | Codigo legado |
 
-- **orchestrator** - Coordena todos os outros
-- **architect** - Design e arquitetura
-- **backend** - Desenvolvimento servidor
-- **frontend** - Desenvolvimento cliente
-- **qa** - Qualidade e testes
-- **devops** - CI/CD e infraestrutura
-- **legacy-analyzer** - Análise de código legado
-- **security-guardian** - Segurança
+### Skills Disponiveis (6)
 
-### Skills Disponíveis
+| Skill | Quando usar |
+|-------|-------------|
+| brainstorming | Nova feature ou projeto |
+| writing-plans | Criar plano de implementacao |
+| test-driven-development | Implementar codigo |
+| code-review | Revisar PR ou codigo |
+| systematic-debugging | Corrigir bugs |
+| learned-lesson | Documentar aprendizados |
 
-- **brainstorming** - Sessões de ideação
-- **writing-plans** - Criação de planos
-- **test-driven-development** - Ciclo TDD
-- **systematic-debugging** - Debug metódico
+### Comandos CLI
 
-### Informações do Projeto
+| Comando | Descricao |
+|---------|-----------|
+| `aidev agent` | Gera prompt de ativacao |
+| `aidev start` | Mostra instrucoes de ativacao |
+| `aidev status` | Mostra status da instalacao |
+| `aidev doctor` | Diagnostico do ambiente |
+
+### Informacoes do Projeto
 
 - **Nome**: {{PROJECT_NAME:Projeto}}
 - **Stack**: {{STACK:generic}}

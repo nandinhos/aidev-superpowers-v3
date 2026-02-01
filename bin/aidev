@@ -536,6 +536,180 @@ cmd_snapshot() {
     print_success "Snapshot gerado com sucesso! Copie o bloco acima."
 }
 
+# Subcomando: agent
+# Gera prompt de ativacao do modo agente para colar na IA
+cmd_agent() {
+    parse_args "$@"
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    # Coleta dados do projeto
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+    local platform=$(detect_platform)
+    local fase=$(get_state_value "current_fase" "1")
+    local sprint=$(get_state_value "current_sprint" "0")
+
+    # Conta agentes e skills
+    local agent_count=0
+    local skill_count=0
+    if [ -d "$install_path/.aidev/agents" ]; then
+        agent_count=$(ls "$install_path/.aidev/agents"/*.md 2>/dev/null | wc -l)
+    fi
+    if [ -d "$install_path/.aidev/skills" ]; then
+        skill_count=$(ls -d "$install_path/.aidev/skills"/*/ 2>/dev/null | wc -l)
+    fi
+
+    print_header "AI Dev Agent Mode"
+    print_info "Gerando prompt de ativacao..."
+    echo ""
+
+    # Gera o prompt
+    echo "============================================================"
+    echo "COPIE E COLE O TEXTO ABAIXO NA SUA IA:"
+    echo "============================================================"
+    echo ""
+    cat << EOF
+ATIVAR MODO AGENTE - AI Dev Superpowers
+
+Voce esta em um projeto com AI Dev Superpowers v3 instalado.
+
+PROJETO: $project_name
+STACK: $stack
+FASE: $fase | SPRINT: $sprint
+AGENTES: $agent_count especializados
+SKILLS: $skill_count automatizadas
+
+INSTRUCOES DE ATIVACAO:
+
+1. Leia o arquivo .aidev/agents/orchestrator.md - este e seu cerebro de coordenacao
+2. Voce tem acesso a $agent_count agentes especializados em .aidev/agents/
+3. Voce tem acesso a $skill_count skills automatizadas em .aidev/skills/
+4. Siga as regras da stack em .aidev/rules/$stack.md
+
+PRINCIPIOS INEGOCIAVEIS:
+- TDD OBRIGATORIO: Sempre escreva teste ANTES do codigo (RED -> GREEN -> REFACTOR)
+- YAGNI: So implemente o que foi solicitado
+- Commits atomicos com mensagens descritivas
+
+FLUXO DE TRABALHO:
+- Para novas features: brainstorming -> writing-plans -> test-driven-development -> code-review
+- Para bugs: systematic-debugging -> learned-lesson
+- Para refatoracao: writing-plans -> test-driven-development -> code-review
+
+AGENTES DISPONIVEIS:
+EOF
+
+    # Lista agentes
+    if [ -d "$install_path/.aidev/agents" ]; then
+        for agent in "$install_path/.aidev/agents"/*.md; do
+            if [ -f "$agent" ]; then
+                local name=$(basename "$agent" .md)
+                echo "- $name"
+            fi
+        done
+    fi
+
+    cat << EOF
+
+SKILLS DISPONIVEIS:
+EOF
+
+    # Lista skills
+    if [ -d "$install_path/.aidev/skills" ]; then
+        for skill_dir in "$install_path/.aidev/skills"/*/; do
+            if [ -d "$skill_dir" ]; then
+                local name=$(basename "$skill_dir")
+                echo "- $name"
+            fi
+        done
+    fi
+
+    cat << EOF
+
+Confirme que voce entendeu e esta pronto para operar como orquestrador.
+Responda: "Modo Agente ativado. Pronto para orquestrar."
+EOF
+
+    echo ""
+    echo "============================================================"
+    echo ""
+    print_success "Prompt gerado! Cole na sua IA para ativar o modo agente."
+    echo ""
+    print_info "Dica: Use 'aidev agent | pbcopy' (macOS) ou 'aidev agent | xclip' (Linux) para copiar automaticamente"
+}
+
+# Subcomando: start
+# Inicia sessao interativa do modo agente (exibe instrucoes de ativacao)
+cmd_start() {
+    parse_args "$@"
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+    local platform=$(detect_platform)
+
+    print_header "AI Dev Superpowers - Modo Agente"
+    echo ""
+    print_success "Projeto: $project_name"
+    print_info "Stack: $stack | Plataforma: $platform"
+    echo ""
+
+    print_section "Como Ativar o Modo Agente"
+    echo ""
+    echo "  Opcao 1: Diga para sua IA:"
+    echo "    ${CYAN}\"modo agente\"${NC} ou ${CYAN}\"aidev\"${NC} ou ${CYAN}\"superpowers\"${NC}"
+    echo ""
+    echo "  Opcao 2: Gere um prompt completo:"
+    echo "    ${CYAN}aidev agent${NC}"
+    echo ""
+    echo "  Opcao 3: Cole o prompt diretamente:"
+    echo "    ${CYAN}aidev agent | pbcopy${NC}  (macOS)"
+    echo "    ${CYAN}aidev agent | xclip -selection clipboard${NC}  (Linux)"
+    echo ""
+
+    print_section "Agentes Disponiveis"
+    if [ -d "$install_path/.aidev/agents" ]; then
+        for agent in "$install_path/.aidev/agents"/*.md; do
+            if [ -f "$agent" ]; then
+                echo "  - $(basename "$agent" .md)"
+            fi
+        done
+    fi
+    echo ""
+
+    print_section "Skills Disponiveis"
+    if [ -d "$install_path/.aidev/skills" ]; then
+        for skill_dir in "$install_path/.aidev/skills"/*/; do
+            if [ -d "$skill_dir" ]; then
+                echo "  - $(basename "$skill_dir")"
+            fi
+        done
+    fi
+    echo ""
+
+    print_section "Proximos Passos"
+    echo "  1. Abra sua IA (Claude Code, Cursor, etc.)"
+    echo "  2. Diga 'modo agente' ou use 'aidev agent'"
+    echo "  3. O orquestrador assumira o controle"
+    echo ""
+}
+
 # Subcomando: doctor
 # Diagnóstico da instalação e ambiente com sugestões de reparo
 cmd_doctor() {
@@ -1029,6 +1203,12 @@ main() {
             ;;
         snapshot)
             cmd_snapshot "$@"
+            ;;
+        agent)
+            cmd_agent "$@"
+            ;;
+        start)
+            cmd_start "$@"
             ;;
         integrity)
             cmd_doctor "$@" # Por enquanto usa doctor como base, mas focado em reparo automático futuramente

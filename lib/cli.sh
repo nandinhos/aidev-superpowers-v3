@@ -55,12 +55,15 @@ ${YELLOW:-}Uso:${NC:-}
 
 ${YELLOW:-}Comandos:${NC:-}
   init              Inicializa AI Dev em um projeto
-  upgrade           Atualiza instalação existente
+  upgrade           Atualiza instalacao existente
+  status            Mostra status da instalacao
+  doctor            Diagnostico da instalacao
+  snapshot          Gera context passport para migracao de modelo
+  agent             Gera prompt de ativacao do modo agente
+  start             Mostra instrucoes de ativacao do modo agente
   add-skill         Adiciona skill customizada
   add-rule          Adiciona regra customizada
   add-agent         Adiciona agente customizado
-  status            Mostra status da instalação
-  doctor            Diagnóstico da instalação
 
 ${YELLOW:-}Opções Globais:${NC:-}
   --install-in <path>   Diretório alvo (default: .)

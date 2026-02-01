@@ -1,49 +1,80 @@
-# {{PROJECT_NAME:Projeto}} - Instruções Antigravity
+# {{PROJECT_NAME:Projeto}} - Instrucoes Antigravity
 
 ## AI Dev Superpowers
 
-Este projeto usa **AI Dev Superpowers** para governança de desenvolvimento com IA.
+Este projeto usa **AI Dev Superpowers** para governanca de desenvolvimento com IA.
 
-### Ativação do Modo Agente
+### Ativacao do Modo Agente
 
-Para ativar o orquestrador com todos os padrões e agentes especializados, diga:
+**Opcao 1 - Comando direto (recomendado):**
+```bash
+aidev agent | xclip -selection clipboard
+```
+Cole o prompt gerado aqui.
 
+**Opcao 2 - Ativacao por trigger:**
 ```
 "modo agente" | "aidev" | "superpowers"
 ```
 
 ### O que acontece ao ativar
 
-1. **Orquestrador** coordena 8 agentes especializados
-2. **TDD obrigatório** - RED → GREEN → REFACTOR
-3. **Skills** automatizam workflows (brainstorming, planning, debugging)
-4. **Regras da stack** {{STACK:generic}} são aplicadas
+1. **Orquestrador** coordena 9 agentes especializados
+2. **TDD obrigatorio** - RED -> GREEN -> REFACTOR
+3. **Skills** automatizam workflows (brainstorming, planning, code-review, debugging)
+4. **Regras da stack** {{STACK:generic}} sao aplicadas
 
 ### Estrutura
 
 ```
 .aidev/
-├── agents/      # 8 agentes especializados
-├── skills/      # Workflows automatizados
-├── rules/       # Convenções por stack
+├── agents/      # 9 agentes especializados
+├── skills/      # 6 workflows automatizados
+├── rules/       # Convencoes por stack
 └── state/       # Estado persistente
 ```
 
-### MCPs Disponíveis
+### MCPs Disponiveis
 
 O Antigravity tem acesso aos seguintes MCPs:
-- **serena** - Análise semântica de código
-- **basic-memory** - Memória persistente
-- **context7** - Documentação de bibliotecas
+- **serena** - Analise semantica de codigo
+- **basic-memory** - Memoria persistente
+- **context7** - Documentacao de bibliotecas
 
-### Referência Rápida
+### Agentes Disponiveis
 
-| Comando | Descrição |
+| Agente | Responsabilidade |
+|--------|------------------|
+| orchestrator | Coordenacao geral |
+| architect | Design e planejamento |
+| backend | Implementacao server-side (TDD) |
+| frontend | Implementacao client-side (TDD) |
+| code-reviewer | Revisao de qualidade |
+| qa | Testes e validacao |
+| security-guardian | Seguranca e OWASP |
+| devops | Deploy e infra |
+| legacy-analyzer | Codigo legado |
+
+### Skills Disponiveis
+
+| Skill | Quando usar |
+|-------|-------------|
+| brainstorming | Nova feature ou projeto |
+| writing-plans | Criar plano de implementacao |
+| test-driven-development | Implementar codigo |
+| code-review | Revisar PR ou codigo |
+| systematic-debugging | Corrigir bugs |
+| learned-lesson | Documentar aprendizados |
+
+### Comandos CLI
+
+| Comando | Descricao |
 |---------|-----------|
-| "modo agente" | Ativa orquestrador completo |
-| "brainstorming" | Inicia sessão de ideação |
-| "planejar" | Cria plano de implementação |
-| "debug" | Debugging sistemático |
+| `aidev agent` | Gera prompt de ativacao |
+| `aidev start` | Mostra instrucoes de ativacao |
+| `aidev status` | Mostra status |
+| `aidev doctor` | Diagnostico |
+| `aidev snapshot` | Context passport |
 
 ---
 *Gerado por AI Dev Superpowers v3*

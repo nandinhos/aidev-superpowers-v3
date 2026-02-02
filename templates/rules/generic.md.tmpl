@@ -30,29 +30,55 @@ These rules apply to ALL projects regardless of stack.
 - Proper exception types
 - Log appropriately
 
-## 6. Version Control
-- Atomic commits
-- Descriptive messages
-- Branch per feature
-- Review before merge
+## 6. Controle de Versao
+- Commits atomicos
+- Mensagens descritivas em PORTUGUES
+- Branch por feature
+- Review antes de merge
 
-## Commit Message Format
+## Formato de Commit
+
+**REGRAS OBRIGATORIAS**:
+- Idioma: PORTUGUES (obrigatorio)
+- Emojis: PROIBIDOS
+- Co-autoria: PROIBIDA (sem Co-Authored-By)
+
+### Formato
 ```
-type(scope): short description
+tipo(escopo): descricao curta em portugues
 
-- Detail 1
-- Detail 2
-
-Refs: #issue-number
+- Detalhe 1 (opcional)
+- Detalhe 2 (opcional)
 ```
 
-### Types
-- `feat`: New feature
-- `fix`: Bug fix
-- `refactor`: Code change (no new feature)
-- `test`: Adding tests
-- `docs`: Documentation
-- `chore`: Maintenance
+### Tipos
+- `feat`: Nova funcionalidade
+- `fix`: Correcao de bug
+- `refactor`: Mudanca de codigo (sem nova funcionalidade)
+- `test`: Adicao de testes
+- `docs`: Documentacao
+- `chore`: Manutencao
+
+### Exemplos Corretos
+```
+feat(auth): adiciona autenticacao JWT
+fix(api): corrige validacao de email
+refactor(utils): extrai funcao de formatacao
+```
+
+### NAO FACA
+```
+# ERRADO - emoji
+feat(auth): :sparkles: adiciona autenticacao
+
+# ERRADO - ingles
+feat(auth): add authentication
+
+# ERRADO - co-autoria
+feat(auth): adiciona auth
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
 
 ## File Organization
 - Group by feature, not type

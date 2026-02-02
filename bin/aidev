@@ -1080,6 +1080,16 @@ install_platform_instructions() {
         fi
     fi
 
+    # Sempre instala o QUICKSTART.md consolidado em .aidev/
+    local quickstart_template="$templates_dir/QUICKSTART.md.tmpl"
+    if [ -f "$quickstart_template" ]; then
+        local output="$path/.aidev/QUICKSTART.md"
+        if should_write_file "$output"; then
+            process_template "$quickstart_template" "$output"
+            print_success "Criado: .aidev/QUICKSTART.md (ativacao rapida)"
+        fi
+    fi
+
     # Instala arquivo específico da plataforma na raiz do projeto
     case "$platform" in
         "claude-code")

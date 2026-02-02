@@ -87,6 +87,45 @@ cmd_init() {
         CLI_PLATFORM=$(detect_platform)
         print_info "Plataforma detectada: $CLI_PLATFORM"
     fi
+
+    # Auto-detecção de Maturidade e Estilo (Smart Context)
+    local maturity=$(detect_maturity "$install_path")
+    local style=$(detect_style "$install_path")
+    print_info "Contexto: $maturity | Estilo: ${style:-none}"
+
+    # Validação de Greenfield (PRD)
+    export CONTEXT_INSTRUCTIONS=""
+
+    if [ "$maturity" = "greenfield" ]; then
+        if [ ! -f "$install_path/docs/PRD.md" ] && [ ! -f "$install_path/PRD.md" ]; then
+             print_warning "Greenfield detectado: PRD ausente!"
+             echo "   ℹ  Recomendado criar 'docs/PRD.md' para que o Agente Architect possa"
+             echo "      analisar requisitos e criar skills personalizadas."
+        fi
+        CONTEXT_INSTRUCTIONS=$(cat <<EOF
+## Modo: Greenfield (Novo Projeto)
+- **Foco Primário**: Setup e Arquitetura.
+- **Regra de Ouro**: Siga o PRD (\`docs/PRD.md\`) como a unica fonte da verdade.
+- **Workflow**: 
+    1. Architect deve criar skills personalizadas baseadas no PRD.
+    2. Validar se o ERD (Diagrama de Entidade-Relacionamento) existe.
+    3. Definir padrões de código para o projeto desde o dia 1.
+EOF
+)
+    elif [ "$maturity" = "brownfield" ]; then
+         print_info "Brownfield detectado: Sugerimos rodar 'legacy-analyzer' para diagnóstico."
+         CONTEXT_INSTRUCTIONS=$(cat <<EOF
+## Modo: Brownfield (Projeto Legado e Em Andamento)
+- **Foco Primário**: Estabilidade e Manutenibilidade.
+- **Regra de Ouro**: "First, do no harm". Analise antes de alterar.
+- **Workflow**:
+    1. Antes de iniciar feature nova, execute \`legacy-analyzer\` para mapa de impacto.
+    2. Respeite os padrões de estilo encontrados (verifique \`.eslintrc\`, \`pint.json\`, etc).
+    3. Use a skill \`learned-lesson\` frequentemente para documentar armadilhas do legado.
+EOF
+)
+    fi
+    export CONTEXT_INSTRUCTIONS
     
     # Mostra configuração
     if [ "${AIDEV_DEBUG:-false}" = "true" ]; then
@@ -147,6 +186,8 @@ cmd_init() {
     set_state_value "current_platform" "$CLI_PLATFORM"
     set_state_value "current_stack" "$CLI_STACK"
     set_state_value "language" "$CLI_LANGUAGE"
+    set_state_value "maturity" "$maturity"
+    set_state_value "style" "$style"
     set_state_value "initialized_at" "$(date -Iseconds)"
 
     # Sumário final

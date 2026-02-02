@@ -14,6 +14,8 @@ DETECTED_STACK=""
 DETECTED_PLATFORM=""
 DETECTED_LANGUAGE=""
 DETECTED_PROJECT_NAME=""
+DETECTED_MATURITY=""
+DETECTED_STYLE=""
 
 # ============================================================================
 # Detecção de Stack
@@ -329,8 +331,12 @@ detect_project_context() {
     DETECTED_PLATFORM=$(detect_platform)
     DETECTED_LANGUAGE=$(detect_language "$path")
     DETECTED_PROJECT_NAME=$(detect_project_name "$path")
+    DETECTED_MATURITY=$(detect_maturity "$path")
+    DETECTED_STYLE=$(detect_style "$path")
     
     print_debug "Stack detectada: $DETECTED_STACK"
+    print_debug "Maturidade: $DETECTED_MATURITY"
+    print_debug "Estilo: $DETECTED_STYLE"
     print_debug "Plataforma detectada: $DETECTED_PLATFORM"
     print_debug "Linguagem detectada: $DETECTED_LANGUAGE"
     print_debug "Nome do projeto: $DETECTED_PROJECT_NAME"
@@ -367,4 +373,69 @@ list_installed_skills() {
     if [ -d "$skills_dir" ]; then
         find "$skills_dir" -name "SKILL.md" -exec dirname {} \; | xargs -I{} basename {}
     fi
+}
+
+# ============================================================================
+# Detecção de Maturidade e Estilo (Smart Context)
+# ============================================================================
+
+# Detecta maturidade do projeto (greenfield vs brownfield)
+# Uso: detect_maturity "/path/to/project"
+detect_maturity() {
+    local path="${1:-.}"
+    
+    # Se diretorio nao existe, eh greenfield
+    if [ ! -d "$path" ]; then
+        echo "greenfield"
+        return
+    fi
+
+    # Se não tem git, assume greenfield se tiver poucos arquivos
+    if [ ! -d "$path/.git" ]; then
+        local file_count=$(find "$path" -maxdepth 2 -type f -not -path '*/.*' 2>/dev/null | wc -l)
+        if [ "$file_count" -lt 5 ]; then
+            echo "greenfield"
+            return
+        fi
+    fi
+    
+    # Com git, verifica profundidade do histórico
+    if command -v git >/dev/null 2>&1 && [ -d "$path/.git" ]; then
+         local commit_count=$(git -C "$path" rev-list --count HEAD 2>/dev/null || echo 0)
+         if [ "$commit_count" -lt 10 ]; then
+             echo "greenfield"
+             return
+         fi
+    fi
+    
+    echo "brownfield"
+}
+
+# Detecta estilo de código e linters
+# Uso: detect_style "/path/to/project"
+detect_style() {
+    local path="${1:-.}"
+    local styles=""
+    
+    # PHP/Laravel
+    [ -f "$path/pint.json" ] && styles="${styles}pint,"
+    [ -f "$path/.php-cs-fixer.php" ] && styles="${styles}php-cs-fixer,"
+    [ -f "$path/phpcs.xml" ] && styles="${styles}phpcs,"
+    
+    # JS/TS
+    ([ -f "$path/.eslintrc" ] || [ -f "$path/.eslintrc.json" ] || [ -f "$path/.eslintrc.js" ]) && styles="${styles}eslint,"
+    ([ -f "$path/.prettierrc" ] || [ -f "$path/prettier.config.js" ]) && styles="${styles}prettier,"
+    [ -f "$path/biome.json" ] && styles="${styles}biome,"
+    (grep -q "eslintConfig" "$path/package.json" 2>/dev/null) && styles="${styles}eslint,"
+    
+    # Python
+    [ -f "$path/.pylintrc" ] && styles="${styles}pylint,"
+    ([ -f "$path/pyproject.toml" ] && grep -q "black" "$path/pyproject.toml" 2>/dev/null) && styles="${styles}black,"
+    ([ -f "$path/pyproject.toml" ] && grep -q "ruff" "$path/pyproject.toml" 2>/dev/null) && styles="${styles}ruff,"
+    
+    # Ruby
+    [ -f "$path/.rubocop.yml" ] && styles="${styles}rubocop,"
+    
+    # Remove vírgula final
+    echo "${styles%,}"
 }

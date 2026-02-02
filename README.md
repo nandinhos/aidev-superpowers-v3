@@ -1,29 +1,29 @@
-# 🚀 AI Dev Superpowers V3
+# AI Dev Superpowers V3
 
-> Transforme qualquer IA de código em um desenvolvedor sênior com práticas TDD e padrões profissionais.
+> Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-122%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
-## 📋 O que é?
+## O que e?
 
-AI Dev Superpowers é um framework que configura **agentes especializados**, **skills** e **regras** para guiar IAs de código (Claude Code, Gemini, Cursor, etc.) a trabalharem com:
+AI Dev Superpowers e um framework que configura **agentes especializados**, **skills** e **regras** para guiar IAs de codigo (Claude Code, Antigravity, Gemini, Cursor, etc.) a trabalharem com:
 
-- ✅ **TDD Mandatório** - RED → GREEN → REFACTOR
-- ✅ **YAGNI** - Só implemente o necessário
-- ✅ **DRY** - Não repita código
-- ✅ **Evidências** - Prove que funciona, não apenas afirme
+- **TDD Mandatorio** - RED -> GREEN -> REFACTOR
+- **YAGNI** - So implemente o necessario
+- **DRY** - Nao repita codigo
+- **Evidencias** - Prove que funciona, nao apenas afirme
 
-## 🎯 Instalação
+## Instalação
 
-### Método 1: One-Liner (Recomendado) ⚡
+### Método 1: One-Liner (Recomendado) 
 Ideal para quem busca rapidez e configuração automática de PATH.
 ```bash
 curl -sSL https://raw.githubusercontent.com/nandinhos/aidev-superpowers-v3/main/install.sh | bash
 ```
 
-### Método 2: Manual (Expert) 🛠️
+### Método 2: Manual (Expert) 
 Ideal para desenvolvedores que desejam manter o repositório em um local específico.
 ```bash
 # 1. Clone o repositório
@@ -39,61 +39,95 @@ aidev init
 
 ---
 
-## ⚡ Novidades da V3.1
-Esta versão introduz a **Fase 4: Automação e Inteligência**, focada em proatividade e economia de tokens.
+## Novidades da V3.1
 
-### 🧠 Knowledge Base Engine (Lições Aprendidas)
-O framework agora possui uma **Memória Semântica**. Erros corrigidos uma vez são memorizados local e globalmente via MCP, evitando que a IA repita os mesmos erros e economizando milhares de tokens.
+### Ativacao Rapida com QUICKSTART.md
+Reducao de 20+ arquivos para 1 arquivo. Ao dizer "modo agente", a IA le apenas `.aidev/QUICKSTART.md` que contem tudo consolidado:
+- Principios (TDD, YAGNI, DRY)
+- Tabela de classificacao de intent
+- Skills e agentes disponiveis
+- Regras de commit
 
-### 🏥 Auto-Cura Proativa (Self-Healing)
-O comando `aidev doctor --fix` agora detecta falhas de ambiente, permissões ou infraestrutura e sugere reparos automáticos. O CLI intercepta erros comuns e te orienta proativamente.
+### Regras de Commit em Portugues
+Commits agora seguem padrao obrigatorio:
+- Idioma: **PORTUGUES**
+- Emojis: **PROIBIDOS**
+- Co-autoria: **PROIBIDA**
 
-### 🛰️ Context Snapshotter
-Use `aidev snapshot` ao final de uma sessão para gerar um "Passaporte de Contexto". Cole esse snapshot em qualquer novo chat de IA (Claude, Gemini, Antigravity) para continuidade instantânea sem perda de foco.
+```
+tipo(escopo): descricao em portugues
+```
 
-## 📁 O que é instalado?
+### Knowledge Base Engine (Licoes Aprendidas)
+O framework possui **Memoria Semantica**. Erros corrigidos sao memorizados via MCP, evitando repeticao.
+
+### Auto-Cura Proativa
+O comando `aidev doctor --fix` detecta e repara problemas de ambiente automaticamente.
+
+### Context Snapshotter
+Use `aidev snapshot` para gerar um "Passaporte de Contexto" e continuar em outro chat.
+
+## O que e instalado?
 
 ```
 seu-projeto/
 ├── .aidev/
-│   ├── agents/           # 8 agentes especializados
+│   ├── QUICKSTART.md     # Arquivo consolidado para ativacao rapida
+│   │
+│   ├── agents/           # 9 agentes especializados
 │   │   ├── orchestrator.md
 │   │   ├── architect.md
 │   │   ├── backend.md
 │   │   ├── frontend.md
+│   │   ├── code-reviewer.md
 │   │   ├── qa.md
 │   │   ├── devops.md
 │   │   ├── legacy-analyzer.md
 │   │   └── security-guardian.md
 │   │
-│   ├── skills/           # 4 skills guiadas
+│   ├── skills/           # 6 skills guiadas
 │   │   ├── brainstorming/
 │   │   ├── writing-plans/
 │   │   ├── test-driven-development/
-│   │   └── systematic-debugging/
+│   │   ├── code-review/
+│   │   ├── systematic-debugging/
+│   │   └── learned-lesson/
 │   │
 │   ├── rules/            # Regras da stack
-│   │   ├── generic.md
+│   │   ├── generic.md    # Inclui regras de commit em portugues
 │   │   └── [sua-stack].md
 │   │
-│   └── state/            # Estado persistente (sessão)
+│   └── state/            # Estado persistente (sessao)
 │
-├── .gitignore            # Configurado para ignorar estado local
-└── .mcp.json             # Configuração MCP global (se aplicável)
+├── CLAUDE.md             # Instrucoes para Claude Code
+└── .mcp.json             # Configuracao MCP (se aplicavel)
 ```
 
-## 🛠️ Comandos CLI
+## Comandos CLI
 
-| Comando | Descrição |
+| Comando | Descricao |
 |---------|-----------|
 | `aidev init` | Inicializa AI Dev no projeto |
-| `aidev upgrade` | Atualiza para versão mais recente |
+| `aidev agent` | Gera prompt de ativacao do modo agente |
+| `aidev start` | Mostra instrucoes de ativacao |
+| `aidev upgrade` | Atualiza para versao mais recente |
 | `aidev status` | Dashboard de progresso e contexto Git |
-| `aidev doctor` | Diagnóstico de saúde do ambiente |
-| `aidev doctor --fix` | **Auto-Cura**: Tenta reparar problemas detectados |
-| `aidev snapshot` | Gera um resumo de contexto para migração de IA |
+| `aidev doctor` | Diagnostico de saude do ambiente |
+| `aidev doctor --fix` | **Auto-Cura**: Repara problemas detectados |
+| `aidev snapshot` | Gera resumo de contexto para migracao de IA |
 | `aidev add-skill <nome>` | Adiciona skill customizada |
 | `aidev add-agent <nome>` | Adiciona agente customizado |
+
+### Ativacao do Modo Agente
+
+```bash
+# Opcao 1: Gerar prompt e copiar
+aidev agent | pbcopy   # macOS
+aidev agent | xclip    # Linux
+
+# Opcao 2: Dizer para a IA
+"modo agente" | "aidev" | "superpowers"
+```
 
 ### Opções Globais
 
@@ -107,47 +141,32 @@ seu-projeto/
 | `--no-mcp` | Não configura MCP |
 | `--debug` | Modo debug com mais informações |
 
-## 🤖 Agentes
+## Agentes
 
-### Orchestrator (Coordenador)
-Coordena o trabalho entre agentes, distribui tarefas e consolida resultados.
+| Agente | Responsabilidade |
+|--------|------------------|
+| **Orchestrator** | Coordena agentes, distribui tarefas, consolida resultados |
+| **Architect** | Design, estrutura de codigo, padroes arquiteturais |
+| **Backend** | Implementacao server-side com TDD obrigatorio |
+| **Frontend** | Componentes UI, estado, integracao com APIs |
+| **Code Reviewer** | Revisao de qualidade, padroes, boas praticas |
+| **QA** | Testes abrangentes, validacao de edge cases |
+| **DevOps** | CI/CD, infraestrutura, automacao de deploy |
+| **Legacy Analyzer** | Analise de codigo legado, refactoring |
+| **Security Guardian** | Seguranca, vulnerabilidades, OWASP |
 
-### Architect (Arquiteto)
-Decisões de design, estrutura de código e padrões arquiteturais.
+## Skills
 
-### Backend
-Implementação server-side com TDD obrigatório.
+| Skill | Quando Usar |
+|-------|-------------|
+| **Brainstorming** | Nova feature ou projeto - refina ideias antes de implementar |
+| **Writing Plans** | Criar plano de implementacao com tarefas de 2-5 minutos |
+| **Test-Driven Development** | Implementar codigo com ciclo RED-GREEN-REFACTOR |
+| **Code Review** | Revisar PR ou codigo antes de merge |
+| **Systematic Debugging** | Investigar bugs com processo de 4 fases |
+| **Learned Lesson** | Documentar aprendizados e evitar repeticao de erros |
 
-### Frontend
-Componentes UI, estado e integração com APIs.
-
-### QA
-Qualidade, testes abrangentes e validação de edge cases.
-
-### DevOps
-CI/CD, infraestrutura e automação de deploy.
-
-### Legacy Analyzer
-Análise de código legado, refactoring e modernização.
-
-### Security Guardian
-Revisão de segurança, vulnerabilidades e compliance.
-
-## 📚 Skills
-
-### Brainstorming
-Refinamento de ideias através de perguntas antes de implementar.
-
-### Writing Plans
-Criação de planos detalhados com tarefas de 2-5 minutos.
-
-### Test-Driven Development
-Ciclo RED-GREEN-REFACTOR com validação obrigatória.
-
-### Systematic Debugging
-Processo de 4 fases para encontrar a causa raiz de bugs.
-
-## ⚙️ Configuração
+## Configuração
 
 ### Arquivo .aidev.yaml
 
@@ -188,7 +207,7 @@ rules:
 # CONTEXT7_API_KEY=sua_chave_aqui
 ```
 
-## 🔐 Gestão de Segredos
+## Gestão de Segredos
 
 O AI Dev utiliza um arquivo `.env` para gerenciar chaves de API e tokens sensíveis de forma segura:
 
@@ -196,7 +215,7 @@ O AI Dev utiliza um arquivo `.env` para gerenciar chaves de API e tokens sensív
 2.  Tokens são injetados dinamicamente nas configurações de MCP.
 3.  Para o **Context7**, obtenha sua chave em [context7.com/dashboard](https://context7.com/dashboard).
 
-## 🔌 MCP (Model Context Protocol)
+## MCP (Model Context Protocol)
 
 O AI Dev configura automaticamente servidores MCP:
 
@@ -206,14 +225,14 @@ O AI Dev configura automaticamente servidores MCP:
 
 O arquivo de configuração MCP é gerado dinamicamente para cada plataforma (ex: `.aidev/mcp/antigravity-config.json`).
 
-## 📖 Documentação Completa
+## Documentação Completa
 
 - [Guia de Customização](docs/CUSTOMIZACAO.md)
 - [Criando Skills](docs/CRIANDO-SKILLS.md)
 - [Criando Agentes](docs/CRIANDO-AGENTES.md)
 - [Changelog](CHANGELOG.md)
 
-## 🧪 Testes
+## Testes
 
 ```bash
 # Executar todos os testes
@@ -229,18 +248,18 @@ O arquivo de configuração MCP é gerado dinamicamente para cada plataforma (ex
 ./tests/test-runner.sh tests/e2e/test-*.sh
 ```
 
-**Status atual:** 122/122 testes passando ✅
+**Status atual:** 122/122 testes passando Sim
 
-## 📦 Stacks Suportadas
+## Stacks Suportadas
 
 | Stack | Auto-detectado | Regras |
 |-------|----------------|--------|
-| Laravel | ✅ `composer.json` | ✅ |
-| Express | ✅ `package.json` | ✅ |
-| Python | ✅ `requirements.txt` | ✅ |
-| Genérico | - | ✅ |
+| Laravel | Sim `composer.json` | Sim |
+| Express | Sim `package.json` | Sim |
+| Python | Sim `requirements.txt` | Sim |
+| Genérico | - | Sim |
 
-## 🤝 Contribuindo
+## Contribuindo
 
 1. Fork o repositório
 2. Crie uma branch: `git checkout -b feature/minha-feature`
@@ -248,10 +267,10 @@ O arquivo de configuração MCP é gerado dinamicamente para cada plataforma (ex
 4. Push: `git push origin feature/minha-feature`
 5. Abra um Pull Request
 
-## 📜 Licença
+## Licença
 
 MIT License - veja [LICENSE](LICENSE) para detalhes.
 
 ---
 
-Feito com ❤️ para a comunidade de desenvolvedores.
+Feito com dedicacao para a comunidade de desenvolvedores.

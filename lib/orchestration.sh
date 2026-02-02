@@ -7,7 +7,8 @@
 # sistema de confianca e validacao
 #
 # Uso: source lib/orchestration.sh
-# Dependencias: lib/core.sh, lib/file-ops.sh
+# Dependencias: lib/core.sh, lib/file-ops.sh, lib/metrics.sh
+source lib/metrics.sh
 # ============================================================================
 
 # ============================================================================
@@ -46,16 +47,22 @@ skill_init() {
     fi
 
     local timestamp=$(date -Iseconds)
+    local timer_id=""
+    if command -v metrics_start_timer >/dev/null 2>&1; then
+        timer_id=$(metrics_start_timer)
+        metrics_track_event "skill_start" "$skill_name" 0 "started" "{}"
+    fi
 
     if command -v jq >/dev/null 2>&1; then
         local tmp_file=$(mktemp)
-        jq --arg skill "$skill_name" --arg ts "$timestamp" '
+        jq --arg skill "$skill_name" --arg ts "$timestamp" --arg tid "$timer_id" '
             .active_skill = $skill |
             .skill_states[$skill] = {
                 "status": "active",
                 "current_step": 0,
                 "total_steps": 0,
                 "started_at": $ts,
+                "metrics_id": $tid,
                 "checkpoints": [],
                 "artifacts": []
             }
@@ -157,13 +164,20 @@ skill_complete() {
 
     if command -v jq >/dev/null 2>&1 && [ -f "$skills_file" ]; then
         local timestamp=$(date -Iseconds)
+        
+        # Recupera metrics_id antes de limpar ou atualizar
+        local metrics_id=$(jq -r --arg skill "$skill_name" '.skill_states[$skill].metrics_id // empty' "$skills_file")
+        if [ -n "$metrics_id" ] && command -v metrics_stop_timer >/dev/null 2>&1; then
+            metrics_stop_timer "$metrics_id" "skill_execution" "$skill_name" "completed"
+        fi
+
         local tmp_file=$(mktemp)
         jq --arg skill "$skill_name" --arg ts "$timestamp" '
             .skill_states[$skill].status = "completed" |
             .skill_states[$skill].completed_at = $ts |
             .active_skill = null
         ' "$skills_file" > "$tmp_file" && mv "$tmp_file" "$skills_file"
-
+ 
         print_success "Skill '$skill_name' concluida!"
     fi
 }
@@ -178,6 +192,13 @@ skill_fail() {
 
     if command -v jq >/dev/null 2>&1 && [ -f "$skills_file" ]; then
         local timestamp=$(date -Iseconds)
+
+        # Recupera metrics_id
+        local metrics_id=$(jq -r --arg skill "$skill_name" '.skill_states[$skill].metrics_id // empty' "$skills_file")
+        if [ -n "$metrics_id" ] && command -v metrics_stop_timer >/dev/null 2>&1; then
+            metrics_stop_timer "$metrics_id" "skill_execution" "$skill_name" "failed" "{\"reason\": \"$reason\"}"
+        fi
+
         local tmp_file=$(mktemp)
         jq --arg skill "$skill_name" --arg ts "$timestamp" --arg reason "$reason" '
             .skill_states[$skill].status = "failed" |
@@ -185,7 +206,7 @@ skill_fail() {
             .skill_states[$skill].failure_reason = $reason |
             .active_skill = null
         ' "$skills_file" > "$tmp_file" && mv "$tmp_file" "$skills_file"
-
+ 
         print_error "Skill '$skill_name' falhou: $reason"
     fi
 }
@@ -259,6 +280,10 @@ agent_activate() {
                 "validations": []
             }
         ' "$agents_file" > "$tmp_file" && mv "$tmp_file" "$agents_file"
+    fi
+
+    if command -v metrics_track_event >/dev/null 2>&1; then
+        metrics_track_event "agent_activate" "$agent_name" 0 "active" "{\"task\": \"$task_description\"}"
     fi
 
     print_info "Agente '$agent_name' ativado: $task_description"

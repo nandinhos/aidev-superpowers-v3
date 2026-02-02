@@ -710,6 +710,54 @@ cmd_start() {
     echo ""
 }
 
+# Subcomando: metrics
+# Exibe dashboard de telemetria
+cmd_metrics() {
+    parse_args "$@"
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    local metrics_file="$install_path/.aidev/state/metrics.log"
+    
+    print_header "AI Dev Telemetry & Metrics"
+    
+    if [ ! -f "$metrics_file" ]; then
+        print_warning "Nenhuma métrica coletada ainda."
+        exit 0
+    fi
+    
+    print_info "Fonte: $metrics_file"
+    echo ""
+    
+    # Verifica dependência jq
+    if ! command -v jq >/dev/null 2>&1; then
+        print_error "jq é necessário para visualizar métricas."
+        exit 1
+    fi
+    
+    print_section "Resumo de Skills"
+    # Agrega por nome de skill: count, avg duration, success count
+    cat "$metrics_file" | jq -r 'select(.type=="skill_execution")' | \
+    jq -s 'group_by(.name) | .[] | {
+        name: .[0].name, 
+        count: length, 
+        avg_duration: (map(.duration)|add/length|floor), 
+        success: (map(select(.status=="completed"))|length),
+        failed: (map(select(.status=="failed"))|length)
+    }' | \
+    jq -r '"  • \(.name): \(.count) execuções | Média: \(.avg_duration)ms | ✓ \(.success) | ✗ \(.failed)"'
+    
+    echo ""
+    print_section "Atividade de Agentes"
+    # Agrega por agente
+    cat "$metrics_file" | jq -r 'select(.type=="agent_activate")' | \
+    jq -s 'group_by(.name) | .[] | {name: .[0].name, count: length}' | \
+    jq -r '"  • \(.name): \(.count) ativações"'
+    
+    echo ""
+    print_success "Dashboard atualizado."
+}
+
 # Subcomando: doctor
 # Diagnóstico da instalação e ambiente com sugestões de reparo
 cmd_doctor() {
@@ -1219,6 +1267,9 @@ main() {
             ;;
         start)
             cmd_start "$@"
+            ;;
+        metrics)
+            cmd_metrics "$@"
             ;;
         integrity)
             cmd_doctor "$@" # Por enquanto usa doctor como base, mas focado em reparo automático futuramente

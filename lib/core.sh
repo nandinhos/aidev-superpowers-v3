@@ -213,7 +213,7 @@ get_state_value() {
     # Se JQ falhou ou não retornou nada, tenta o fallback
     if [ -z "$value" ]; then
         # Fallback simples via grep/sed
-        value=$(grep "\"$key\":" "$state_file" | sed "s/.*\"$key\": \"\(.*\)\".*/\1/" | head -n 1)
+        value=$(grep "\"$key\":" "$state_file" | sed "s/.*\"$key\": \"\(.*\)\".*/\1/" | head -n 1 || echo "")
     fi
     
     if [ -z "$value" ]; then

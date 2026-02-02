@@ -34,7 +34,12 @@ node_modules/
 *.bak
 *.backup
 
-# AI Dev State (dynamic session data)
-.aidev/state/
-.env
+# AI Dev - Output gerado (teste local)
+# Os templates estao em templates/, nao em .aidev/
+.aidev/
 !.aidev/state/plans/
+.serena/
+AI_INSTRUCTIONS.md
+
+# Environment
+.env

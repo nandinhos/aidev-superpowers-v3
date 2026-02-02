@@ -37,3 +37,4 @@ node_modules/
 # AI Dev State (dynamic session data)
 .aidev/state/
 .env
+!.aidev/state/plans/

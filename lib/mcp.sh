@@ -6,8 +6,11 @@
 # Model Context Protocol - Configuração de servidores MCP para AIs
 # 
 # Uso: source lib/mcp.sh
-# Dependências: lib/core.sh, lib/file-ops.sh, lib/detection.sh
+# Dependências: lib/core.sh, lib/file-ops.sh, lib/detection.sh, lib/templates.sh
 # ============================================================================
+
+# ============================================================================
+source "${AIDEV_ROOT_DIR:-$(dirname $(dirname ${BASH_SOURCE[0]}))}/lib/templates.sh"
 
 # ============================================================================
 # Configuração de Servidores MCP

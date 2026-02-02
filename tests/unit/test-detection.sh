@@ -12,6 +12,29 @@ source "$ROOT_DIR/lib/loader.sh"
 load_module "detection"
 
 # ============================================================================
+# Setup / Teardown
+# ============================================================================
+
+TEST_BASE_DIR="/tmp/aidev-test-projects"
+
+setup() {
+    mkdir -p "$TEST_BASE_DIR/laravel-test"
+    echo '{"name": "laravel/framework"}' > "$TEST_BASE_DIR/laravel-test/composer.json"
+    
+    mkdir -p "$TEST_BASE_DIR/node-test"
+    echo '{"name": "test-project", "dependencies": {"express": "^4.0.0"}}' > "$TEST_BASE_DIR/node-test/package.json"
+    
+    mkdir -p "$TEST_BASE_DIR/python-test"
+    touch "$TEST_BASE_DIR/python-test/requirements.txt"
+}
+
+teardown() {
+    rm -rf "$TEST_BASE_DIR"
+}
+
+setup
+
+# ============================================================================
 # Testes de Detecção de Stack
 # ============================================================================
 
@@ -40,9 +63,14 @@ test_section "Detection - Detecção de Plataforma"
 result=$(detect_platform)
 assert_not_empty "$result" "Detecta alguma plataforma"
 
-# Se claude está disponível, deve detectar claude-code
+# Se claude está disponível, deve detectar claude-code OU antigravity se estiver neste ambiente
 if command -v claude &> /dev/null; then
-    assert_equals "claude-code" "$result" "Detecta Claude Code"
+    # Se antigravity folder existe, ele tem prioridade
+    if [ -d "$HOME/.gemini/antigravity" ]; then
+        assert_equals "antigravity" "$result" "Detecta Antigravity (prioridade sobre Claude)"
+    else
+        assert_equals "claude-code" "$result" "Detecta Claude Code"
+    fi
 fi
 
 # ============================================================================
@@ -59,6 +87,7 @@ assert_equals "javascript" "$result" "Detecta JavaScript para projeto Node"
 
 result=$(detect_language /tmp/aidev-test-projects/python-test)
 assert_equals "python" "$result" "Detecta Python para projeto Python"
+
 
 # ============================================================================
 # Testes de Detecção de Nome do Projeto
@@ -82,3 +111,5 @@ detect_project_context /tmp/aidev-test-projects/laravel-test
 assert_equals "laravel" "$DETECTED_STACK" "DETECTED_STACK populado"
 assert_not_empty "$DETECTED_PLATFORM" "DETECTED_PLATFORM populado"
 assert_equals "php" "$DETECTED_LANGUAGE" "DETECTED_LANGUAGE populado"
+
+teardown

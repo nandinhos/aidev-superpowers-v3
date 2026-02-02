@@ -56,8 +56,13 @@ Architect --[design.md]--> Backend --[implementation]--> QA --[tests]--> Complet
 - `task`: Descricao da tarefa
 - `artifact`: Artefato produzido (caminho do arquivo)
 
-### 5. Sistema de Confianca
+### 5. Dynamic Strategy Engine (O Estrategista)
+Em vez de seguir cegamente uma lista, voce deve:
+1. **Analisar**: Entender profudamente o pedido + contexto.
+2. **Planejar**: Usar a skill `meta-planning` para desenhar a estrategia.
+3. **Executar**: So entao chamar os agentes taticos (Backend, QA, etc).
 
+### 6. Sistema de Confianca
 Antes de executar acoes autonomamente, avaliar confianca:
 
 | Nivel | Score | Acao |
@@ -81,7 +86,9 @@ Antes de operacoes de risco, validar:
 ```
 1. Usuario solicita feature
 2. Classificar intent -> feature_request
-3. Iniciar skill: brainstorming
+3. **ESTRATEGIA**: Iniciar skill `meta-planning`
+   - Definir abordagem e arquitetura
+4. Iniciar skill: brainstorming
    - Step 1: Entender problema (perguntas)
    - Step 2: Explorar alternativas (2-3 opcoes)
    - Step 3: Apresentar design (chunks)

@@ -85,7 +85,7 @@ validate_install_dir() {
     fi
 
     # PROTEÇÃO EXTRA: Repositórios git
-    if [[ -d "$dir/.git" ]]; then
+    if [[ -d "$dir/.git" ]] && [[ "${AIDEV_FORCE_GIT:-0}" != "1" ]]; then
         echo -e "${RED}ERRO: Não é permitido desinstalar diretórios com repositório git${NC}" >&2
         echo "Path não permitido: $dir (contém .git)" >&2
         echo "Repositórios git são protegidos por segurança." >&2

@@ -400,6 +400,36 @@ confidence_log() {
     fi
 }
 
+# Tenta executar um comando com recuperacao automatica
+# Uso: try_with_recovery "npm install" "npm cache clean --force"
+try_with_recovery() {
+    local command="$1"
+    local recovery_command="${2:-aidev doctor --fix}"
+    local max_attempts="${3:-2}"
+    local attempt=1
+
+    while [ $attempt -le $max_attempts ]; do
+        print_step "Tentativa $attempt/$max_attempts: $command"
+        
+        if eval "$command"; then
+            return 0
+        fi
+        
+        print_warning "Comando falhou. Tentando recuperacao..."
+        
+        # Executa comando de recuperacao
+        if [ -n "$recovery_command" ]; then
+            print_info "Executando recuperacao: $recovery_command"
+            eval "$recovery_command"
+        fi
+        
+        ((attempt++))
+    done
+    
+    print_error "Falha apos $max_attempts tentativas: $command"
+    return 1
+}
+
 # Verifica se deve pedir confirmacao baseado na confianca
 # Uso: if confidence_needs_confirmation 0.4; then ask_user; fi
 confidence_needs_confirmation() {
@@ -603,6 +633,43 @@ orchestrator_select_skill() {
     esac
 }
 
+# Obtem licoes aprendidas relevantes
+# Uso: lessons=$(orchestrator_get_lessons)
+orchestrator_get_lessons() {
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local lessons_dir="$install_path/.aidev/state/lessons"
+    
+    if [ ! -d "$lessons_dir" ]; then
+        echo "[]"
+        return
+    fi
+    
+    # Lista ultimas 5 licoes (simples por enquanto)
+    # Idealmente seria busca vetorial, mas por bash usamos recencia
+    local lessons_json="["
+    local count=0
+    
+    # Loop seguro com nullglob
+    shopt -s nullglob
+    for lesson_file in "$lessons_dir"/*.md; do
+        if [ "$count" -ge 5 ]; then break; fi
+        
+        # Extrai titulo e conteudo resumido
+        local title=$(basename "$lesson_file" .md)
+        # Pega as primeiras 5 linhas do arquivo como resumo, escapando aspas
+        local content=$(head -n 5 "$lesson_file" | tr '\n' ' ' | sed 's/"/\\"/g')
+        
+        if [ "$count" -gt 0 ]; then lessons_json+=","; fi
+        
+        lessons_json+="{\"title\": \"$title\", \"summary\": \"$content\"}"
+        ((count++))
+    done
+    shopt -u nullglob
+    
+    lessons_json+="]"
+    echo "$lessons_json"
+}
+
 # Gera contexto completo para o orchestrador
 # Uso: context=$(orchestrator_get_context)
 orchestrator_get_context() {
@@ -613,6 +680,7 @@ orchestrator_get_context() {
     local platform=$(detect_platform)
     local fase=$(get_state_value "current_fase" "1")
     local sprint=$(get_state_value "current_sprint" "0")
+    local lessons=$(orchestrator_get_lessons)
 
     cat << EOF
 {
@@ -628,6 +696,9 @@ orchestrator_get_context() {
   "orchestration": {
     "active_skill": "$active_skill",
     "skill_progress": "$(skill_get_progress "$active_skill")"
+  },
+  "memory": {
+    "recent_lessons": $lessons
   }
 }
 EOF

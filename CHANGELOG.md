@@ -5,6 +5,26 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.1.0] - 2026-02-02
+
+### 🚀 Novidades
+- **Smart Context (Contexto Inteligente)**: CLI `aidev init` agora detecta maturidade do projeto (Greenfield/Brownfield) e adapta o workflow.
+- **Knowledge Base Engine**: Sistema de lições aprendidas (`learned-lesson`) compartilhado entre agentes.
+- **Auto-Cura Proativa**: Skill `systematic-debugging` orquestrada para detectar, corrigir e validar bugs automaticamente.
+- **Telemetria Avançada**: Novo comando `aidev metrics` para visualizar performance, custos e uso de skills.
+- **Context Snapshotter**: Comando `aidev snapshot` para portabilidade de contexto entre sessões/LLMs.
+- **One-Liner Installer**: Script de instalação unificado `install.sh`.
+
+### ⚡ Melhorias
+- Correção de injeção de templates no Orchestrator (Antigravity).
+- Suporte a hooks de auto-fix no `setup_secrets` (modo não-interativo).
+- Documentação `README.md` atualizada com stacks suportadas e novos comandos.
+
+### 🧪 Validação
+- Stress Test "The Legacy Calculator" executado com sucesso (Orquestração + Falha Planejada + Correção Automática).
+- Todos os testes de integração e unitários passando.
+
+
 ## [3.0.0] - 2026-01-29
 
 ### ✨ Adicionado

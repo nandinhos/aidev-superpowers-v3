@@ -47,7 +47,7 @@ sync_session_state() {
 # Uso: show_help
 show_help() {
     cat << EOF
-${CYAN:-}AI Dev Superpowers${NC:-} v${AIDEV_VERSION:-3.0.0}
+${CYAN:-}AI Dev Superpowers${NC:-} v${AIDEV_VERSION:-3.1.0}
 ${YELLOW:-}Sistema Unificado de Governança de IA para Desenvolvimento${NC:-}
 
 ${YELLOW:-}Uso:${NC:-}
@@ -118,7 +118,7 @@ EOF
 # Exibe versão
 # Uso: show_version
 show_version() {
-    echo "aidev v${AIDEV_VERSION:-3.0.0}"
+    echo "aidev v${AIDEV_VERSION:-3.1.0}"
 }
 
 # ============================================================================

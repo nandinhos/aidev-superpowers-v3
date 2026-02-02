@@ -25,5 +25,5 @@ Implementar `detect_maturity` e `detect_style`.
 ## 2. Execução (Roadmap)
 
 1.  [x] **Core**: Implementar detecção de maturidade e estilo.
-2.  [ ] **CLI**: Adaptar `aidev init` para os dois fluxos.
-3.  [ ] **Templates**: Inserir condicionais Handlebars (`{{#if IS_GREENFIELD}}`).
+2.  [x] **CLI**: Adaptar `aidev init` para os dois fluxos.
+3.  [x] **Templates**: Inserir condicionais Handlebars (`{{#if IS_GREENFIELD}}`).

@@ -39,33 +39,27 @@ aidev init
 
 ---
 
-## Novidades da V3.1
+## Novidades da V3.1 `(Greenfield & Brownfield)`
 
-### Ativacao Rapida com QUICKSTART.md
-Reducao de 20+ arquivos para 1 arquivo. Ao dizer "modo agente", a IA le apenas `.aidev/QUICKSTART.md` que contem tudo consolidado:
-- Principios (TDD, YAGNI, DRY)
-- Tabela de classificacao de intent
-- Skills e agentes disponiveis
-- Regras de commit
+### Contexto Inteligente (Smart Context)
+O `aidev init` agora detecta automaticamente o estado do projeto:
+*   **Greenfield (Projetos Novos)**: Bloqueia se não houver um PRD. Força *Design-First*.
+*   **Brownfield (Projetos Legados)**: Sugere diagnóstico com *Legacy Analyzer*. Foca em Refatoração.
 
-### Regras de Commit em Portugues
-Commits agora seguem padrao obrigatorio:
-- Idioma: **PORTUGUES**
-- Emojis: **PROIBIDOS**
-- Co-autoria: **PROIBIDA**
+### Telemetria e Métricas
+Novo comando `aidev metrics` fornece insights sobre o uso dos agentes:
+*   Tempo de execução por skill.
+*   Taxa de sucesso/falha (TDD).
+*   Custo e eficiência dos agentes.
 
-```
-tipo(escopo): descricao em portugues
-```
+### Auto-Cura Proativa (Systematic Debugging)
+A nova skill `systematic-debugging` orquestrada pelo agente não apenas identifica erros, mas aplica correções, valida com testes e gera uma **Lição Aprendida** na memória para evitar recorrência.
 
-### Knowledge Base Engine (Licoes Aprendidas)
-O framework possui **Memoria Semantica**. Erros corrigidos sao memorizados via MCP, evitando repeticao.
-
-### Auto-Cura Proativa
-O comando `aidev doctor --fix` detecta e repara problemas de ambiente automaticamente.
+### Knowledge Base Engine
+Memória semântica compartilhada. O que o *Backend Agent* aprende sobre um bug de banco de dados, o *Architect Agent* sabe ao planejar a próxima feature.
 
 ### Context Snapshotter
-Use `aidev snapshot` para gerar um "Passaporte de Contexto" e continuar em outro chat.
+Use `aidev snapshot` para gerar um "Passaporte de Contexto" portátil e continuar seu desenvolvimento em qualquer LLM.
 
 ## O que e instalado?
 

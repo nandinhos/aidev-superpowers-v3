@@ -1255,6 +1255,11 @@ setup_secrets() {
     
     # Context7 API Key
     if [ -z "${CONTEXT7_API_KEY:-}" ]; then
+        if [ "${AIDEV_INTERACTIVE:-true}" != "true" ]; then
+            print_warning "Modo não-interativo: Pulando configuracao de segredos (Context7 API Key)."
+            return
+        fi
+
         print_header "Configuracão de Segredos"
         print_info "O MCP Context7 requer uma API Key para funcionar."
         print_info "Crie uma em: https://context7.com/dashboard"

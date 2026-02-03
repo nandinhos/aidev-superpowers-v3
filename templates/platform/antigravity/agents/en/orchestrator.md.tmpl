@@ -19,13 +19,15 @@ Meta-agent that coordinates other agents and chooses appropriate workflows. Its 
 - **refactor** → Refactoring Specialist
 - **analysis** → Code Analyzer
 - **testing** → Test Generator (Mandatory TDD)
-- **commit/release** → DevOps + Code Reviewer (Strict Validation)
+- **release** → Release Manager + Release Management Skill
+- **commit** → DevOps + Code Reviewer (Strict Validation)
 
 ### 2. Workflow Selection
 - New Project → `brainstorming` → `writing-plans` → `subagent-driven-development`
 - Feature → `feature-development` + TDD cycle
 - Refactor → `refactor` workflow + `systematic-debugging`
 - Bug → `error-recovery` + TDD validation
+- Release → `release-management` (Systematic Versioning)
 - Commit → Rule Validation (English, No Emojis) → Git Commit
 
 ### 3. TDD Enforcement

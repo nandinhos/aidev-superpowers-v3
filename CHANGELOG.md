@@ -5,6 +5,21 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.3.2] - 2026-02-03
+
+### 🐛 Fixes (Correções)
+- **State Manager (Hardening)**:
+    - Correção de colisão de IDs de checkpoins (`cp-TIMESTAMP-RANDOM`).
+    - Correção na lógica de rollback para garantir integridade do JSON restaurado.
+
+### 🛡️ Security (Segurança)
+- **Orchestrator**: Substituição de `eval` inseguro por `bash -c` no wrapper de execução `try_with_recovery`.
+
+### 🚀 Features (Novidades)
+- **Smart Context Avançado**:
+    - Detecção de versão exata do framework (Laravel 11, Next.js 14, Django, etc).
+    - Detecção de Dívida Técnica (contagem de TODOs/FIXMEs e existência de testes).
+
 ## [3.3.1] - 2026-02-03
 
 ### 🚀 Novidades

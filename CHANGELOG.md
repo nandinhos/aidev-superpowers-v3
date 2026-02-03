@@ -5,6 +5,21 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.4.0] - 2026-02-03
+
+### 🚀 Features (Novidades)
+- **MCP Manager**: Gerenciamento completo de servidores MCP (Model Context Protocol).
+    - `aidev mcp add <nome> --command <cmd> --args <args>`: Adiciona servidor.
+    - `aidev mcp list`: Lista servidores configurados.
+    - `aidev mcp remove <nome>`: Remove servidor.
+- **Runtime Detection**: Identificação inteligente do ambiente de execução (Terminal CLI vs VS Code/Cursor Integrado vs Antigravity).
+    - Exibição no comando `status` (`Runtime: antigravity`).
+- **Slash Commands**: Suporte nativo a comandos de chat (`/aidev`) no Antigravity via workflows.
+- **Status em Tempo Real**: `aidev status` agora exibe o Intent e Skill ativos diretamente do cérebro do sistema (`unified.json`).
+
+### 🐛 Fixes (Correções)
+- **Self-Upgrade**: Correção crítica que impedia atualização quando executada da raiz do repositório (`fix source detection`).
+
 ## [3.3.2] - 2026-02-03
 
 ### 🐛 Fixes (Correções)

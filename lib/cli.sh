@@ -47,7 +47,7 @@ sync_session_state() {
 # Uso: show_help
 show_help() {
     cat << EOF
-${CYAN:-}AI Dev Superpowers${NC:-} v${AIDEV_VERSION:-3.1.0}
+${CYAN:-}AI Dev Superpowers${NC:-} v${AIDEV_VERSION:-3.3.0}
 ${YELLOW:-}Sistema Unificado de Governança de IA para Desenvolvimento${NC:-}
 
 ${YELLOW:-}Uso:${NC:-}
@@ -127,7 +127,7 @@ EOF
 # Exibe versão
 # Uso: show_version
 show_version() {
-    echo "aidev v${AIDEV_VERSION:-3.1.0}"
+    echo "aidev v${AIDEV_VERSION:-3.3.0}"
 }
 
 # ============================================================================
@@ -144,6 +144,7 @@ parse_args() {
     CLI_PRD_PATH=""
     CLI_PLATFORM="auto"
     CLI_LANGUAGE="pt-BR"
+    CLI_LANGUAGE_SET=false
     CLI_AUTO_DETECT=true
     CLI_NO_MCP=false
     CLI_NO_HOOKS=false
@@ -176,6 +177,7 @@ parse_args() {
                 ;;
             --language)
                 CLI_LANGUAGE="$2"
+                CLI_LANGUAGE_SET=true
                 shift 2
                 ;;
             --detect)

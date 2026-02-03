@@ -38,6 +38,11 @@ TRANSLATIONS_PT["fix_restoring_base"]="Tentando reconstruir estrutura base..."
 TRANSLATIONS_PT["fix_restored"]="Estrutura recriada."
 TRANSLATIONS_PT["fix_protecting_env"]="Protegendo .env no .gitignore..."
 TRANSLATIONS_PT["fix_protected_env"]=".env protegido"
+TRANSLATIONS_PT["cmd_new_feature_title"]="Nova Feature"
+TRANSLATIONS_PT["cmd_fix_bug_title"]="Correção de Bug"
+TRANSLATIONS_PT["cmd_refactor_title"]="Refatoração"
+TRANSLATIONS_PT["cmd_suggest_title"]="Sugestão Inteligente"
+TRANSLATIONS_PT["config_lang_updated"]="Idioma atualizado para: "
 
 # ----------------------------------------------------------------------------
 # Traduções em Inglês
@@ -64,6 +69,11 @@ TRANSLATIONS_EN["fix_restoring_base"]="Attempting to rebuild base structure..."
 TRANSLATIONS_EN["fix_restored"]="Structure recreated."
 TRANSLATIONS_EN["fix_protecting_env"]="Protecting .env in .gitignore..."
 TRANSLATIONS_EN["fix_protected_env"]=".env protected"
+TRANSLATIONS_EN["cmd_new_feature_title"]="New Feature"
+TRANSLATIONS_EN["cmd_fix_bug_title"]="Bug Fix"
+TRANSLATIONS_EN["cmd_refactor_title"]="Refactor"
+TRANSLATIONS_EN["cmd_suggest_title"]="Smart Suggestion"
+TRANSLATIONS_EN["config_lang_updated"]="Language updated to: "
 
 # Função de tradução
 # Uso: t "chave" [base_string_se_nao_encontrar]
@@ -90,5 +100,14 @@ set_language() {
         AIDEV_LANG="pt-BR"
     else
         AIDEV_LANG="en"
+    fi
+}
+
+# Retorna o sufixo de idioma para caminhos de arquivo (pt/en)
+get_lang_suffix() {
+    if [[ "$AIDEV_LANG" == "pt-BR" || "$AIDEV_LANG" == "pt" ]]; then
+        echo "pt"
+    else
+        echo "en"
     fi
 }

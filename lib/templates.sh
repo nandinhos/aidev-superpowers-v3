@@ -212,16 +212,31 @@ generate_from_template() {
 generate_category_templates() {
     local category="$1"
     local output_dir="$2"
-    local templates_dir="${AIDEV_ROOT_DIR}/templates/$category"
+    local templates_dir="${AIDEV_ROOT_DIR}/templates"
     
-    if [ ! -d "$templates_dir" ]; then
-        print_error "Categoria não encontrada: $category"
+    # Lógica de localização v3.3
+    # 1. Tenta encontrar na pasta localizada (ex: templates/pt/agents)
+    # 2. Se não existir, fallback para a pasta raiz (legado ou default)
+    local lang_suffix=$(get_lang_suffix 2>/dev/null || echo "pt")
+    local localized_dir="$templates_dir/$lang_suffix/$category"
+    local legacy_dir="$templates_dir/$category"
+    
+    local source_dir=""
+    
+    if [ -d "$localized_dir" ]; then
+        source_dir="$localized_dir"
+        print_debug "Usando templates localizados: $localized_dir"
+    elif [ -d "$legacy_dir" ]; then
+        source_dir="$legacy_dir"
+        print_debug "Usando templates legado: $legacy_dir"
+    else
+        print_error "Categoria não encontrada: $category (tentou $localized_dir e $legacy_dir)"
         return 1
     fi
     
     ensure_dir "$output_dir"
     
-    for template in "$templates_dir"/*.tmpl; do
+    for template in "$source_dir"/*.tmpl; do
         if [ -f "$template" ]; then
             local name
             name=$(basename "$template" .md.tmpl)

@@ -1,0 +1,125 @@
+# Python Stack Rules
+
+## Project Structure
+```
+src/
+├── api/
+├── services/
+├── models/
+├── utils/
+├── config/
+tests/
+├── unit/
+├── integration/
+```
+
+## Naming Conventions
+- **Files**: `snake_case.py`
+- **Variables**: `snake_case`
+- **Constants**: `SCREAMING_SNAKE_CASE`
+- **Classes**: `PascalCase`
+- **Functions**: `snake_case`
+- **Private**: `_prefixed`
+
+## Coding Patterns
+
+### Type Hints
+```python
+from typing import Optional, List
+
+def get_user(user_id: int) -> Optional[User]:
+    """Fetch a user by ID."""
+    return User.query.get(user_id)
+
+def list_users(limit: int = 10) -> List[User]:
+    """List users with pagination."""
+    return User.query.limit(limit).all()
+```
+
+### Docstrings
+```python
+def create_user(name: str, email: str) -> User:
+    """
+    Create a new user.
+    
+    Args:
+        name: The user's full name.
+        email: The user's email address.
+        
+    Returns:
+        The newly created User object.
+        
+    Raises:
+        ValueError: If email is invalid.
+    """
+    ...
+```
+
+### Services
+```python
+class UserService:
+    def __init__(self, repository: UserRepository):
+        self._repository = repository
+    
+    def create(self, data: UserCreateDTO) -> User:
+        """Create a new user with validation."""
+        self._validate_email(data.email)
+        return self._repository.create(data)
+```
+
+### Testing with pytest
+```python
+import pytest
+
+class TestUserService:
+    @pytest.fixture
+    def service(self, mock_repository):
+        return UserService(mock_repository)
+    
+    def test_create_with_valid_data(self, service):
+        data = UserCreateDTO(name="Test", email="test@example.com")
+        
+        user = service.create(data)
+        
+        assert user.name == "Test"
+        assert user.email == "test@example.com"
+```
+
+### Exceptions
+```python
+class ValidationError(Exception):
+    """Raised when validation fails."""
+    pass
+
+class NotFoundError(Exception):
+    """Raised when resource is not found."""
+    pass
+```
+
+## Virtual Environment
+```bash
+# Create venv
+python -m venv venv
+
+# Activate
+source venv/bin/activate  # Linux/Mac
+.\venv\Scripts\activate   # Windows
+
+# Install deps
+pip install -r requirements.txt
+```
+
+## Testing Commands
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=src
+
+# Run specific file
+pytest tests/unit/test_user_service.py
+
+# Run with verbose output
+pytest -v
+```

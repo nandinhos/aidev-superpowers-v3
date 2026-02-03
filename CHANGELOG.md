@@ -5,6 +5,18 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.3.0] - 2026-02-03
+
+### 🚀 Novidades
+- **Internationalization (i18n)**: Suporte completo a Inglês (en) e Português (pt-BR).
+- **Config Command**: `aidev config language <lang>` para troca dinâmica de idioma.
+- **Localized Templates**: Agentes e Regras organizados em `templates/{en,pt}`.
+- **String Externalization**: Cabeçalhos e mensagens chave do CLI agora são traduzidos.
+
+### ⚡ Melhorias
+- **Auto-Load Environment**: `bin/aidev` carrega automaticamente `.env` para persistência de config.
+- **Reinstall**: Troca de idioma reinstala automaticamente agentes e regras.
+
 ## [3.2.0] - 2026-02-03
 
 ### 🚀 Novidades

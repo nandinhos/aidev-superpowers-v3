@@ -1,0 +1,106 @@
+# Node.js Stack Rules
+
+## Project Structure
+```
+src/
+├── controllers/
+├── services/
+├── models/
+├── middleware/
+├── routes/
+├── utils/
+tests/
+├── unit/
+├── integration/
+```
+
+## Naming Conventions
+- **Files**: `kebab-case.js`
+- **Variables**: `camelCase`
+- **Constants**: `SCREAMING_SNAKE_CASE`
+- **Classes**: `PascalCase`
+- **Functions**: `camelCase`
+
+## Coding Patterns
+
+### Express Routes
+```javascript
+// routes/users.js
+const router = express.Router();
+
+router.get('/', userController.index);
+router.post('/', validateUser, userController.create);
+router.get('/:id', userController.show);
+router.put('/:id', validateUser, userController.update);
+router.delete('/:id', userController.destroy);
+
+export default router;
+```
+
+### Controllers
+```javascript
+export const create = async (req, res, next) => {
+  try {
+    const user = await userService.create(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+```
+
+### Services
+- Business logic layer
+- Returns data, not responses
+- Async/await pattern
+- Dependency injection when possible
+
+### Error Handling
+```javascript
+// Centralized error handler
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  res.status(status).json({
+    error: {
+      message,
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    }
+  });
+});
+```
+
+### Testing
+```javascript
+describe('UserService', () => {
+  describe('create', () => {
+    it('should create a user with valid data', async () => {
+      const userData = { name: 'Test', email: 'test@example.com' };
+      
+      const user = await userService.create(userData);
+      
+      expect(user).toHaveProperty('id');
+      expect(user.name).toBe(userData.name);
+    });
+  });
+});
+```
+
+## NPM Scripts
+```json
+{
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/"
+  }
+}
+```
+
+## Environment
+- Use `.env` for configuration
+- Never commit `.env` file
+- Validate env vars on startup

@@ -45,6 +45,9 @@ load_essential_modules
 load_module "templates"
 load_module "mcp"
 
+# Tenta carregar ambiente (idioma, segredos)
+load_env 2>/dev/null || true
+
 # ============================================================================
 # Subcomandos
 # ============================================================================
@@ -62,7 +65,7 @@ cmd_init() {
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
 
     # Seleção de Idioma Interativa
-    if [ "${AIDEV_INTERACTIVE:-true}" = "true" ] && [ -z "${CLI_LANGUAGE:-}" ]; then
+    if [ "${AIDEV_INTERACTIVE:-true}" = "true" ] && [ "${CLI_LANGUAGE_SET:-false}" = "false" ]; then
         echo -n "$(_ "select_lang")"
         read -r selected_lang
         case "$selected_lang" in
@@ -565,10 +568,21 @@ cmd_snapshot() {
     fi
     echo ""
 
+    # Estado Unificado
+    local unified_state_file="$install_path/.aidev/state/unified.json"
+    if [ -f "$unified_state_file" ]; then
+        echo "## ⚡ Estado Técnico Unificado (Session State)"
+        echo "\`\`\`json"
+        cat "$unified_state_file"
+        echo "\`\`\`"
+        echo ""
+    fi
+
     echo "## 🚀 Instruções para o Próximo Modelo"
     echo "1. Leia o arquivo \`task.md\` e \`implementation_plan.md\` se existirem."
-    echo "2. O projeto usa o framework AI Dev Superpowers V3."
-    echo "3. Continue a partir da tarefa: **$task**."
+    echo "2. Carregue o **Estado Técnico Unificado** acima na sua memória de trabalho."
+    echo "3. O projeto usa o framework AI Dev Superpowers V3."
+    echo "4. Continue a partir da tarefa: **$task**."
     echo ""
     echo "------------------------------------------------"
     echo "--- SNAPSHOT END ---"
@@ -1060,35 +1074,80 @@ create_base_structure() {
 }
 
 # Instala agentes a partir dos templates com suporte a overrides por plataforma
+# Instala agentes a partir dos templates com suporte a overrides por plataforma
 install_agents() {
     local path="$1"
     local agents_dir="$path/.aidev/agents"
-    local platform_agents_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents"
+    local lang_suffix=$(get_lang_suffix 2>/dev/null || echo "pt")
+    
+    # Define diretórios de origem baseados no idioma
+    local base_templates_dir="$AIDEV_ROOT_DIR/templates/agents/$lang_suffix"
+    # Fallback para root
+    if [ ! -d "$base_templates_dir" ]; then
+        base_templates_dir="$AIDEV_ROOT_DIR/templates/agents"
+    fi
+    
+    local platform_templates_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents/$lang_suffix"
+    # Fallback para root da plataforma
+    if [ ! -d "$platform_templates_dir" ]; then
+        platform_templates_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents"
+    fi
     
     # Exporta variáveis para os templates
     export PROJECT_NAME=$(detect_project_name "$path")
     export STACK="$CLI_STACK"
     export PLATFORM="$CLI_PLATFORM"
     
-    # Itera sobre os templates globais primeiro para garantir que todos os básicos existam
-    for template in "$AIDEV_ROOT_DIR/templates/agents"/*.md.tmpl; do
-        if [ -f "$template" ]; then
-            local name=$(basename "$template" .md.tmpl)
-            local output="$agents_dir/${name}.md"
-            
-            # Verifica se existe override na plataforma
-            local template_to_use="$template"
-            if [ -n "$CLI_PLATFORM" ] && [ -f "$platform_agents_dir/${name}.md.tmpl" ]; then
-                template_to_use="$platform_agents_dir/${name}.md.tmpl"
-                print_debug "Usando override de plataforma para: $name"
+    # Itera sobre os templates base (se existirem)
+    if [ -d "$base_templates_dir" ]; then
+        for template in "$base_templates_dir"/*.md.tmpl; do
+            if [ -f "$template" ]; then
+                process_agent_template "$template" "$agents_dir" "$platform_templates_dir"
             fi
-            
-            if should_write_file "$output"; then
-                process_template "$template_to_use" "$output"
-                print_debug "Instalado: $name (de $(basename "$(dirname "$template_to_use")"))"
+        done
+    fi
+    
+    # Se usou fallback base, itera sobre ele tambem (caso não tenha iterado acima)
+    if [ "$base_templates_dir" == "$AIDEV_ROOT_DIR/templates/agents" ]; then
+         for template in "$base_templates_dir"/*.md.tmpl; do
+            if [ -f "$template" ]; then
+                process_agent_template "$template" "$agents_dir" "$platform_templates_dir"
             fi
-        fi
-    done
+        done
+    fi
+    
+    # Hack para iterar sobre plataforma se existirem agentes EXCLUSIVOS da plataforma
+    if [ -d "$platform_templates_dir" ]; then
+         for template in "$platform_templates_dir"/*.md.tmpl; do
+            if [ -f "$template" ]; then
+                local name=$(basename "$template" .md.tmpl)
+                if [ ! -f "$agents_dir/${name}.md" ]; then
+                    process_agent_template "$template" "$agents_dir" "$platform_templates_dir"
+                fi
+            fi
+        done
+    fi
+}
+
+process_agent_template() {
+    local template="$1"
+    local output_dir="$2"
+    local platform_dir="$3"
+    
+    local name=$(basename "$template" .md.tmpl)
+    local output="$output_dir/${name}.md"
+    
+    # Verifica override
+    local template_to_use="$template"
+    if [ -n "$CLI_PLATFORM" ] && [ -f "$platform_dir/${name}.md.tmpl" ]; then
+        template_to_use="$platform_dir/${name}.md.tmpl"
+        print_debug "Usando override de plataforma para: $name"
+    fi
+    
+    if should_write_file "$output"; then
+        process_template "$template_to_use" "$output"
+        print_debug "Instalado: $name"
+    fi
 }
 
 # Instala skills a partir dos templates
@@ -1122,15 +1181,26 @@ install_rules() {
     local path="$1"
     local stack="$2"
     local rules_dir="$path/.aidev/rules"
+    local lang_suffix=$(get_lang_suffix 2>/dev/null || echo "pt")
     
-    # Sempre instala generic
-    local generic_template="$AIDEV_ROOT_DIR/templates/rules/generic.md.tmpl"
+    # Busca templates localizados (ex: templates/rules/pt/generic.md.tmpl)
+    # Tenta: localized -> legacy/root
+    
+    local generic_template="$AIDEV_ROOT_DIR/templates/rules/$lang_suffix/generic.md.tmpl"
+    if [ ! -f "$generic_template" ]; then
+        generic_template="$AIDEV_ROOT_DIR/templates/rules/generic.md.tmpl"
+    fi
+
     if [ -f "$generic_template" ]; then
         process_template "$generic_template" "$rules_dir/generic.md"
     fi
     
     # Instala rule específica da stack
-    local stack_template="$AIDEV_ROOT_DIR/templates/rules/${stack}.md.tmpl"
+    local stack_template="$AIDEV_ROOT_DIR/templates/rules/$lang_suffix/${stack}.md.tmpl"
+    if [ ! -f "$stack_template" ]; then
+        stack_template="$AIDEV_ROOT_DIR/templates/rules/${stack}.md.tmpl"
+    fi
+    
     if [ -f "$stack_template" ]; then
         process_template "$stack_template" "$rules_dir/${stack}.md"
     fi
@@ -1312,7 +1382,7 @@ cmd_new_feature() {
     local project_name=$(detect_project_name "$install_path")
     local stack=$(detect_stack "$install_path")
 
-    print_header "AI Dev Superpowers - Nova Feature"
+    print_header "$(_ "cmd_new_feature_title")"
     echo ""
     print_info "Projeto: $project_name"
     print_info "Stack: $stack"
@@ -1414,7 +1484,7 @@ cmd_fix_bug() {
     local project_name=$(detect_project_name "$install_path")
     local stack=$(detect_stack "$install_path")
 
-    print_header "AI Dev Superpowers - Fix Bug"
+    print_header "$(_ "cmd_fix_bug_title")"
     echo ""
     print_info "Projeto: $project_name"
     print_info "Stack: $stack"
@@ -1509,7 +1579,7 @@ cmd_suggest() {
     local stack=$(detect_stack "$install_path")
     local maturity=$(detect_maturity "$install_path")
 
-    print_header "AI Dev Superpowers - Smart Suggest"
+    print_header "$(_ "cmd_suggest_title")"
     echo ""
 
     # Inicializa estado
@@ -1723,6 +1793,76 @@ EOF
     print_success "Fluxo de refatoracao configurado!"
 }
 
+# Subcomando: config
+# Gerencia configuracoes do AI Dev
+cmd_config() {
+    local subcommand="${2:-}"
+    
+    # Shift manual para passar argumentos corretamente
+    shift 2 2>/dev/null || true
+    
+    case "$subcommand" in
+        language|lang)
+            cmd_config_language "$@"
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcommand"
+            echo "Uso: aidev config [language]"
+            exit 1
+            ;;
+    esac
+}
+
+
+
+# Subcomando: config language
+cmd_config_language() {
+    local lang="${1:-}"
+    
+    if [ -z "$lang" ]; then
+        print_error "Idioma obrigatorio. Uso: aidev config language [en|pt]"
+        exit 1
+    fi
+    
+    if [[ "$lang" != "en" && "$lang" != "pt" && "$lang" != "pt-BR" ]]; then
+        print_error "Idioma invalido: $lang. Use 'en' ou 'pt'."
+        exit 1
+    fi
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    local env_file="$install_path/.env"
+    
+    if [ ! -f "$env_file" ]; then
+        print_error ".env nao encontrado em $install_path"
+        exit 1
+    fi
+    
+    # Atualiza .env
+    set_env_value "AIDEV_LANG" "$lang" "$env_file"
+    
+    # Atualiza variavel atual para feedback imediato
+    export AIDEV_LANG="$lang"
+    set_language "$lang" 2>/dev/null || true
+    
+    # Re-instala agentes e regras para aplicar novo idioma
+    print_step "Atualizando agentes e regras para $lang..."
+    
+    # Necessario carregar envVars de install_path para install_agents funcionar (CLI_PLATFORM etc)
+    # Mas CLI_PLATFORM é global. Se nao estiver setado, tentamos detectar.
+    if [ -z "${CLI_PLATFORM:-}" ]; then
+         CLI_PLATFORM=$(detect_platform 2>/dev/null || echo "antigravity")
+    fi
+    if [ -z "${CLI_STACK:-}" ]; then
+         CLI_STACK=$(detect_stack "$install_path" 2>/dev/null || echo "generic")
+    fi
+    
+    install_agents "$install_path"
+    install_rules "$install_path" "$CLI_STACK"
+    
+    print_success "$(_ "config_lang_updated" "Idioma atualizado para: ") $lang"
+}
+
 main() {
     local command="${1:-help}"
     # shift || true # Deixa o comando original para o parse_args identificar
@@ -1730,6 +1870,9 @@ main() {
     case "$command" in
         init)
             cmd_init "$@"
+            ;;
+        config)
+            cmd_config "$@"
             ;;
         upgrade)
             cmd_upgrade "$@"
@@ -1773,6 +1916,7 @@ main() {
         suggest)
             cmd_suggest "$@"
             ;;
+
         refactor)
             cmd_refactor "$@"
             ;;

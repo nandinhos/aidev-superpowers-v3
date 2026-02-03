@@ -1,0 +1,97 @@
+# Generic Stack Rules
+
+## Core Principles
+These rules apply to ALL projects regardless of stack.
+
+## 1. TDD is Mandatory
+- **RED**: Write failing test first
+- **GREEN**: Minimal code to pass
+- **REFACTOR**: Improve without breaking
+
+## 2. YAGNI (You Aren't Gonna Need It)
+- Don't add functionality until needed
+- Avoid premature optimization  
+- Build only what's requested
+
+## 3. DRY (Don't Repeat Yourself)
+- Each piece of knowledge has single source
+- Extract when repeated 3+ times
+- But don't over-abstract early
+
+## 4. Clean Code
+- Meaningful names
+- Small functions (≤20 lines)
+- Single responsibility
+- Clear separation of concerns
+
+## 5. Error Handling
+- Fail fast
+- Clear error messages
+- Proper exception types
+- Log appropriately
+
+## 6. Version Control
+- Atomic commits
+- Descriptive messages in ENGLISH
+- Branch per feature
+- Review before merge
+
+## Commit Message Format
+
+**MANDATORY RULES**:
+- Language: ENGLISH (Mandatory)
+- Emojis: FORBIDDEN
+- Co-authorship: FORBIDDEN (No Co-Authored-By)
+
+### Format
+```
+type(scope): short description in english
+
+- Detail 1 (optional)
+- Detail 2 (optional)
+```
+
+### Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code change (no new feature)
+- `test`: Adding tests
+- `docs`: Documentation
+- `chore`: Maintenance
+
+### Examples
+```
+feat(auth): add JWT authentication
+fix(api): fix email validation
+refactor(utils): extract formatting function
+```
+
+### DO NOT DO
+```
+# WRONG - emoji
+feat(auth): :sparkles: add authentication
+
+# WRONG - mixed language/portuguese
+feat(auth): adiciona auth
+
+# WRONG - co-authorship
+feat(auth): add auth
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+## File Organization
+- Group by feature, not type
+- Clear naming conventions
+- Consistent structure
+- Separate config from code
+
+## Documentation
+- README for every project
+- Inline comments for "why"
+- API documentation
+- Architecture decisions
+
+{{#if PROJECT_NAME}}
+## Project: {{PROJECT_NAME}}
+{{/if}}

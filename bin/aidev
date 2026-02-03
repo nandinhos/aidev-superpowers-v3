@@ -1279,6 +1279,450 @@ setup_secrets() {
 # Main
 # ============================================================================
 
+# ============================================================================
+# Novos Comandos Intuitivos (v3.2)
+# ============================================================================
+
+# Subcomando: new-feature
+# Inicia fluxo completo de nova feature: brainstorming -> planning -> TDD
+cmd_new_feature() {
+    local description="${2:-}"
+    shift 2 2>/dev/null || true
+    parse_args "$@"
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    if [ -z "$description" ]; then
+        print_error "Descricao da feature e obrigatoria"
+        echo "Uso: aidev new-feature \"descricao da feature\""
+        exit 1
+    fi
+
+    # Carrega modulo de estado unificado
+    load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
+    load_module "orchestration" 2>/dev/null || source "$AIDEV_LIB_DIR/orchestration.sh"
+
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+
+    print_header "AI Dev Superpowers - Nova Feature"
+    echo ""
+    print_info "Projeto: $project_name"
+    print_info "Stack: $stack"
+    print_info "Feature: $description"
+    echo ""
+
+    # Inicializa estado unificado
+    export CLI_INSTALL_PATH="$install_path"
+    state_init
+
+    # Classifica intent e configura fluxo
+    local intent="feature_request"
+    local agents=$(orchestrator_select_agents "$intent")
+    local skill=$(orchestrator_select_skill "$intent")
+
+    # Cria checkpoint antes de iniciar
+    state_checkpoint "Inicio de nova feature: $description"
+
+    # Registra confianca inicial
+    state_log_confidence "Iniciar feature: $description" "0.7" "medium"
+
+    # Configura fluxo de skills
+    state_write "active_intent" "$intent"
+    state_write "intent_description" "$description"
+    state_activate_skill "$skill"
+
+    print_section "Fluxo Configurado"
+    echo "  Intent:  $intent"
+    echo "  Skill:   $skill"
+    echo "  Agentes: $agents"
+    echo ""
+
+    print_section "Proximos Passos"
+    echo "  1. Ative o modo agente na sua IA (Claude Code, Cursor, etc.)"
+    echo "  2. Diga: 'modo agente' ou 'aidev'"
+    echo "  3. O orquestrador ira conduzir o fluxo:"
+    echo ""
+    echo "     brainstorming -> writing-plans -> test-driven-development"
+    echo "           |              |                    |"
+    echo "     Architect        Architect          Backend/Frontend"
+    echo ""
+    
+    # Gera prompt de ativacao
+    print_section "Prompt de Ativacao (copie e cole na IA)"
+    echo "----------------------------------------"
+    cat << EOF
+MODO AGENTE - Nova Feature
+
+Contexto:
+- Projeto: $project_name
+- Stack: $stack
+- Intent: $intent
+- Skill inicial: $skill
+
+Feature solicitada:
+"$description"
+
+Instrucoes:
+1. Leia o arquivo .aidev/agents/orchestrator.md
+2. Inicie a skill '$skill'
+3. Siga o fluxo: brainstorming -> writing-plans -> test-driven-development
+4. Use TDD obrigatorio: RED -> GREEN -> REFACTOR
+
+Confirme que entendeu e inicie o brainstorming fazendo perguntas clarificadoras.
+EOF
+    echo "----------------------------------------"
+    echo ""
+
+    print_success "Fluxo de nova feature configurado!"
+    print_info "Estado salvo em: .aidev/state/unified.json"
+}
+
+# Subcomando: fix-bug
+# Inicia fluxo de correcao de bug: systematic-debugging -> learned-lesson
+cmd_fix_bug() {
+    local description="${2:-}"
+    shift 2 2>/dev/null || true
+    parse_args "$@"
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    if [ -z "$description" ]; then
+        print_error "Descricao do bug e obrigatoria"
+        echo "Uso: aidev fix-bug \"descricao do bug\""
+        exit 1
+    fi
+
+    # Carrega modulos
+    load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
+    load_module "orchestration" 2>/dev/null || source "$AIDEV_LIB_DIR/orchestration.sh"
+
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+
+    print_header "AI Dev Superpowers - Fix Bug"
+    echo ""
+    print_info "Projeto: $project_name"
+    print_info "Stack: $stack"
+    print_info "Bug: $description"
+    echo ""
+
+    # Inicializa estado
+    export CLI_INSTALL_PATH="$install_path"
+    state_init
+
+    # Classifica intent
+    local intent="bug_fix"
+    local agents=$(orchestrator_select_agents "$intent")
+    local skill=$(orchestrator_select_skill "$intent")
+
+    # Cria checkpoint
+    state_checkpoint "Inicio de fix bug: $description"
+
+    # Registra confianca
+    state_log_confidence "Fix bug: $description" "0.6" "medium"
+
+    # Configura fluxo
+    state_write "active_intent" "$intent"
+    state_write "intent_description" "$description"
+    state_activate_skill "$skill"
+
+    print_section "Fluxo Configurado"
+    echo "  Intent:  $intent"
+    echo "  Skill:   $skill"
+    echo "  Agentes: $agents"
+    echo ""
+
+    print_section "Metodologia de Debug"
+    echo "  Phase 1: REPRODUCE - Criar teste que falha"
+    echo "  Phase 2: ISOLATE   - Binary search para isolar causa"
+    echo "  Phase 3: ROOT CAUSE - 5 Whys para encontrar raiz"
+    echo "  Phase 4: FIX       - Corrigir e prevenir"
+    echo ""
+
+    print_section "Prompt de Ativacao (copie e cole na IA)"
+    echo "----------------------------------------"
+    cat << EOF
+MODO AGENTE - Fix Bug
+
+Contexto:
+- Projeto: $project_name
+- Stack: $stack
+- Intent: $intent
+- Skill: $skill
+
+Bug reportado:
+"$description"
+
+Instrucoes:
+1. Leia o arquivo .aidev/agents/orchestrator.md
+2. Inicie a skill '$skill'
+3. Siga as 4 fases do debugging sistematico:
+   - REPRODUCE: Crie um teste que reproduza o bug
+   - ISOLATE: Use binary search para isolar
+   - ROOT CAUSE: Aplique 5 Whys
+   - FIX: Corrija e crie teste de regressao
+4. Ao final, registre a licao aprendida
+
+Confirme que entendeu e comece pela fase REPRODUCE.
+EOF
+    echo "----------------------------------------"
+    echo ""
+
+    print_success "Fluxo de fix bug configurado!"
+    print_info "Estado salvo em: .aidev/state/unified.json"
+}
+
+# Subcomando: suggest
+# Analisa projeto e sugere proximo passo baseado em contexto
+cmd_suggest() {
+    parse_args "$@"
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    # Carrega modulos
+    load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
+    load_module "orchestration" 2>/dev/null || source "$AIDEV_LIB_DIR/orchestration.sh"
+
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+    local maturity=$(detect_maturity "$install_path")
+
+    print_header "AI Dev Superpowers - Smart Suggest"
+    echo ""
+
+    # Inicializa estado
+    export CLI_INSTALL_PATH="$install_path"
+    state_init
+
+    # Coleta informacoes do projeto
+    local active_skill=$(state_get_active_skill)
+    local active_agent=$(state_get_active_agent)
+    local has_tests=false
+    local has_failing_tests=false
+    local has_uncommitted=false
+    local has_prd=false
+
+    # Verifica testes
+    if [ -f "$install_path/package.json" ] || [ -f "$install_path/composer.json" ] || [ -f "$install_path/pytest.ini" ]; then
+        has_tests=true
+    fi
+
+    # Verifica mudancas nao commitadas
+    if [ -d "$install_path/.git" ]; then
+        if [ -n "$(git -C "$install_path" status --porcelain 2>/dev/null)" ]; then
+            has_uncommitted=true
+        fi
+    fi
+
+    # Verifica PRD
+    if [ -f "$install_path/docs/PRD.md" ] || [ -f "$install_path/PRD.md" ]; then
+        has_prd=true
+    fi
+
+    print_section "Analise do Projeto"
+    echo "  Projeto:     $project_name"
+    echo "  Stack:       $stack"
+    echo "  Maturidade:  $maturity"
+    echo "  PRD:         $([ "$has_prd" = true ] && echo "Sim" || echo "Nao")"
+    echo "  Testes:      $([ "$has_tests" = true ] && echo "Configurados" || echo "Nao detectados")"
+    echo "  Git Status:  $([ "$has_uncommitted" = true ] && echo "Mudancas pendentes" || echo "Limpo")"
+    echo ""
+
+    # Estado atual
+    print_section "Estado Atual"
+    if [ -n "$active_skill" ] && [ "$active_skill" != "null" ]; then
+        local progress=$(skill_get_progress "$active_skill" 2>/dev/null || echo "0/0")
+        echo "  Skill Ativa: $active_skill ($progress)"
+    else
+        echo "  Skill Ativa: Nenhuma"
+    fi
+    
+    if [ -n "$active_agent" ] && [ "$active_agent" != "null" ]; then
+        echo "  Agente Ativo: $active_agent"
+    else
+        echo "  Agente Ativo: Nenhum"
+    fi
+    echo ""
+
+    # Gera sugestoes
+    print_section "Sugestoes"
+    
+    local suggestion_count=0
+
+    # Sugestao 1: Skill pendente
+    if [ -n "$active_skill" ] && [ "$active_skill" != "null" ]; then
+        ((suggestion_count++)) || true
+        echo "  $suggestion_count. Continuar skill '$active_skill' em andamento"
+        echo "     Comando: Ative o modo agente e diga 'continuar $active_skill'"
+        echo ""
+    fi
+
+    # Sugestao 2: Mudancas nao commitadas
+    if [ "$has_uncommitted" = true ]; then
+        ((suggestion_count++)) || true
+        echo "  $suggestion_count. Commitar mudancas pendentes"
+        echo "     Comando: git add . && git commit -m \"...\""
+        echo ""
+    fi
+
+    # Sugestao 3: Brownfield sem testes
+    if [ "$maturity" = "brownfield" ] && [ "$has_tests" = false ]; then
+        ((suggestion_count++)) || true
+        echo "  $suggestion_count. Adicionar testes ao projeto legado"
+        echo "     Comando: aidev new-feature \"Adicionar suite de testes\""
+        echo ""
+    fi
+
+    # Sugestao 4: Greenfield sem PRD
+    if [ "$maturity" = "greenfield" ] && [ "$has_prd" = false ]; then
+        ((suggestion_count++)) || true
+        echo "  $suggestion_count. Criar documento de requisitos (PRD)"
+        echo "     Acao: Crie docs/PRD.md com requisitos do projeto"
+        echo ""
+    fi
+
+    # Sugestao 5: Brownfield - analisar legado
+    if [ "$maturity" = "brownfield" ]; then
+        ((suggestion_count++)) || true
+        echo "  $suggestion_count. Rodar analise de codigo legado"
+        echo "     Comando: Ative modo agente e diga 'analisar codigo legado'"
+        echo ""
+    fi
+
+    # Sugestao padrao
+    if [ $suggestion_count -eq 0 ]; then
+        echo "  Projeto parece estar em bom estado!"
+        echo ""
+        echo "  Comandos disponiveis:"
+        echo "    aidev new-feature \"descricao\"  - Iniciar nova feature"
+        echo "    aidev fix-bug \"descricao\"      - Corrigir um bug"
+        echo "    aidev status                    - Ver status detalhado"
+        echo ""
+    fi
+
+    # Licoes recentes
+    local lessons_dir="$install_path/.aidev/state/lessons"
+    if [ -d "$lessons_dir" ] && [ "$(ls -A "$lessons_dir" 2>/dev/null)" ]; then
+        print_section "Licoes Aprendidas Recentes"
+        ls -t "$lessons_dir" 2>/dev/null | head -n 3 | while read -r lesson; do
+            echo "  - $lesson"
+        done
+        echo ""
+    fi
+
+    print_success "Analise concluida!"
+}
+
+# Subcomando: refactor
+# Inicia fluxo de refatoracao
+cmd_refactor() {
+    local description="${2:-}"
+    shift 2 2>/dev/null || true
+    parse_args "$@"
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    if [ -z "$description" ]; then
+        print_error "Escopo da refatoracao e obrigatorio"
+        echo "Uso: aidev refactor \"escopo da refatoracao\""
+        exit 1
+    fi
+
+    # Carrega modulos
+    load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
+    load_module "orchestration" 2>/dev/null || source "$AIDEV_LIB_DIR/orchestration.sh"
+
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+
+    print_header "AI Dev Superpowers - Refatoracao"
+    echo ""
+    print_info "Projeto: $project_name"
+    print_info "Stack: $stack"
+    print_info "Escopo: $description"
+    echo ""
+
+    # Inicializa estado
+    export CLI_INSTALL_PATH="$install_path"
+    state_init
+
+    # Classifica intent
+    local intent="refactor"
+    local agents=$(orchestrator_select_agents "$intent")
+    local skill=$(orchestrator_select_skill "$intent")
+
+    # Cria checkpoint
+    state_checkpoint "Inicio de refatoracao: $description"
+
+    # Configura fluxo
+    state_write "active_intent" "$intent"
+    state_write "intent_description" "$description"
+    state_activate_skill "$skill"
+
+    print_section "Fluxo Configurado"
+    echo "  Intent:  $intent"
+    echo "  Skill:   $skill"
+    echo "  Agentes: $agents"
+    echo ""
+
+    print_section "Prompt de Ativacao (copie e cole na IA)"
+    echo "----------------------------------------"
+    cat << EOF
+MODO AGENTE - Refatoracao
+
+Contexto:
+- Projeto: $project_name
+- Stack: $stack
+- Intent: $intent
+- Skill: $skill
+
+Escopo da refatoracao:
+"$description"
+
+Instrucoes:
+1. Leia o arquivo .aidev/agents/orchestrator.md
+2. Execute legacy-analyzer primeiro para mapear impacto
+3. Inicie a skill '$skill' para criar plano
+4. Siga TDD: garanta que testes existem antes de refatorar
+5. Mantenha comportamento externo identico
+
+Confirme que entendeu e comece pela analise de impacto.
+EOF
+    echo "----------------------------------------"
+    echo ""
+
+    print_success "Fluxo de refatoracao configurado!"
+}
+
 main() {
     local command="${1:-help}"
     # shift || true # Deixa o comando original para o parse_args identificar
@@ -1318,7 +1762,19 @@ main() {
             cmd_metrics "$@"
             ;;
         integrity)
-            cmd_doctor "$@" # Por enquanto usa doctor como base, mas focado em reparo automático futuramente
+            cmd_doctor "$@"
+            ;;
+        new-feature)
+            cmd_new_feature "$@"
+            ;;
+        fix-bug)
+            cmd_fix_bug "$@"
+            ;;
+        suggest)
+            cmd_suggest "$@"
+            ;;
+        refactor)
+            cmd_refactor "$@"
             ;;
         -h|--help|help)
             show_help

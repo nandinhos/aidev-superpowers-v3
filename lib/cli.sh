@@ -53,14 +53,24 @@ ${YELLOW:-}Sistema Unificado de Governança de IA para Desenvolvimento${NC:-}
 ${YELLOW:-}Uso:${NC:-}
   aidev <comando> [opções]
 
-${YELLOW:-}Comandos:${NC:-}
+${YELLOW:-}Comandos Principais:${NC:-}
   init              Inicializa AI Dev em um projeto
   upgrade           Atualiza instalacao existente
   status            Mostra status da instalacao
   doctor            Diagnostico da instalacao
-  snapshot          Gera context passport para migracao de modelo
+
+${YELLOW:-}Comandos Intuitivos (v3.2):${NC:-}
+  new-feature       Inicia fluxo de nova feature (brainstorming -> TDD)
+  fix-bug           Inicia fluxo de correcao de bug (debugging sistematico)
+  refactor          Inicia fluxo de refatoracao (analyze -> plan -> TDD)
+  suggest           Analisa projeto e sugere proximo passo
+
+${YELLOW:-}Modo Agente:${NC:-}
   agent             Gera prompt de ativacao do modo agente
   start             Mostra instrucoes de ativacao do modo agente
+  snapshot          Gera context passport para migracao de modelo
+
+${YELLOW:-}Customizacao:${NC:-}
   add-skill         Adiciona skill customizada
   add-rule          Adiciona regra customizada
   add-agent         Adiciona agente customizado
@@ -97,17 +107,16 @@ ${YELLOW:-}Stacks Suportadas:${NC:-}
   generic                        Regras base apenas
 
 ${YELLOW:-}Exemplos:${NC:-}
-  # Novo projeto Laravel a partir de PRD
+  # Inicializacao
   aidev init --mode new --stack laravel --prd docs/prd.md
-
-  # Refatoração de sistema legado
   aidev init --mode refactor --detect
-
-  # Setup mínimo para exploração
-  aidev init --mode minimal
-
-  # Instalação completa com auto-detecção
   aidev init --detect
+
+  # Comandos intuitivos (v3.2)
+  aidev new-feature "Adicionar autenticacao com JWT"
+  aidev fix-bug "Login falha quando senha tem caracteres especiais"
+  aidev refactor "Extrair logica de validacao para service"
+  aidev suggest
 
 ${YELLOW:-}Documentação:${NC:-}
   https://github.com/nandinhos/aidev-superpowers-v3

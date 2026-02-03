@@ -64,8 +64,33 @@ show_help() {
         printf "  ${C_GREEN}%-18s${C_NC} %s\n" "$1" "$2"
     }
 
+    # ========================================================================
+    # Correção de Alinhamento (ANSI-safe)
+    # ------------------------------------------------------------------------
+    local version="${AIDEV_VERSION:-3.3.1}"
+    local app_name="AI Dev Superpowers"
+    
+    # 1. Conteúdo limpo (sem cores) para cálculo de largura
+    local clean_content="  ${app_name} v${version}"
+    local content_len=${#clean_content}
+    
+    # 2. Largura fixa da tabela (baseada na borda de 64 chars)
+    local inner_width=64
+    
+    # 3. Cálculo do padding (preenchimento à direita)
+    local pad_len=$((inner_width - content_len))
+    [[ $pad_len -lt 0 ]] && pad_len=0
+    
+    # 4. Conteúdo visual (com injeção de cores)
+    local display_content="  ${C_YELLOW}${app_name}${C_NC} v${version}"
+
+    # Top Border
     echo -e "${C_CYAN}╔════════════════════════════════════════════════════════════════╗${C_NC}"
-    echo -e "${C_CYAN}║${C_NC}  ${C_YELLOW}AI Dev Superpowers${C_NC} v${AIDEV_VERSION:-3.3.1}${C_CYAN}                               ║${C_NC}"
+    # Content Line
+    # Usamos %b para interpretar os escapes de cor na string ($display_content)
+    # Usamos %*s para injetar o padding de espaços calculado ($pad_len)
+    printf "${C_CYAN}║${C_NC}%b%*s${C_CYAN}║${C_NC}\n" "${display_content}" "$pad_len" ""
+    # Bottom Border
     echo -e "${C_CYAN}╚════════════════════════════════════════════════════════════════╝${C_NC}"
     echo -e "${C_WHITE}Sistema Unificado de Governança de IA para Desenvolvimento${C_NC}"
     echo ""

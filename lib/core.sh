@@ -36,10 +36,28 @@ AIDEV_DIRS_CREATED=0
 
 # Exibe header do script
 # Uso: print_header "Título Opcional"
+# Exibe header do script
+# Uso: print_header "Título Opcional"
 print_header() {
     local title="${1:-AI Dev Superpowers}"
+    local version="${AIDEV_VERSION}"
+    
+    # 1. Conteúdo limpo (sem cores)
+    local clean_content="  ${title} v${version}"
+    local content_len=${#clean_content}
+    
+    # 2. Largura interna (borda a borda = 64)
+    local inner_width=64
+    
+    # 3. Padding
+    local pad_len=$((inner_width - content_len))
+    [[ $pad_len -lt 0 ]] && pad_len=0
+    
+    # 4. Display content (com cores)
+    local display_content="  ${YELLOW}${title}${NC} v${version}"
+
     echo -e "${CYAN}╔════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║${NC}  ${YELLOW}${title}${NC} v${AIDEV_VERSION}${CYAN}                              ║${NC}"
+    printf "${CYAN}║${NC}%b%*s${CYAN}║${NC}\n" "${display_content}" "$pad_len" ""
     echo -e "${CYAN}╚════════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -88,9 +106,17 @@ print_summary() {
     local mode="${1:-full}"
     local stack="${2:-generic}"
     
+    # Header do Summary
+    local title="Operação Concluída com Sucesso!"
+    local clean_title="  ${title}" # Espaços antes
+    local inner_width=64
+    local pad_len=$((inner_width - ${#clean_title}))
+    [[ $pad_len -lt 0 ]] && pad_len=0
+    local display_title="  ${GREEN}${title}${NC}"
+
     echo ""
     echo -e "${CYAN}╔════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║${NC}  ${GREEN}Operação Concluída com Sucesso!${NC}${CYAN}                             ║${NC}"
+    printf "${CYAN}║${NC}%b%*s${CYAN}║${NC}\n" "${display_title}" "$pad_len" ""
     echo -e "${CYAN}╠════════════════════════════════════════════════════════════════╣${NC}"
     printf "${CYAN}║${NC}  Diretórios criados: %-42s${CYAN}║${NC}\n" "$AIDEV_DIRS_CREATED"
     printf "${CYAN}║${NC}  Arquivos criados:   %-42s${CYAN}║${NC}\n" "$AIDEV_FILES_CREATED"

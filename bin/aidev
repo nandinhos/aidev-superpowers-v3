@@ -2151,7 +2151,7 @@ cmd_self_upgrade() {
     echo ""
 
     # Verifica se precisa atualizar
-    if [ "$current_version" = "$source_version" ]; then
+    if [ "$current_version" = "$source_version" ] && [ "$AIDEV_FORCE" != true ]; then
         print_success "Ja esta na versao mais recente ($current_version)"
         exit 0
     fi

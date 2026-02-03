@@ -223,6 +223,43 @@ detect_platform() {
 }
 
 # ============================================================================
+# Detecção de Runtime
+# ============================================================================
+
+# Detecta o runtime atual (e.g., terminal-cli, vscode-extension, web-app)
+# Uso: detect_runtime
+# Retorna: nome do runtime detectado
+detect_runtime() {
+    # 0. Antigravity (Specific)
+    if [ -n "$ANTIGRAVITY_AGENT" ]; then
+        echo "antigravity"
+        return
+    fi
+
+    # 1. VS Code Extension
+    if [ -n "$VSCODE_CWD" ] || [ -n "$VSCODE_PID" ]; then
+        echo "vscode-extension"
+        return
+    fi
+
+    # 2. Web App (e.g., Codespaces, Gitpod)
+    if [ -n "$CODESPACES" ] || [ -n "$GITPOD_WORKSPACE_ID" ]; then
+        echo "web-app"
+        return
+    fi
+
+    # 3. Docker Container
+    if [ -f "/.dockerenv" ] || grep -q "docker" /proc/self/cgroup 2>/dev/null; then
+        echo "docker-container"
+        return
+    fi
+
+    # 4. Fallback
+    echo "terminal-cli"
+}
+export -f detect_runtime
+
+# ============================================================================
 # Detecção de Linguagem Principal
 # ============================================================================
 
@@ -338,6 +375,7 @@ detect_project_context() {
     
     DETECTED_FRAMEWORK_VERSION=$(detect_framework_version "$path")
     DETECTED_TECH_DEBT=$(detect_technical_debt "$path")
+    DETECTED_RUNTIME=$(detect_runtime)
     
     print_debug "Stack detectada: $DETECTED_STACK"
     print_debug "Versao Framework: $DETECTED_FRAMEWORK_VERSION"
@@ -347,6 +385,7 @@ detect_project_context() {
     print_debug "Plataforma detectada: $DETECTED_PLATFORM"
     print_debug "Linguagem detectada: $DETECTED_LANGUAGE"
     print_debug "Nome do projeto: $DETECTED_PROJECT_NAME"
+    print_debug "Runtime: $DETECTED_RUNTIME"
 }
 
 # ============================================================================

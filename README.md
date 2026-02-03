@@ -102,6 +102,10 @@ seu-projeto/
 | Comando | Descricao |
 |---------|-----------|
 | `aidev init` | Inicializa AI Dev no projeto |
+| `aidev new-feature` | **(v3.2)** Inicia fluxo de Nova Feature (Brainstorming -> TDD) |
+| `aidev fix-bug` | **(v3.2)** Inicia fluxo de Correção de Bug (Systematic Debugging) |
+| `aidev refactor` | **(v3.2)** Inicia fluxo de Refatoração Segura |
+| `aidev suggest` | **(v3.2)** Analisa o projeto e sugere o próximo passo ideal |
 | `aidev agent` | Gera prompt de ativacao do modo agente |
 | `aidev start` | Mostra instrucoes de ativacao |
 | `aidev upgrade` | Atualiza para versao mais recente |
@@ -109,8 +113,8 @@ seu-projeto/
 | `aidev doctor` | Diagnostico de saude do ambiente |
 | `aidev doctor --fix` | **Auto-Cura**: Repara problemas detectados |
 | `aidev snapshot` | Gera resumo de contexto para migracao de IA |
-| `aidev add-skill <nome>` | Adiciona skill customizada |
-| `aidev add-agent <nome>` | Adiciona agente customizado |
+| `aidev add-skill` | Adiciona skill customizada |
+| `aidev add-agent` | Adiciona agente customizado |
 
 ### Ativacao do Modo Agente
 

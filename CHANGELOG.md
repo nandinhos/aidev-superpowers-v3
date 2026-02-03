@@ -5,6 +5,22 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.2.0] - 2026-02-03
+
+### 🚀 Novidades
+- **Comandos Intuitivos**: Novos subcomandos que configuram automaticamente o fluxo do Agente:
+    - `aidev new-feature "descrição"`: Inicia Brainstorming → TDD.
+    - `aidev fix-bug "descrição"`: Inicia Systematic Debugging (Reproduce → Isolate → Fix).
+    - `aidev refactor "escopo"`: Inicia fluxo de refatoração segura.
+- **Smart Suggest (`aidev suggest`)**: Analisa o estado do projeto (Greenfield/Brownfield, testes, git) e sugere proativamente o próximo comando ideal.
+- **Prompt Dinâmico**: O comando `aidev agent` agora gera prompts ainda mais específicos baseados no intent detectado pelos comandos acima.
+
+### ⚡ Melhorias
+- Correção no comando `status` para evitar crash quando o estado da sessão está parcial.
+- Melhoria na detecção de projetos Brownfield sem testes na skill `suggest`.
+
+
+
 ## [3.1.0] - 2026-02-02
 
 ### 🚀 Novidades

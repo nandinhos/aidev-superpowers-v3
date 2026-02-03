@@ -559,12 +559,24 @@ cmd_snapshot() {
     fi
     echo ""
 
-    echo "## 🧠 Lições Aprendidas Recentes"
-    local lessons_dir="$install_path/.aidev/state/lessons"
-    if [ -d "$lessons_dir" ]; then
-        ls -F "$lessons_dir" 2>/dev/null | grep -v "/" | head -n 5 | sed 's/^/- /' || echo "- Nenhuma lição registrada nesta sessão."
+    echo "## 🧠 Base de Conhecimento (KB)"
+    local kb_dir="$install_path/.aidev/memory/kb"
+    if [ -d "$kb_dir" ]; then
+        shopt -s nullglob
+        local kb_files=("$kb_dir"/*.md)
+        shopt -u nullglob
+        local kb_count=${#kb_files[@]}
+        
+        if [ "$kb_count" -gt 0 ]; then
+            echo "- $kb_count lições disponíveis em .aidev/memory/kb/"
+            echo "- Use a tool \`read_file\` se precisar de contexto específico."
+            # Lista as 3 mais recentes (precisa de ls -t pois glob nao garante ordem por data)
+            ls -t "$kb_dir"/*.md 2>/dev/null | head -n 3 | sed 's/^/- /'
+        else
+            echo "- Nenhuma lição registrada."
+        fi
     else
-        echo "- Nenhuma lição registrada nesta sessão."
+        echo "- Nenhuma lição registrada."
     fi
     echo ""
 
@@ -573,7 +585,12 @@ cmd_snapshot() {
     if [ -f "$unified_state_file" ]; then
         echo "## ⚡ Estado Técnico Unificado (Session State)"
         echo "\`\`\`json"
-        cat "$unified_state_file"
+        if command -v jq >/dev/null 2>&1; then
+            # Otimizacao de Tokens: Mantem apenas os ultimos 5 checkpoints de rollback
+            jq '.rollback_stack |= (if length > 5 then .[-5:] else . end)' "$unified_state_file"
+        else
+            cat "$unified_state_file"
+        fi
         echo "\`\`\`"
         echo ""
     fi
@@ -1692,13 +1709,13 @@ cmd_suggest() {
         echo ""
     fi
 
-    # Licoes recentes
-    local lessons_dir="$install_path/.aidev/state/lessons"
-    if [ -d "$lessons_dir" ] && [ "$(ls -A "$lessons_dir" 2>/dev/null)" ]; then
-        print_section "Licoes Aprendidas Recentes"
-        ls -t "$lessons_dir" 2>/dev/null | head -n 3 | while read -r lesson; do
-            echo "  - $lesson"
-        done
+    # Licoes recentes (KB)
+    local kb_dir="$install_path/.aidev/memory/kb"
+    if [ -d "$kb_dir" ] && [ "$(ls -A "$kb_dir" 2>/dev/null)" ]; then
+        local count=$(ls "$kb_dir"/*.md 2>/dev/null | wc -l)
+        print_section "Base de Conhecimento (KB)"
+        echo "  📚 $count licoes disponiveis."
+        echo "     Use 'aidev lessons' para consultar."
         echo ""
     fi
 
@@ -1813,7 +1830,133 @@ cmd_config() {
     esac
 }
 
+# Subcomando: lessons
+# Gerencia e consulta base de conhecimento (KB)
+cmd_lessons() {
+    local action="${2:-list}"
+    local query="${3:-}"
+    
+    # Suporte a flags
+    local search_mode=false
+    local read_mode=false
+    local query_term=""
+    
+    # Parse simples de argumentos
+    local args=("$@")
+    for ((i=1; i<${#args[@]}+1; i++)); do
+        local arg="${args[$i]}"
+        case "$arg" in
+            --search|-s)
+                search_mode=true
+                query_term="${args[$((i+1))]}"
+                ((i++))
+                ;;
+            --read|-r)
+                read_mode=true
+                query_term="${args[$((i+1))]}"
+                ((i++))
+                ;;
+        esac
+    done
 
+    # Se usou argumento posicional sem flag
+    if [ "$search_mode" = false ] && [ "$read_mode" = false ]; then
+        if [ "$action" = "search" ]; then
+            search_mode=true
+            query_term="$query"
+        elif [ "$action" = "read" ]; then
+            read_mode=true
+            query_term="$query"
+        fi
+    fi
+
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    local kb_dir="$install_path/.aidev/memory/kb"
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        exit 1
+    fi
+
+    print_header "AI Dev Knowledge Base (KB)"
+    
+    if [ ! -d "$kb_dir" ]; then
+        print_warning "Diretorio de conhecimento nao encontrado: .aidev/memory/kb/"
+        ensure_dir "$kb_dir"
+        print_success "Diretorio criado."
+    fi
+
+    # Modo Leitura
+    if [ "$read_mode" = true ]; then
+        if [ -z "$query_term" ]; then
+            print_error "Especifique o nome ou ID do arquivo para ler."
+            exit 1
+        fi
+        
+        # Tenta achar arquivo exato ou parcial
+        local target_file=""
+        if [ -f "$kb_dir/$query_term" ]; then
+            target_file="$kb_dir/$query_term"
+        elif [ -f "$kb_dir/$query_term.md" ]; then
+            target_file="$kb_dir/$query_term.md"
+        else
+            # Busca por padrao
+            target_file=$(ls "$kb_dir"/*"$query_term"* 2>/dev/null | head -n 1)
+        fi
+        
+        if [ -n "$target_file" ] && [ -f "$target_file" ]; then
+            print_section "Licao: $(basename "$target_file")"
+            echo ""
+            cat "$target_file"
+            echo ""
+        else
+            print_error "Licao nao encontrada: $query_term"
+        fi
+        return
+    fi
+
+    # Modo Busca/Listagem
+    local count=0
+    local files=()
+    
+    # Coleta arquivos
+    if [ "$search_mode" = true ]; then
+        print_info "Buscando por: '$query_term'"
+        # Busca no nome ou conteudo
+        if [ -n "$query_term" ]; then
+            files=($(grep -l "$query_term" "$kb_dir"/*.md 2>/dev/null))
+        fi
+    else
+        # Lista todos, mais recentes primeiro
+        files=($(ls -t "$kb_dir"/*.md 2>/dev/null))
+    fi
+
+    echo ""
+    if [ ${#files[@]} -gt 0 ]; then
+        print_section "Licoes Encontradas (${#files[@]})"
+        for file in "${files[@]}"; do
+            local filename=$(basename "$file")
+            local title=$(head -n 1 "$file" | sed 's/^# //')
+            if [ -z "$title" ]; then title="(Sem titulo)"; fi
+            
+            echo "  📄 $filename"
+            echo "     └─ $title"
+            ((count++)) || true
+        done
+        
+        echo ""
+        print_info "Para ler uma licao: aidev lessons --read <nome-arquivo>"
+    else
+        if [ "$search_mode" = true ]; then
+            print_warning "Nenhuma licao encontrada para '$query_term'."
+        else
+            print_info "Nenhuma licao registrada ainda."
+            echo "Dica: Use a skill 'learned-lesson' apos corrigir um bug."
+        fi
+    fi
+    echo ""
+}
 
 # Subcomando: config language
 cmd_config_language() {
@@ -1916,7 +2059,9 @@ main() {
         suggest)
             cmd_suggest "$@"
             ;;
-
+        lessons)
+            cmd_lessons "$@"
+            ;;
         refactor)
             cmd_refactor "$@"
             ;;

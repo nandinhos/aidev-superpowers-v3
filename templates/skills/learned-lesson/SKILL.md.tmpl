@@ -290,9 +290,10 @@ skill_complete "learned-lesson"
 Para consultar licoes em sessoes futuras:
 
 ```bash
-# Busca local
-ls .aidev/memory/kb/
-grep -r "palavra-chave" .aidev/memory/kb/
+# Listar e buscar (CLI Otimizado)
+aidev lessons
+aidev lessons --search "termo"
+aidev lessons --read "nome-arquivo"
 
 # Busca global (basic-memory)
 mcp__basic-memory__search_notes query="palavra-chave"

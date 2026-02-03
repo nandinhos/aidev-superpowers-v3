@@ -70,6 +70,36 @@ priority: 10            # Opcional: prioridade (maior = mais importante)
 [O que evitar ao usar esta skill]
 ```
 
+## 💾 Persistência de Conhecimento (KB)
+
+Se sua skill gera conhecimento reutilizável (lições, decisões, análises), salve-os na **Base de Conhecimento (KB)** do projeto.
+
+- **Caminho Padrão:** `.aidev/memory/kb/`
+- **Formato:** Markdown (`.md`) com metadados
+- **Nome:** `YYYY-MM-DD-titulo-descritivo.md`
+
+### Por que usar a KB?
+O Orquestrador lê automaticamente esta pasta para fornecer contexto em futuras sessões, permitindo que a IA "aprenda" com o tempo.
+
+Exemplo de artefato:
+```markdown
+# Decisão: Uso de Redis para Cache
+
+**Data**: 2026-02-03
+**Tags**: arquitetura, performance
+
+## Contexto
+Precisávamos reduzir a latência da API de produtos.
+
+## Decisão
+Implementamos cache layer com Redis (TTL 60min).
+
+## Resultado
+Latência caiu de 200ms para 15ms.
+```
+
+---
+
 ## 🎯 Exemplos Práticos
 
 ### Skill: API Design

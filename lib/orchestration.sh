@@ -662,7 +662,7 @@ orchestrator_select_skill() {
 # Uso: lessons=$(orchestrator_get_lessons)
 orchestrator_get_lessons() {
     local install_path="${CLI_INSTALL_PATH:-.}"
-    local lessons_dir="$install_path/.aidev/state/lessons"
+    local lessons_dir="$install_path/.aidev/memory/kb"
     
     if [ ! -d "$lessons_dir" ]; then
         echo "[]"

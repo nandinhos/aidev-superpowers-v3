@@ -2006,6 +2006,204 @@ cmd_config_language() {
     print_success "$(_ "config_lang_updated" "Idioma atualizado para: ") $lang"
 }
 
+# Subcomando: release
+# Gerencia ciclo de release e versionamento
+cmd_release() {
+    # O primeiro argumento ($1) é 'release'.
+    # O segundo ($2) pode ser o tipo de bump (major, minor, patch).
+    local bump_type="patch"
+    
+    # Verifica se o segundo argumento é um tipo de bump conhecido
+    if [[ "$2" == "major" || "$2" == "minor" || "$2" == "patch" || "$2" == "current" ]]; then
+        bump_type="$2"
+        shift 2 # Consome 'release' e o tipo
+    else
+        shift 1 # Consome apenas 'release'
+    fi
+
+    parse_args "$@"
+    
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+    
+    # Carrega módulos necessários
+    load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
+    load_module "orchestration" 2>/dev/null || source "$AIDEV_LIB_DIR/orchestration.sh"
+    
+    local project_name=$(detect_project_name "$install_path")
+    local stack=$(detect_stack "$install_path")
+    local intent="release"
+    local skill="release-management"
+    
+    print_header "AI Dev - Release Manager"
+    echo ""
+    
+    # Define Agentes baseados no intent (Orquestrador já sabe lidar com isso)
+    local agents=$(orchestrator_select_agents "$intent")
+    
+    # Configura fluxo no estado
+    export CLI_INSTALL_PATH="$install_path"
+    state_init
+    state_write "active_intent" "$intent"
+    state_write "intent_description" "Prepare release ($bump_type) version bump"
+    state_activate_skill "$skill"
+    
+    print_section "Fluxo Configurado"
+    echo "  Intent:  $intent"
+    echo "  Tipo:    $bump_type"
+    echo "  Skill:   $skill"
+    echo "  Agentes: $agents"
+    echo ""
+    
+    print_section "Prompt de Ativacao (copie e cole na IA)"
+    echo "----------------------------------------"
+    cat << EOF
+MODO AGENTE - Release Manager
+
+Contexto:
+- Projeto: $project_name
+- Stack: $stack
+- Intent: $intent
+- Tipo de Bump: $bump_type
+
+Instrucoes:
+1. Leia o arquivo .aidev/agents/orchestrator.md
+2. Ative o agente 'release-manager' e a skill '$skill'
+3. Execute o checklist de release:
+   - Identifique arquivos de versao
+   - Verifique integridade (testes, git status)
+   - Atualize versoes e changelog
+   - Gere comamndos de git tag
+
+Confirme que entendeu e inicie a Verificacao de Integridade (Pre-check).
+EOF
+    echo "----------------------------------------"
+    echo ""
+    
+    print_success "Modo Release Manager configurado!"
+}
+
+# Subcomando: self-upgrade
+# Atualiza a instalacao global do aidev CLI
+cmd_self_upgrade() {
+    shift || true
+    parse_args "$@"
+
+    print_header "AI Dev - Self Upgrade"
+
+    # Detecta diretorio de instalacao global
+    local global_install=""
+    local source_dir=""
+
+    # Verifica symlink do aidev
+    local aidev_path
+    aidev_path=$(which aidev 2>/dev/null || echo "")
+
+    if [ -z "$aidev_path" ]; then
+        print_error "aidev nao encontrado no PATH"
+        exit 1
+    fi
+
+    # Resolve symlink
+    if [ -L "$aidev_path" ]; then
+        local real_path
+        real_path=$(readlink -f "$aidev_path")
+        global_install=$(dirname "$(dirname "$real_path")")
+    else
+        global_install=$(dirname "$(dirname "$aidev_path")")
+    fi
+
+    print_info "Instalacao global: $global_install"
+
+    # Versao atual
+    local current_version
+    current_version=$(grep "AIDEV_VERSION" "$global_install/lib/core.sh" 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "desconhecida")
+    print_info "Versao atual: $current_version"
+
+    # Detecta source (projeto atual ou diretorio padrao)
+    if [ -f "$AIDEV_ROOT_DIR/lib/core.sh" ] && [ "$AIDEV_ROOT_DIR" != "$global_install" ]; then
+        source_dir="$AIDEV_ROOT_DIR"
+    elif [ -d "$HOME/projects/aidev-superpowers-v3-1" ]; then
+        source_dir="$HOME/projects/aidev-superpowers-v3-1"
+    elif [ -d "$HOME/aidev-superpowers" ]; then
+        source_dir="$HOME/aidev-superpowers"
+    fi
+
+    if [ -z "$source_dir" ] || [ ! -d "$source_dir" ]; then
+        print_error "Diretorio source nao encontrado"
+        print_info "Opcoes:"
+        echo "  1. Clone o repositorio: git clone https://github.com/nandinhos/aidev-superpowers-v3.git"
+        echo "  2. Execute de dentro do diretorio do projeto"
+        exit 1
+    fi
+
+    # Versao do source
+    local source_version
+    source_version=$(grep "AIDEV_VERSION" "$source_dir/lib/core.sh" 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "desconhecida")
+    print_info "Versao no source: $source_version"
+    print_info "Source: $source_dir"
+    echo ""
+
+    # Verifica se precisa atualizar
+    if [ "$current_version" = "$source_version" ]; then
+        print_success "Ja esta na versao mais recente ($current_version)"
+        exit 0
+    fi
+
+    print_step "Atualizando $current_version -> $source_version"
+    echo ""
+
+    # Dry run check
+    if [ "$AIDEV_DRY_RUN" = true ]; then
+        print_info "[DRY-RUN] Arquivos que seriam atualizados:"
+        echo "  - bin/aidev"
+        echo "  - lib/*.sh"
+        echo "  - templates/"
+        exit 0
+    fi
+
+    # Executa sync
+    print_step "Sincronizando bin/..."
+    rsync -a --delete "$source_dir/bin/" "$global_install/bin/" 2>/dev/null || {
+        print_error "Falha ao sincronizar bin/"
+        exit 1
+    }
+
+    print_step "Sincronizando lib/..."
+    rsync -a --delete "$source_dir/lib/" "$global_install/lib/" 2>/dev/null || {
+        print_error "Falha ao sincronizar lib/"
+        exit 1
+    }
+
+    print_step "Sincronizando templates/..."
+    rsync -a --delete "$source_dir/templates/" "$global_install/templates/" 2>/dev/null || {
+        print_error "Falha ao sincronizar templates/"
+        exit 1
+    }
+
+    # Sincroniza tests se existir
+    if [ -d "$source_dir/tests" ]; then
+        print_step "Sincronizando tests/..."
+        rsync -a --delete "$source_dir/tests/" "$global_install/tests/" 2>/dev/null || true
+    fi
+
+    echo ""
+    print_success "Atualizado com sucesso: $current_version -> $source_version"
+
+    # Verifica a nova versao
+    local new_version
+    new_version=$("$global_install/bin/aidev" --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+' || echo "")
+    if [ -n "$new_version" ]; then
+        print_info "Verificado: aidev v$new_version"
+    fi
+}
+
 main() {
     local command="${1:-help}"
     # shift || true # Deixa o comando original para o parse_args identificar
@@ -2064,6 +2262,12 @@ main() {
             ;;
         refactor)
             cmd_refactor "$@"
+            ;;
+        release)
+            cmd_release "$@"
+            ;;
+        self-upgrade)
+            cmd_self_upgrade "$@"
             ;;
         -h|--help|help)
             show_help

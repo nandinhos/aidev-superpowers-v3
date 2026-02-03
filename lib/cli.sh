@@ -46,82 +46,82 @@ sync_session_state() {
 # Exibe ajuda completa do comando aidev
 # Uso: show_help
 show_help() {
-    cat << EOF
-${CYAN:-}AI Dev Superpowers${NC:-} v${AIDEV_VERSION:-3.3.0}
-${YELLOW:-}Sistema Unificado de Governança de IA para Desenvolvimento${NC:-}
+    # Definição local de cores (prefixo C_ para evitar conflito com readonly globals)
+    local C_CYAN="\033[0;36m"
+    local C_YELLOW="\033[1;33m"
+    local C_GREEN="\033[0;32m"
+    local C_WHITE="\033[1;37m"
+    local C_GREY="\033[0;90m"
+    local C_NC="\033[0m"
 
-${YELLOW:-}Uso:${NC:-}
-  aidev <comando> [opções]
+    # Desabilita cores se não for terminal interativo
+    if [ ! -t 1 ]; then
+        C_CYAN=""; C_YELLOW=""; C_GREEN=""; C_WHITE=""; C_GREY=""; C_NC=""
+    fi
 
-${YELLOW:-}Comandos Principais:${NC:-}
-  init              Inicializa AI Dev em um projeto
-  upgrade           Atualiza instalacao existente
-  status            Mostra status da instalacao
-  doctor            Diagnostico da instalacao
+    # Helper para imprimir linhas da tabela
+    print_cmd() {
+        printf "  ${C_GREEN}%-18s${C_NC} %s\n" "$1" "$2"
+    }
 
-${YELLOW:-}Comandos Intuitivos (v3.2):${NC:-}
-  new-feature       Inicia fluxo de nova feature (brainstorming -> TDD)
-  fix-bug           Inicia fluxo de correcao de bug (debugging sistematico)
-  refactor          Inicia fluxo de refatoracao (analyze -> plan -> TDD)
-  suggest           Analisa projeto e sugere proximo passo
+    echo -e "${C_CYAN}╔════════════════════════════════════════════════════════════════╗${C_NC}"
+    echo -e "${C_CYAN}║${C_NC}  ${C_YELLOW}AI Dev Superpowers${C_NC} v${AIDEV_VERSION:-3.3.0}${C_CYAN}                               ║${C_NC}"
+    echo -e "${C_CYAN}╚════════════════════════════════════════════════════════════════╝${C_NC}"
+    echo -e "${C_WHITE}Sistema Unificado de Governança de IA para Desenvolvimento${C_NC}"
+    echo ""
 
-${YELLOW:-}Modo Agente:${NC:-}
-  agent             Gera prompt de ativacao do modo agente
-  start             Mostra instrucoes de ativacao do modo agente
-  snapshot          Gera context passport para migracao de modelo
+    echo -e "${C_YELLOW}Uso:${C_NC}"
+    echo -e "  aidev <comando> [opções]"
+    echo ""
 
-${YELLOW:-}Customizacao:${NC:-}
-  add-skill         Adiciona skill customizada
-  add-rule          Adiciona regra customizada
-  add-agent         Adiciona agente customizado
+    echo -e "${C_YELLOW}Comandos Principais:${C_NC}"
+    print_cmd "init" "Inicializa AI Dev em um projeto"
+    print_cmd "upgrade" "Atualiza instalação existente (projeto)"
+    print_cmd "self-upgrade" "Atualiza instalação global do CLI"
+    print_cmd "status" "Mostra status da instalação"
+    print_cmd "doctor" "Diagnóstico da instalação"
+    print_cmd "config" "Configurações (idioma, etc)"
+    echo ""
 
-${YELLOW:-}Opções Globais:${NC:-}
-  --install-in <path>   Diretório alvo (default: .)
-  --force               Sobrescreve arquivos existentes
-  --dry-run             Mostra o que seria criado sem executar
-  -h, --help            Mostra esta ajuda
-  -v, --version         Mostra versão
+    echo -e "${C_YELLOW}Fluxo de Trabalho (Agente):${C_NC}"
+    print_cmd "new-feature" "Inicia fluxo de nova feature (brainstorming → TDD)"
+    print_cmd "fix-bug" "Inicia fluxo de correção de bug (debugging sistemático)"
+    print_cmd "refactor" "Inicia fluxo de refatoração (análise → plano → TDD)"
+    print_cmd "suggest" "Analisa projeto e sugere próximo passo inteligente"
+    echo ""
 
-${YELLOW:-}Opções do 'init':${NC:-}
-  --mode <modo>         Modo de operação: new, refactor, minimal, full
-  --stack <stack>       Stack: laravel, filament, livewire, node, react, nextjs, python, generic
-  --detect              Auto-detecta stack (padrão)
-  --platform <plat>     Plataforma: antigravity, claude-code, gemini, opencode, codex, generic
-  --prd <path>          Caminho para PRD (obrigatório em --mode new)
-  --no-mcp              Não configura MCP Engine
-  --no-hooks            Não configura hooks automáticos
-  --language <lang>     Idioma: pt-BR, en (default: pt-BR)
+    echo -e "${C_YELLOW}Memória e Conhecimento:${C_NC}"
+    print_cmd "lessons" "Gerencia base de conhecimento (KB)"
+    print_cmd "snapshot" "Gera 'Context Passport' para migração entre IAs"
+    print_cmd "metrics" "Visualiza telemetria e uso de skills"
+    echo ""
 
-${YELLOW:-}Modos de Operação:${NC:-}
-  new       Sistema novo baseado em PRD (requer --prd)
-  refactor  Sistema existente para refatoração
-  minimal   Estrutura mínima para exploração
-  full      Instalação completa (padrão)
+    echo -e "${C_YELLOW}Modo Agente (LLM):${C_NC}"
+    print_cmd "agent" "Gera prompt de ativação para copiar/colar"
+    print_cmd "start" "Inicia sessão interativa com instruções"
+    echo ""
 
-${YELLOW:-}Stacks Suportadas:${NC:-}
-  laravel, filament, livewire    PHP + Laravel
-  node, react, nextjs, vue       JavaScript/TypeScript
-  python, django, fastapi, flask Python
-  ruby, rails                    Ruby
-  go, rust                       Sistemas
-  generic                        Regras base apenas
+    echo -e "${C_YELLOW}Customização:${C_NC}"
+    print_cmd "add-skill" "Adiciona skill customizada"
+    print_cmd "add-rule" "Adiciona regra customizada"
+    print_cmd "add-agent" "Adiciona agente customizado"
+    echo ""
 
-${YELLOW:-}Exemplos:${NC:-}
-  # Inicializacao
-  aidev init --mode new --stack laravel --prd docs/prd.md
-  aidev init --mode refactor --detect
-  aidev init --detect
+    echo -e "${C_YELLOW}Opções Globais:${C_NC}"
+    printf "  ${C_CYAN}%-20s${C_NC} %s\n" "--install-in <path>" "Diretório alvo (default: .)"
+    printf "  ${C_CYAN}%-20s${C_NC} %s\n" "--force" "Sobrescreve arquivos existentes"
+    printf "  ${C_CYAN}%-20s${C_NC} %s\n" "--dry-run" "Simula execução sem alterações"
+    printf "  ${C_CYAN}%-20s${C_NC} %s\n" "-h, --help" "Mostra esta ajuda"
+    printf "  ${C_CYAN}%-20s${C_NC} %s\n" "-v, --version" "Mostra versão"
+    echo ""
 
-  # Comandos intuitivos (v3.2)
-  aidev new-feature "Adicionar autenticacao com JWT"
-  aidev fix-bug "Login falha quando senha tem caracteres especiais"
-  aidev refactor "Extrair logica de validacao para service"
-  aidev suggest
-
-${YELLOW:-}Documentação:${NC:-}
-  https://github.com/nandinhos/aidev-superpowers-v3
-
-EOF
+    echo -e "${C_GREY}Para ajuda específica de 'init':${C_NC}"
+    echo "  aidev init --help"
+    echo ""
+    
+    echo -e "${C_YELLOW}Documentação:${C_NC}"
+    echo "  https://github.com/nandinhos/aidev-superpowers-v3"
+    echo ""
 }
 
 # Exibe versão

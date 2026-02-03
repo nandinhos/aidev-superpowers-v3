@@ -427,19 +427,35 @@ cmd_status() {
     local stack=$(detect_stack "$install_path")
     local platform=$(detect_platform)
     local project_name=$(detect_project_name "$install_path")
+    local runtime=$(detect_runtime)
     
     print_section "Contexto"
     echo "  Projeto:    $project_name"
     echo "  Stack:      $stack"
     echo "  Plataforma: $platform"
+    echo "  Runtime:    $runtime"
     
-    # Progresso da Sessão (usa variáveis globais sincronizadas em sync_session_state)
-    # Exibe dashboard
-    print_section "Progresso"
-    echo "  Fase:       ${current_fase:-1}"
-    echo "  Sprint:     ${current_sprint:-0}"
-    echo "  Tarefa:     ${current_task:-Pendente}"
-    echo "  Última Ativ: ${initialized_at:-N/A}"
+    # Progresso da Sessão (Lê do estado unificado)
+    local unified_state_file="$install_path/.aidev/state/unified.json"
+    local active_intent="N/A"
+    local intent_desc="N/A"
+    local active_skill="N/A"
+    local last_checkpoint="N/A"
+
+    if [ -f "$unified_state_file" ] && command -v jq >/dev/null 2>&1; then
+        active_intent=$(jq -r '.active_intent // "N/A"' "$unified_state_file")
+        intent_desc=$(jq -r '.intent_description // "N/A"' "$unified_state_file")
+        active_skill=$(jq -r '.active_skill // "N/A"' "$unified_state_file")
+        last_checkpoint=$(jq -r '.rollback_stack[0].description // "N/A"' "$unified_state_file")
+    fi
+
+    # Exibe dashboard dinâmico
+    print_section "Progresso (Em Tempo Real)"
+    echo "  Intent:     $active_intent"
+    echo "  Descrição:  $intent_desc"
+    echo "  Skill:      $active_skill"
+    echo "  Checkout:   $last_checkpoint"
+    echo "  Fase/Sprint: ${current_fase:-3} / ${current_sprint:-4}"
     
     # Histórico Git Recente
     if [ -d "$install_path/.git" ]; then
@@ -1370,6 +1386,65 @@ setup_secrets() {
 # Novos Comandos Intuitivos (v3.2)
 # ============================================================================
 
+# Subcomando: mcp
+# Gerencia servidores MCP
+cmd_mcp() {
+    local subcommand="${2:-}"
+    shift 2 2>/dev/null || true
+    
+    # NÃO chamamos parse_args aqui porque ele falha com flags específicas do subcomando (ex: --command)
+    # Assumimos path atual se não especificado (limitação: --install-in não funciona aqui por enquanto)
+    local install_path="."
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev não está instalado neste diretório"
+        exit 1
+    fi
+    
+    # Carrega módulo MCP
+    load_module "mcp"
+    
+    case "$subcommand" in
+        list|"")
+            mcp_list_servers "$install_path"
+            ;;
+        add)
+            local name=""
+            local command=""
+            local args=""
+            
+            # Parse args manually for this subcommand
+            while [[ $# -gt 0 ]]; do
+                case "$1" in
+                    --command) command="$2"; shift 2 ;;
+                    --args) args="$2"; shift 2 ;;
+                    *) 
+                        if [ -z "$name" ]; then 
+                            name="$1"
+                            shift
+                        else
+                            # Ignora outros argumentos desconhecidos para evitar erro
+                            shift 
+                        fi 
+                        ;;
+                esac
+            done
+            
+            mcp_add_server "$name" "$command" "$args" "$install_path"
+            ;;
+        remove|rm)
+            local name="$1"
+            mcp_remove_server "$name" "$install_path"
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcommand"
+            echo "Uso: aidev mcp [list|add|remove]"
+            exit 1
+            ;;
+    esac
+}
+
 # Subcomando: new-feature
 # Inicia fluxo completo de nova feature: brainstorming -> planning -> TDD
 cmd_new_feature() {
@@ -2214,6 +2289,9 @@ main() {
             ;;
         config)
             cmd_config "$@"
+            ;;
+        mcp)
+            cmd_mcp "$@"
             ;;
         upgrade)
             cmd_upgrade "$@"

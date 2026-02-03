@@ -374,24 +374,75 @@ mcp_status() {
 }
 
 # Adiciona servidor ao MCP
+# Adiciona servidor ao MCP
 mcp_add_server() {
     local server_name="$1"
-    local project_path="${2:-.}"
+    local command="$2"
+    local args="$3"
+    local project_path="${4:-.}"
     
-    if [ -z "$server_name" ]; then
-        print_error "Nome do servidor é obrigatório"
+    if [ -z "$server_name" ] || [ -z "$command" ]; then
+        print_error "Nome do servidor e comando são obrigatórios"
+        print_info "Uso: aidev mcp add <nome> --command <cmd> [--args <args>]"
         return 1
     fi
     
-    if [ ! -f "$project_path/.mcp.json" ]; then
-        print_error ".mcp.json não encontrado"
-        return 1
+    local mcp_file="$project_path/.mcp.json"
+    
+    if [ ! -f "$mcp_file" ]; then
+        print_warning ".mcp.json não encontrado. Criando novo..."
+        echo '{ "mcpServers": {} }' > "$mcp_file"
     fi
     
     print_step "Adicionando servidor '$server_name'..."
     
-    # TODO: Implementar adição de servidor ao JSON
-    print_info "Edite .mcp.json manualmente para adicionar servidores customizados"
+    if command -v jq >/dev/null 2>&1; then
+        local tmp_file
+        tmp_file=$(mktemp)
+        
+        # Constrói o objeto do servidor
+        # Tratamento básico de args como array JSON se possível, ou string simples splitada
+        # Aqui assumimos que args vem como string única que será quebrada por espaços pelo jq se necessário
+        # Mas para segurança, vamos tentar passar como array se o usuário fornecer JSON, senão string split
+        
+        local jq_script
+        if [ -n "$args" ]; then
+            # Se args parecer um array JSON (começa com [), usa raw, senão split por espaço
+            if [[ "$args" == \[* ]]; then
+                 jq --arg name "$server_name" \
+                    --arg cmd "$command" \
+                    --argjson args_arr "$args" \
+                    '.mcpServers[$name] = { "command": $cmd, "args": $args_arr }' \
+                    "$mcp_file" > "$tmp_file"
+            else
+                 # Split por espaço é arriscado para args com espaço, mas é o baseline bash
+                 # Melhor abordagem: usuário passa args como string única e nós transformamos em array de 1 elemento ou split
+                 # Vamos usar split(" ") simples para compatibilidade shell básica
+                 jq --arg name "$server_name" \
+                    --arg cmd "$command" \
+                    --arg args_str "$args" \
+                    '.mcpServers[$name] = { "command": $cmd, "args": ($args_str | split(" ")) }' \
+                    "$mcp_file" > "$tmp_file"
+            fi
+        else
+            jq --arg name "$server_name" \
+               --arg cmd "$command" \
+               '.mcpServers[$name] = { "command": $cmd, "args": [] }' \
+               "$mcp_file" > "$tmp_file"
+        fi
+        
+        if [ $? -eq 0 ]; then
+            mv "$tmp_file" "$mcp_file"
+            print_success "Servidor '$server_name' adicionado com sucesso!"
+        else
+            print_error "Falha ao atualizar .mcp.json"
+            rm "$tmp_file"
+            return 1
+        fi
+    else
+        print_error "jq não encontrado. Instale jq para gerenciar MCP."
+        return 1
+    fi
 }
 
 # Remove servidor do MCP
@@ -404,8 +455,60 @@ mcp_remove_server() {
         return 1
     fi
     
+    local mcp_file="$project_path/.mcp.json"
+    
+    if [ ! -f "$mcp_file" ]; then
+        print_error ".mcp.json não encontrado"
+        return 1
+    fi
+    
     print_step "Removendo servidor '$server_name'..."
     
-    # TODO: Implementar remoção de servidor do JSON
-    print_info "Edite .mcp.json manualmente para remover servidores"
+    if command -v jq >/dev/null 2>&1; then
+        local tmp_file
+        tmp_file=$(mktemp)
+        
+        jq --arg name "$server_name" 'del(.mcpServers[$name])' "$mcp_file" > "$tmp_file"
+        
+        if [ $? -eq 0 ]; then
+            mv "$tmp_file" "$mcp_file"
+            print_success "Servidor '$server_name' removido."
+        else
+            print_error "Falha ao atualizar .mcp.json"
+            rm "$tmp_file"
+            return 1
+        fi
+    else
+        print_error "jq não encontrado."
+        return 1
+    fi
+}
+
+# Lista servidores configurados
+mcp_list_servers() {
+    local project_path="${1:-.}"
+    local mcp_file="$project_path/.mcp.json"
+    
+    if [ ! -f "$mcp_file" ]; then
+        print_warning ".mcp.json não encontrado"
+        return 1
+    fi
+    
+    print_section "Servidores MCP Configurados"
+    
+    if command -v jq >/dev/null 2>&1; then
+        # Extrai chaves e formata
+        local count
+        count=$(jq '.mcpServers | length' "$mcp_file")
+        
+        if [ "$count" -gt 0 ]; then
+            jq -r '.mcpServers | to_entries[] | "• \(.key) -> \(.value.command) \(.value.args | join(" "))"' "$mcp_file"
+            echo ""
+            echo "Total: $count servidores"
+        else
+            echo "Nenhum servidor configurado."
+        fi
+    else
+        grep "mcpServers" -A 20 "$mcp_file"
+    fi
 }

@@ -8,14 +8,17 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ## [3.3.0] - 2026-02-03
 
 ### 🚀 Novidades
+- **Unified Knowledge Base (KB)**: Nova arquitetura de memória em `.aidev/memory/kb/`.
+- **Lessons Command**: Comando `aidev lessons` para listar, buscar e ler lições aprendidas de forma interativa.
+- **Smart Snapshot V2**: `aidev snapshot` agora inclui o estado técnico unificado (`unified.json`) com limite de 5 rollbacks para trocas de LLM sem perda de contexto.
 - **Internationalization (i18n)**: Suporte completo a Inglês (en) e Português (pt-BR).
 - **Config Command**: `aidev config language <lang>` para troca dinâmica de idioma.
 - **Localized Templates**: Agentes e Regras organizados em `templates/{en,pt}`.
-- **String Externalization**: Cabeçalhos e mensagens chave do CLI agora são traduzidos.
 
 ### ⚡ Melhorias
+- **Orchestrator Context**: Otimização na injeção de lições para economizar tokens.
 - **Auto-Load Environment**: `bin/aidev` carrega automaticamente `.env` para persistência de config.
-- **Reinstall**: Troca de idioma reinstala automaticamente agentes e regras.
+- **Robustez CLI**: Melhoria na contagem de arquivos e tratamento de erros de shell no modo `set -e`.
 
 ## [3.2.0] - 2026-02-03
 

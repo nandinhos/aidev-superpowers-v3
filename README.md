@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-3.3.0-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-122%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -58,8 +58,11 @@ A nova skill `systematic-debugging` orquestrada pelo agente não apenas identifi
 ### Knowledge Base Engine
 Memória semântica compartilhada. O que o *Backend Agent* aprende sobre um bug de banco de dados, o *Architect Agent* sabe ao planejar a próxima feature.
 
-### Context Snapshotter
-Use `aidev snapshot` para gerar um "Passaporte de Contexto" portátil e continuar seu desenvolvimento em qualquer LLM.
+### Context Snapshotter V2
+Use `aidev snapshot` para gerar um "Passaporte de Contexto" portátil. Agora inclui o **Unified State**, permitindo que a próxima LLM saiba exatamente em qual passo de qual skill você parou.
+
+### Knowledge Base Interativa
+Novo comando `aidev lessons` permite consultar todo o conhecimento acumulado do projeto diretamente pelo terminal, com busca semântica por tags e leitura rápida.
 
 ## O que e instalado?
 

@@ -612,10 +612,11 @@ cmd_snapshot() {
     fi
 
     echo "## 🚀 Instruções para o Próximo Modelo"
-    echo "1. Leia o arquivo \`task.md\` e \`implementation_plan.md\` se existirem."
+    echo "1. Analise o estado atual, mas **AGUARDE** o comando do usuário."
     echo "2. Carregue o **Estado Técnico Unificado** acima na sua memória de trabalho."
     echo "3. O projeto usa o framework AI Dev Superpowers V3."
-    echo "4. Continue a partir da tarefa: **$task**."
+    echo "4. O último status conhecido foi: **$task**."
+    echo "5. Não execute nenhuma ação autônoma até que o usuário solicite."
     echo ""
     echo "------------------------------------------------"
     echo "--- SNAPSHOT END ---"
@@ -849,15 +850,20 @@ cmd_metrics() {
 # Subcomando: doctor
 # Diagnóstico da instalação e ambiente com sugestões de reparo
 cmd_doctor() {
-    parse_args "$@"
-    
     local fix_mode=false
+    local filtered_args=()
+    
     for arg in "$@"; do
         if [ "$arg" == "--fix" ]; then
             fix_mode=true
+        else
+            filtered_args+=("$arg")
         fi
     done
 
+    # Parse remaining args
+    parse_args "${filtered_args[@]}"
+    
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
     
@@ -1101,7 +1107,6 @@ create_base_structure() {
     ensure_dir "$path/.aidev/skills"
     ensure_dir "$path/.aidev/rules"
     ensure_dir "$path/.aidev/state"
-    ensure_dir "$path/.aidev/state/lessons"
     ensure_dir "$path/.aidev/memory/kb"
     ensure_dir "$path/.aidev/analysis"
 }

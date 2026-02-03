@@ -16,6 +16,8 @@ DETECTED_LANGUAGE=""
 DETECTED_PROJECT_NAME=""
 DETECTED_MATURITY=""
 DETECTED_STYLE=""
+DETECTED_FRAMEWORK_VERSION=""
+DETECTED_TECH_DEBT=""
 
 # ============================================================================
 # Detecção de Stack
@@ -334,8 +336,13 @@ detect_project_context() {
     DETECTED_MATURITY=$(detect_maturity "$path")
     DETECTED_STYLE=$(detect_style "$path")
     
+    DETECTED_FRAMEWORK_VERSION=$(detect_framework_version "$path")
+    DETECTED_TECH_DEBT=$(detect_technical_debt "$path")
+    
     print_debug "Stack detectada: $DETECTED_STACK"
+    print_debug "Versao Framework: $DETECTED_FRAMEWORK_VERSION"
     print_debug "Maturidade: $DETECTED_MATURITY"
+    print_debug "Divida Tecnica: $DETECTED_TECH_DEBT"
     print_debug "Estilo: $DETECTED_STYLE"
     print_debug "Plataforma detectada: $DETECTED_PLATFORM"
     print_debug "Linguagem detectada: $DETECTED_LANGUAGE"
@@ -438,4 +445,66 @@ detect_style() {
     
     # Remove vírgula final
     echo "${styles%,}"
+}
+
+# ============================================================================
+# Smart Context Avançado
+# ============================================================================
+
+# Detecta versão do framework principal
+# Uso: detect_framework_version "/path/to/project"
+detect_framework_version() {
+    local path="${1:-.}"
+    local version=""
+    
+    # Laravel
+    if [ -f "$path/composer.json" ]; then
+        version=$(grep '"laravel/framework":' "$path/composer.json" 2>/dev/null | head -1 | grep -o '[0-9]\+\.[0-9]\+' | head -1)
+        if [ -n "$version" ]; then
+            echo "Laravel $version"
+            return
+        fi
+    fi
+    
+    # Next.js / React
+    if [ -f "$path/package.json" ]; then
+        if grep -q '"next":' "$path/package.json" 2>/dev/null; then
+            version=$(grep '"next":' "$path/package.json" 2>/dev/null | head -1 | grep -o '[0-9]\+\.[0-9]\+' | head -1)
+            [ -n "$version" ] && echo "Next.js $version" && return
+        fi
+        
+        if grep -q '"react":' "$path/package.json" 2>/dev/null; then
+            version=$(grep '"react":' "$path/package.json" 2>/dev/null | head -1 | grep -o '[0-9]\+\.[0-9]\+' | head -1)
+            [ -n "$version" ] && echo "React $version" && return
+        fi
+    fi
+    
+    # Python - Django/Flask/FastAPI
+    if [ -f "$path/requirements.txt" ] || [ -f "$path/pyproject.toml" ]; then
+        local file="$path/requirements.txt"
+        [ -f "$path/pyproject.toml" ] && file="$path/pyproject.toml"
+        
+        if grep -q "Django" "$file" 2>/dev/null; then
+            version=$(grep -i "Django" "$file" | grep -o '[0-9]\+\.[0-9]\+' | head -1)
+            [ -n "$version" ] && echo "Django $version" && return
+        fi
+    fi
+    
+    echo "unknown"
+}
+
+# Analisa Divida Tecnica e Maturidade Real
+# Uso: detect_technical_debt "/path/to/project"
+detect_technical_debt() {
+    local path="${1:-.}"
+    
+    local todo_count=$(grep -r "TODO" "$path" 2>/dev/null | grep -v "node_modules" | grep -v "vendor" | wc -l)
+    local fixme_count=$(grep -r "FIXME" "$path" 2>/dev/null | grep -v "node_modules" | grep -v "vendor" | wc -l)
+    local has_tests=false
+    
+    if [ -d "$path/tests" ] || [ -d "$path/__tests__" ] || echo "$path"/*test* >/dev/null 2>&1; then
+        has_tests=true
+    fi
+    
+    echo "{\"todos\": $todo_count, \"fixmes\": $fixme_count, \"has_tests\": $has_tests}"
 }

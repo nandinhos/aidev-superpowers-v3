@@ -436,7 +436,7 @@ try_with_recovery() {
     while [ $attempt -le $max_attempts ]; do
         print_step "Tentativa $attempt/$max_attempts: $command"
         
-        if eval "$command"; then
+        if bash -c "$command"; then
             return 0
         fi
         
@@ -445,7 +445,7 @@ try_with_recovery() {
         # Executa comando de recuperacao
         if [ -n "$recovery_command" ]; then
             print_info "Executando recuperacao: $recovery_command"
-            eval "$recovery_command"
+            bash -c "$recovery_command"
         fi
         
         ((attempt++))

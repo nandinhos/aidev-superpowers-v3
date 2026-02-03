@@ -257,7 +257,7 @@ state_checkpoint() {
     if command -v jq >/dev/null 2>&1; then
         local tmp_file=$(mktemp)
         local timestamp=$(date -Iseconds)
-        local checkpoint_id="cp-$(date +%s)"
+        local checkpoint_id="cp-$(date +%s)-${RANDOM}"
         
         # Captura snapshot do estado atual (exceto rollback_stack para evitar recursao)
         local snapshot=$(jq 'del(.rollback_stack)' "$STATE_FILE")
@@ -308,7 +308,7 @@ state_rollback() {
         else
             # Rollback para checkpoint especifico
             snapshot=$(jq -r --arg id "$checkpoint_id" \
-                '.rollback_stack[] | select(.id == $id) | .state_snapshot' "$STATE_FILE")
+                '[.rollback_stack[] | select(.id == $id)] | first | .state_snapshot // empty' "$STATE_FILE")
         fi
         
         if [ -z "$snapshot" ] || [ "$snapshot" = "null" ]; then

@@ -65,7 +65,7 @@ show_help() {
     }
 
     echo -e "${C_CYAN}╔════════════════════════════════════════════════════════════════╗${C_NC}"
-    echo -e "${C_CYAN}║${C_NC}  ${C_YELLOW}AI Dev Superpowers${C_NC} v${AIDEV_VERSION:-3.3.0}${C_CYAN}                               ║${C_NC}"
+    echo -e "${C_CYAN}║${C_NC}  ${C_YELLOW}AI Dev Superpowers${C_NC} v${AIDEV_VERSION:-3.3.1}${C_CYAN}                               ║${C_NC}"
     echo -e "${C_CYAN}╚════════════════════════════════════════════════════════════════╝${C_NC}"
     echo -e "${C_WHITE}Sistema Unificado de Governança de IA para Desenvolvimento${C_NC}"
     echo ""
@@ -80,6 +80,7 @@ show_help() {
     print_cmd "self-upgrade" "Atualiza instalação global do CLI"
     print_cmd "status" "Mostra status da instalação"
     print_cmd "doctor" "Diagnóstico da instalação"
+    print_cmd "release" "Gerencia releases e versionamento"
     print_cmd "config" "Configurações (idioma, etc)"
     echo ""
 

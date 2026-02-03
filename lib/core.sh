@@ -8,7 +8,7 @@
 # Uso: source lib/core.sh
 # ============================================================================
 
-readonly AIDEV_VERSION="${AIDEV_VERSION:-3.3.0}" 2>/dev/null || true
+readonly AIDEV_VERSION="${AIDEV_VERSION:-3.3.1}" 2>/dev/null || true
 
 # ============================================================================
 # Cores (declaração segura para múltiplos sources)

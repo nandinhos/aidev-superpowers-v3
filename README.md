@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-3.3.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-3.3.1-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-122%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 

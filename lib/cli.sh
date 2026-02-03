@@ -128,7 +128,7 @@ show_help() {
 # Exibe versão
 # Uso: show_version
 show_version() {
-    echo "aidev v${AIDEV_VERSION:-3.3.0}"
+    echo "aidev v${AIDEV_VERSION:-3.3.1}"
 }
 
 # ============================================================================

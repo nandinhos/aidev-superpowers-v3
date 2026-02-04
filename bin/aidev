@@ -667,6 +667,31 @@ cmd_agent() {
         cache_content=$(get_cached_activation "$install_path")
     fi
 
+    # Carrega estado da sessão (Continuity Context)
+    local session_context=""
+    local unified_file="$install_path/.aidev/state/unified.json"
+    local active_intent=""
+    local active_skill=""
+    local last_activity=""
+    
+    if [ -f "$unified_file" ] && command -v jq >/dev/null 2>&1; then
+        active_intent=$(jq -r '.active_intent // empty' "$unified_file")
+        active_skill=$(jq -r '.active_skill // empty' "$unified_file")
+        last_activity=$(jq -r '.session.last_activity // empty' "$unified_file")
+        
+        if [ -n "$active_intent" ] || [ -n "$active_skill" ]; then
+            session_context="
+CONTEXTO ATUAL (SESSAO ANTERIOR):
+- Intencao Ativa: ${active_intent:-Nenhum}
+- Skill em Uso: ${active_skill:-Nenhuma}
+- Ultima Atividade: $last_activity
+
+ATENCAO: VOCE DEVE CONTINUAR O TRABALHO ACIMA SE AINDA NAO ESTIVER CONCLUIDO.
+NAO SUGIRA 'legacy-analyzer' OU NOVAS TAREFAS SE HOUVER UMA INTENCAO ATIVA.
+"
+        fi
+    fi
+
     # Gera o prompt
     echo "============================================================"
     echo "COPIE E COLE O TEXTO ABAIXO NA SUA IA:"
@@ -682,7 +707,7 @@ STACK: $stack
 FASE: $fase | SPRINT: $sprint
 AGENTES: $agent_count especializados
 SKILLS: $skill_count automatizadas
-
+$session_context
 EOF
 
     if [ -n "$cache_content" ]; then

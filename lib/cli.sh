@@ -120,6 +120,7 @@ show_help() {
     print_cmd "lessons" "Gerencia base de conhecimento (KB)"
     print_cmd "snapshot" "Gera 'Context Passport' para migração entre IAs"
     print_cmd "metrics" "Visualiza telemetria e uso de skills"
+    print_cmd "cache" "Gerencia cache de ativação (economia de tokens)"
     echo ""
 
     echo -e "${C_YELLOW}Modo Agente (LLM):${C_NC}"

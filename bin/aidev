@@ -735,6 +735,75 @@ EOF
     print_info "Dica: Use 'aidev agent | pbcopy' (macOS) ou 'aidev agent | xclip' (Linux) para copiar automaticamente"
 }
 
+# Subcomando: cache
+# Gerencia cache de ativação para economia de tokens
+cmd_cache() {
+    # Não usa parse_args pois --build/--clear são específicos deste subcomando
+    local install_path="."
+    local action="status"
+    
+    # Parse manual de argumentos
+    for arg in "$@"; do
+        case "$arg" in
+            cache) ;; # ignora o próprio nome do comando
+            --build|-b) action="build" ;;
+            --clear|-c) action="clear" ;;
+            --show|-s) action="show" ;;
+            --install-in) ;; # handled next
+            *)
+                # Se o anterior foi --install-in, este é o path
+                if [[ "${prev_arg:-}" == "--install-in" ]]; then
+                    install_path="$arg"
+                fi
+                ;;
+        esac
+        prev_arg="$arg"
+    done
+
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev não está instalado neste diretório"
+        print_info "Execute 'aidev init' primeiro"
+        exit 1
+    fi
+
+    # Carrega módulo de cache
+    load_module "cache"
+
+    print_header "AI Dev Cache Manager"
+
+    case "$action" in
+        build)
+            print_step "Construindo cache de ativação..."
+            save_activation_cache "$install_path"
+            print_success "Cache construído com sucesso!"
+            show_cache_status "$install_path"
+            ;;
+        clear)
+            print_step "Limpando cache..."
+            invalidate_cache "$install_path"
+            print_success "Cache removido!"
+            ;;
+        show)
+            print_step "Conteúdo do cache:"
+            local cache_file="$install_path/$CACHE_DIR/$CACHE_FILE"
+            if [ -f "$cache_file" ]; then
+                cat "$cache_file"
+            else
+                print_warning "Cache não existe. Use 'aidev cache --build' para criar."
+            fi
+            ;;
+        status|*)
+            show_cache_status "$install_path"
+            print_info "Opções:"
+            echo "  --build, -b   Constrói/atualiza o cache"
+            echo "  --clear, -c   Remove o cache"
+            echo "  --show, -s    Exibe conteúdo do cache (JSON)"
+            ;;
+    esac
+}
+
 # Subcomando: start
 # Inicia sessao interativa do modo agente (exibe instrucoes de ativacao)
 cmd_start() {
@@ -2323,6 +2392,9 @@ main() {
             ;;
         agent)
             cmd_agent "$@"
+            ;;
+        cache)
+            cmd_cache "$@"
             ;;
         start)
             cmd_start "$@"

@@ -82,13 +82,28 @@ generate_activation_cache() {
         return 1
     fi
     
-    # Coletar agentes
+    # Coletar agentes com metadados
     local agents=()
+    local agent_details_json=""
     shopt -s nullglob
     for f in "$aidev_dir"/agents/*.md; do
-        [ -f "$f" ] && agents+=("$(basename "${f%.md}")")
+        if [ -f "$f" ]; then
+            local name=$(basename "${f%.md}")
+            agents+=("$name")
+            
+            # Extrair Role ou Identity (primeira linha util após header ## Role ou # Identity)
+            local role=$(grep -A 2 -E "## Role|# Identity" "$f" | grep -vE "## Role|# Identity|^--" | grep -v "^$" | head -n 1 | sed 's/[#*`]//g' | tr '\n' ' ' | sed 's/"/\\"/g' | xargs | head -c 200)
+            
+            if [ -z "$role" ]; then
+                # Fallback: pegar primeira linha útil do arquivo que não seja header
+                role=$(grep -vE "^#|^$" "$f" | head -n 1 | sed 's/[#*`]//g' | tr '\n' ' ' | sed 's/"/\\"/g' | xargs | head -c 200)
+            fi
+
+            if [ -n "$agent_details_json" ]; then agent_details_json+=", "; fi
+            agent_details_json+="\"$name\": \"$role\""
+        fi
     done
-    
+
     # Coletar skills
     local skills=()
     for d in "$aidev_dir"/skills/*/; do
@@ -102,7 +117,6 @@ generate_activation_cache() {
     done
     shopt -u nullglob
 
-    
     # Gerar hash
     local hash
     hash=$(get_aidev_hash "$project_path")
@@ -121,7 +135,7 @@ generate_activation_cache() {
     fi
     
     # Versão do aidev
-    local version="${AIDEV_VERSION:-3.3.1}"
+    local version="${AIDEV_VERSION:-3.4.0}"
     
     # Gerar JSON manualmente (para compatibilidade)
     local agents_json=""
@@ -150,6 +164,7 @@ generate_activation_cache() {
   "project": "$project_name",
   "stack": "$stack",
   "agents": [$agents_json],
+  "agent_roles": {$agent_details_json},
   "skills": [$skills_json],
   "rules": [$rules_json],
   "agents_count": ${#agents[@]},

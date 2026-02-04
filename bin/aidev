@@ -660,6 +660,13 @@ cmd_agent() {
     print_info "Gerando prompt de ativacao..."
     echo ""
 
+    # Verifica se existe cache e carrega
+    load_module "cache"
+    local cache_content=""
+    if validate_cache_freshness "$install_path"; then
+        cache_content=$(get_cached_activation "$install_path")
+    fi
+
     # Gera o prompt
     echo "============================================================"
     echo "COPIE E COLE O TEXTO ABAIXO NA SUA IA:"
@@ -676,12 +683,27 @@ FASE: $fase | SPRINT: $sprint
 AGENTES: $agent_count especializados
 SKILLS: $skill_count automatizadas
 
-INSTRUCOES DE ATIVACAO:
+EOF
 
-1. Leia o arquivo .aidev/agents/orchestrator.md - este e seu cerebro de coordenacao
-2. Voce tem acesso a $agent_count agentes especializados em .aidev/agents/
-3. Voce tem acesso a $skill_count skills automatizadas em .aidev/skills/
-4. Siga as regras da stack em .aidev/rules/$stack.md
+    if [ -n "$cache_content" ]; then
+        echo "CACHE DE ATIVACAO DETECTADO E CARREGADO NO CONTEXTO:"
+        echo "\`\`\`json"
+        echo "$cache_content"
+        echo "\`\`\`"
+        echo ""
+        echo "INSTRUCOES DE ATIVACAO (OTIMIZADAS):"
+        echo "1. Use o CACHE acima como fonte de verdade sobre Agentes, Skills e Stack."
+        echo "2. NAO leia arquivos individuais em .aidev/agents/ ou .aidev/skills/ a menos que precise de detalhes profundos."
+        echo "3. O arquivo .aidev/agents/orchestrator.md continua sendo seu cerebro de coordenacao."
+    else
+        echo "INSTRUCOES DE ATIVACAO:"
+        echo "1. Leia o arquivo .aidev/agents/orchestrator.md - este e seu cerebro de coordenacao"
+        echo "2. Voce tem acesso a $agent_count agentes especializados em .aidev/agents/"
+        echo "3. Voce tem acesso a $skill_count skills automatizadas em .aidev/skills/"
+        echo "4. Siga as regras da stack em .aidev/rules/$stack.md"
+    fi
+
+    cat << EOF
 
 PRINCIPIOS INEGOCIAVEIS:
 - TDD OBRIGATORIO: Sempre escreva teste ANTES do codigo (RED -> GREEN -> REFACTOR)

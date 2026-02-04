@@ -641,6 +641,7 @@ cmd_agent() {
 
     # Coleta dados do projeto
     local project_name=$(detect_project_name "$install_path")
+    [ -z "$project_name" ] && project_name="Sem Nome"
     local stack=$(detect_stack "$install_path")
     local platform=$(detect_platform)
     local fase=$(get_state_value "current_fase" "1")

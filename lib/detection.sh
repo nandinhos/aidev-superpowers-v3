@@ -327,7 +327,7 @@ detect_project_name() {
     
     # Tenta extrair de package.json
     if [ -f "$path/package.json" ]; then
-        local name=$(grep -o '"name":[[:space:]]*"[^"]*"' "$path/package.json" | head -1 | sed 's/.*"name":[[:space:]]*"\([^"]*\)".*/\1/')
+        local name=$(grep -o '"name":[[:space:]]*"[^"]*"' "$path/package.json" 2>/dev/null | head -1 | sed 's/.*"name":[[:space:]]*"\([^"]*\)".*/\1/' || echo "")
         if [ -n "$name" ]; then
             echo "$name"
             return
@@ -336,7 +336,7 @@ detect_project_name() {
     
     # Tenta extrair de composer.json
     if [ -f "$path/composer.json" ]; then
-        local name=$(grep -o '"name":[[:space:]]*"[^"]*"' "$path/composer.json" | head -1 | sed 's/.*"name":[[:space:]]*"\([^"]*\)".*/\1/')
+        local name=$(grep -o '"name":[[:space:]]*"[^"]*"' "$path/composer.json" 2>/dev/null | head -1 | sed 's/.*"name":[[:space:]]*"\([^"]*\)".*/\1/' || echo "")
         if [ -n "$name" ]; then
             # Remove prefixo vendor/ se existir
             echo "${name##*/}"
@@ -346,7 +346,7 @@ detect_project_name() {
     
     # Tenta extrair de pyproject.toml
     if [ -f "$path/pyproject.toml" ]; then
-        local name=$(grep -o '^name[[:space:]]*=[[:space:]]*"[^"]*"' "$path/pyproject.toml" | sed 's/.*"\([^"]*\)".*/\1/')
+        local name=$(grep -o '^name[[:space:]]*=[[:space:]]*"[^"]*"' "$path/pyproject.toml" 2>/dev/null | sed 's/.*"\([^"]*\)".*/\1/' || echo "")
         if [ -n "$name" ]; then
             echo "$name"
             return

@@ -15,6 +15,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Runtime Detection**: Identificação inteligente do ambiente de execução (Terminal CLI vs VS Code/Cursor Integrado vs Antigravity).
     - Exibição no comando `status` (`Runtime: antigravity`).
 - **Slash Commands**: Suporte nativo a comandos de chat (`/aidev`) no Antigravity via workflows.
+- **Guia Técnico dos Agentes**: Documentação completa detalhando o funcionamento, ciclo de vida e dinâmicas (Greenfield/Brownfield/Legado) de cada agente.
 - **Status em Tempo Real**: `aidev status` agora exibe o Intent e Skill ativos diretamente do cérebro do sistema (`unified.json`).
 
 ### 🐛 Fixes (Correções)

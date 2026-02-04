@@ -259,6 +259,7 @@ O arquivo de configuração MCP é gerado dinamicamente para cada plataforma (ex
 
 ## Documentação Completa
 
+- [Guia Técnico dos Agentes](docs/AGENTS-TECHNICAL-GUIDE.md)
 - [Guia de Customização](docs/CUSTOMIZACAO.md)
 - [Criando Skills](docs/CRIANDO-SKILLS.md)
 - [Criando Agentes](docs/CRIANDO-AGENTES.md)

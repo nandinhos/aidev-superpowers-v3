@@ -712,15 +712,17 @@ $session_context
 EOF
 
     if [ -n "$cache_content" ]; then
-        echo "CACHE DE ATIVACAO DETECTADO E CARREGADO NO CONTEXTO:"
+        echo "⚠️  CACHE DE ATIVACAO DETECTADO (OBRIGATORIO) ⚠️"
         echo "\`\`\`json"
         echo "$cache_content"
         echo "\`\`\`"
         echo ""
-        echo "INSTRUCOES DE ATIVACAO (OTIMIZADAS):"
-        echo "1. Use o CACHE acima como fonte de verdade sobre Agentes, Skills e Stack."
-        echo "2. NAO leia arquivos individuais em .aidev/agents/ ou .aidev/skills/ a menos que precise de detalhes profundos."
-        echo "3. O arquivo .aidev/agents/orchestrator.md continua sendo seu cerebro de coordenacao."
+        echo "🛑 INSTRUCOES CRITICAS DE ECONOMIA DE TOKENS:"
+        echo "1. USE O JSON ACIMA como sua ÚNICA fonte de verdade sobre Agentes e Skills."
+        echo "2. PROIBIDO LER arquivos individuais em .aidev/agents/ ou .aidev/skills/."
+        echo "3. O JSON já contém o 'role' (objetivo) de cada agente. NÃO RE-LEIA os arquivos .md."
+        echo "4. O arquivo .aidev/rules/$stack.md também já está resumido no cache."
+        echo "5. Só abra arquivos de código do projeto quando solicitado pelo usuário."
     else
         echo "INSTRUCOES DE ATIVACAO:"
         echo "1. Leia o arquivo .aidev/agents/orchestrator.md - este e seu cerebro de coordenacao"

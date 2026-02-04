@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-3.3.1-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-3.5.0-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-122%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -36,6 +36,34 @@ export PATH="$PATH:$(pwd)/aidev-superpowers-v3/bin"
 cd seu-projeto
 aidev init
 ```
+
+---
+
+## 🚀 Novidades da V3.5 `(Cache de Ativação & Economia de Tokens)`
+
+### Cache de Ativação Inteligente
+O sistema agora **pré-computa** todas as informações essenciais (agentes, skills, regras) em um único JSON, reduzindo o consumo de tokens na ativação em **até 96%**.
+
+```bash
+aidev cache --build   # Gera o cache
+aidev cache --status  # Verifica integridade
+aidev agent           # Prompt já inclui o cache automaticamente
+```
+
+**Documentação técnica**: [docs/CACHE_SYSTEM.md](docs/CACHE_SYSTEM.md)
+
+### Continuidade de Sessão
+O prompt de ativação agora injeta o **contexto da sessão anterior** (intenção ativa, skill em uso), permitindo que a IA retome trabalhos pendentes em vez de sugerir novas tarefas.
+
+### Compatibilidade Multi-Modelo
+Instruções otimizadas para diferentes comportamentos de LLMs:
+- **Claude**: Ativa instantaneamente, respeita cache
+- **Gemini**: Instruções assertivas com emojis (⚠️🛑) forçam economia
+- **GPT-4**: Meio-termo equilibrado
+
+### Correções de Estabilidade
+- Fix: Crash quando nome do projeto não é detectado
+- Fix: Listagem redundante de agentes quando cache existe
 
 ---
 
@@ -110,6 +138,9 @@ seu-projeto/
 | `aidev refactor` | **(v3.2)** Inicia fluxo de Refatoração Segura |
 | `aidev suggest` | **(v3.2)** Analisa o projeto e sugere o próximo passo ideal |
 | `aidev agent` | Gera prompt de ativacao do modo agente |
+| `aidev cache --build` | **(v3.5)** Gera cache de ativação para economia de tokens |
+| `aidev cache --status` | **(v3.5)** Verifica integridade do cache |
+| `aidev cache --clear` | **(v3.5)** Remove cache (força leitura completa) |
 | `aidev start` | Mostra instrucoes de ativacao |
 | `aidev upgrade` | Atualiza para versao mais recente |
 | `aidev status` | Dashboard de progresso e contexto Git |

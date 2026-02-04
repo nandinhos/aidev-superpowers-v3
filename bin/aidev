@@ -715,32 +715,39 @@ FLUXO DE TRABALHO:
 - Para bugs: systematic-debugging -> learned-lesson
 - Para refatoracao: writing-plans -> test-driven-development -> code-review
 
+EOF
+
+    # Se cache NÃO existe, lista agentes e skills individualmente
+    if [ -z "$cache_content" ]; then
+        cat << EOF
+
 AGENTES DISPONIVEIS:
 EOF
 
-    # Lista agentes
-    if [ -d "$install_path/.aidev/agents" ]; then
-        for agent in "$install_path/.aidev/agents"/*.md; do
-            if [ -f "$agent" ]; then
-                local name=$(basename "$agent" .md)
-                echo "- $name"
-            fi
-        done
-    fi
+        # Lista agentes
+        if [ -d "$install_path/.aidev/agents" ]; then
+            for agent in "$install_path/.aidev/agents"/*.md; do
+                if [ -f "$agent" ]; then
+                    local name=$(basename "$agent" .md)
+                    echo "- $name"
+                fi
+            done
+        fi
 
-    cat << EOF
+        cat << EOF
 
 SKILLS DISPONIVEIS:
 EOF
 
-    # Lista skills
-    if [ -d "$install_path/.aidev/skills" ]; then
-        for skill_dir in "$install_path/.aidev/skills"/*/; do
-            if [ -d "$skill_dir" ]; then
-                local name=$(basename "$skill_dir")
-                echo "- $name"
-            fi
-        done
+        # Lista skills
+        if [ -d "$install_path/.aidev/skills" ]; then
+            for skill_dir in "$install_path/.aidev/skills"/*/; do
+                if [ -d "$skill_dir" ]; then
+                    local name=$(basename "$skill_dir")
+                    echo "- $name"
+                fi
+            done
+        fi
     fi
 
     cat << EOF

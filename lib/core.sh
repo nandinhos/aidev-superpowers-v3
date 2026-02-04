@@ -14,14 +14,14 @@ readonly AIDEV_VERSION="${AIDEV_VERSION:-3.5.0}" 2>/dev/null || true
 # Cores (declaração segura para múltiplos sources)
 # ============================================================================
 
-[[ -z "${RED:-}" ]] && readonly RED='\033[0;31m'
-[[ -z "${GREEN:-}" ]] && readonly GREEN='\033[0;32m'
-[[ -z "${YELLOW:-}" ]] && readonly YELLOW='\033[1;33m'
-[[ -z "${BLUE:-}" ]] && readonly BLUE='\033[0;34m'
-[[ -z "${CYAN:-}" ]] && readonly CYAN='\033[0;36m'
-[[ -z "${MAGENTA:-}" ]] && readonly MAGENTA='\033[0;35m'
-[[ -z "${BOLD:-}" ]] && readonly BOLD='\033[1m'
-[[ -z "${NC:-}" ]] && readonly NC='\033[0m' # No Color
+RED=$'\e[0;31m'
+GREEN=$'\e[0;32m'
+YELLOW=$'\e[1;33m'
+BLUE=$'\e[0;34m'
+CYAN=$'\e[0;36m'
+MAGENTA=$'\e[0;35m'
+BOLD=$'\e[1m'
+NC=$'\e[0m' # No Color
 
 # ============================================================================
 # Contadores (inicializados em cada operação)

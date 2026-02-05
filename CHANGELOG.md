@@ -5,7 +5,19 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [3.4.0] - 2026-02-03
+## [3.6.0] - 2026-02-05
+
+### 🚀 Features (Novidades)
+- **Sentinela de Conhecimento**: Orquestrador agora sugere registro de lições proativamente após bugs ou tarefas complexas.
+- **Padrões de Sucesso**: Expansão do sistema `learned-lesson` para capturar padrões de excelência e decisões arquiteturais (não apenas bugs).
+- **Busca Unificada de Lições**: Novo módulo `lib/lessons.sh` integra busca local (`.aidev/memory/kb/`) com busca global (`basic-memory` MCP).
+- **CLI Lessons Refatorado**: `aidev lessons` com suporte a `--sync`, `--search` e `--read`.
+- **Knowledge Ingestion**: Sincronização automática de regras genéricas e padrões técnicos para o KB.
+
+### ⚡ Melhorias
+- Orquestrador Brain: Integração profunda com `lessons_search` para injeção de contexto inteligente.
+
+## [3.5.0] - 2026-02-05
 
 ### 🚀 Features (Novidades)
 - **MCP Manager**: Gerenciamento completo de servidores MCP (Model Context Protocol).

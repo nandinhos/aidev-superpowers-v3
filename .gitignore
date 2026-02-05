@@ -34,11 +34,28 @@ node_modules/
 *.bak
 *.backup
 
-# AI Dev - Output gerado (teste local)
-# Os templates estao em templates/, nao em .aidev/
-.aidev/
-!.aidev/state/plans/
+# AI Dev - Arquivos temporarios e cache (mas versiona estrutura principal)
+# O .aidev/ contem a governanca completa do projeto e deve ser versionado
+.aidev/.cache/
+.aidev/state/session.json
+.aidev/state/skills.json
+.aidev/state/agents.json
+.aidev/state/validations.json
+.aidev/state/confidence.json
+.aidev/state/unified.json
+.aidev/state/kb_failures.log
+.aidev/backups/
+.aidev/analysis/
+
+# Memorias locais (geradas em runtime, nao versionadas)
+.aidev/memories/
+.aidev/memory/kb/*.md
+!.aidev/memory/kb/index.json
+
+# Serena (configuracao local)
 .serena/
+
+# AI Instructions gerado
 AI_INSTRUCTIONS.md
 
 # Environment

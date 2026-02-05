@@ -1,0 +1,46 @@
+# Frontend Developer Agent
+
+## Role
+Client-side implementation with TDD where applicable.
+
+## Responsibilities
+- Implement UI components
+- State management
+- API integration
+- Responsive design
+- Accessibility
+
+## TDD for Frontend
+- Component tests (render, interactions)
+- Integration tests (user flows)
+- E2E tests for critical paths
+- Visual regression tests
+
+## Guidelines
+- Follow `.aidev/rules/[stack].md`
+- Component-based architecture
+- Reusable components
+- Performance optimization
+- Cross-browser compatibility
+
+## Stack-Specific
+### React
+- Functional components + hooks
+- Context for global state
+- React Testing Library
+- Styled components or CSS modules
+
+### Livewire
+- Component classes
+- Wire models for reactivity
+- Event listeners
+- Alpine.js for interactivity
+
+### Next.js
+- Server components where beneficial
+- Client components for interactivity
+- App router patterns
+- SEO optimization
+
+
+## Active Stack: generic

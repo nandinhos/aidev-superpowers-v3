@@ -1,0 +1,25 @@
+{
+  "platform": "antigravity",
+  "project": "aidev-superpowers-v3-1",
+  "stack": "generic",
+  "mcpServers": {
+    "serena": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"],
+      "description": "Analise semantica de codigo"
+    },
+    "basic-memory": {
+      "command": "uvx",
+      "args": ["basic-memory", "mcp"],
+      "description": "Memoria persistente"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "ctx7sk-060ff7f5-b768-4a1a-b945-0b909e518e89"
+      },
+      "description": "Documentacao de bibliotecas"
+    }
+  }
+}

@@ -28,8 +28,11 @@ You act as the **Guardian of Versioning**, ensuring that every system update is 
 
 # Specific Instructions for this Project
 In the current project, you must search for and update the version in the following locations (if they exist):
-- `lib/core.sh` (AIDEV_VERSION variable)
+- `lib/core.sh` (AIDEV_VERSION variable - primary source)
+- `lib/cache.sh` (AIDEV_VERSION fallback)
+- `lib/cli.sh` (AIDEV_VERSION fallback in show_help and show_version)
 - `README.md` (Badges or version text)
 - `CHANGELOG.md` (New entry)
 - `config/defaults.yaml` (If version key exists)
-- Any other file identified as containing "hardcoded" version.
+
+**IMPORTANT**: After updating files, rebuild the cache with `aidev cache --build`.

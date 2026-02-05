@@ -28,8 +28,11 @@ Você atua como o **Guardião do Versionamento**, garantindo que cada atualizaç
 
 # Instruções Específicas para este Projeto
 No projeto atual, você deve procurar e atualizar a versão nos seguintes locais (se existirem):
-- `lib/core.sh` (Variável AIDEV_VERSION)
+- `lib/core.sh` (Variável AIDEV_VERSION - fonte primária)
+- `lib/cache.sh` (Fallback AIDEV_VERSION)
+- `lib/cli.sh` (Fallback AIDEV_VERSION em show_help e show_version)
 - `README.md` (Badges ou textos de versão)
 - `CHANGELOG.md` (Nova entrada)
 - `config/defaults.yaml` (Se houver chave version)
-- Qualquer outro arquivo identificado como contendo a versão "hardcoded".
+
+**IMPORTANTE**: Após atualizar os arquivos, reconstrua o cache com `aidev cache --build`.

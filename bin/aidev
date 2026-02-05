@@ -2125,17 +2125,30 @@ cmd_lessons() {
     # Modo Busca/Listagem
     local count=0
     local files=()
-    
+
+    # Verifica se diretorio existe e tem arquivos .md
+    if [ ! -d "$kb_dir" ] || [ -z "$(find "$kb_dir" -maxdepth 1 -name '*.md' -type f 2>/dev/null | head -1)" ]; then
+        echo ""
+        print_info "Nenhuma licao registrada ainda."
+        echo "Dica: Use a skill 'learned-lesson' apos corrigir um bug."
+        echo ""
+        return 0
+    fi
+
     # Coleta arquivos
     if [ "$search_mode" = true ]; then
         print_info "Buscando por: '$query_term'"
         # Busca no nome ou conteudo
         if [ -n "$query_term" ]; then
-            files=($(grep -l "$query_term" "$kb_dir"/*.md 2>/dev/null))
+            while IFS= read -r -d '' file; do
+                files+=("$file")
+            done < <(grep -l -Z "$query_term" "$kb_dir"/*.md 2>/dev/null || true)
         fi
     else
         # Lista todos, mais recentes primeiro
-        files=($(ls -t "$kb_dir"/*.md 2>/dev/null))
+        while IFS= read -r file; do
+            [ -n "$file" ] && files+=("$file")
+        done < <(find "$kb_dir" -maxdepth 1 -name '*.md' -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | cut -d' ' -f2-)
     fi
 
     echo ""

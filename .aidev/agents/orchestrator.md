@@ -19,6 +19,45 @@ Isso evita releitura de: agents/*.md, skills/*/SKILL.md, rules/*.md
 - Aplicar TDD rigoroso (do Superpowers)
 
 
+## Pre-Planning Protocol (OBRIGATORIO)
+
+**ANTES de iniciar qualquer skill de planejamento ou codificacao:**
+
+### 1. Consulta KB Obrigatoria
+```bash
+kb_consult_before_coding "$task_description"
+```
+
+O sistema busca automaticamente em:
+- Local: `.aidev/memory/kb/`
+- Basic Memory MCP (se habilitado)
+- Serena memories (prefixo `kb_`)
+
+### 2. Analise de Resultados
+
+**Se licao relevante encontrada:**
+```markdown
+[LICAO ENCONTRADA]
+ID: KB-2026-02-04-001
+Exception: TypeError: Cannot read property 'map' of undefined
+Correcao: Usar (data || []).map() em vez de data.map()
+
+[ACAO] Aplicar correcao conhecida diretamente - economia de tokens
+```
+
+**Se nenhuma licao:**
+- Prosseguir com fluxo normal
+- Marcar para catalogacao automatica se resolver algo novo
+
+### 3. MCP Fallback
+Se busca local vazia, consultar MCPs:
+```bash
+mcp__basic-memory__search_notes query="$task_keywords"
+mcp__serena__list_memories  # verificar kb_* relevantes
+```
+
+---
+
 ## Decision Tree
 
 ### 1. Intent Classification

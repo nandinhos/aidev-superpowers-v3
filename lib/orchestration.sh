@@ -7,8 +7,15 @@
 # sistema de confianca e validacao
 #
 # Uso: source lib/orchestration.sh
-# Dependencias: lib/core.sh, lib/file-ops.sh, lib/metrics.sh
+# Dependencias: lib/core.sh, lib/file-ops.sh, lib/metrics.sh, lib/kb.sh
 source lib/metrics.sh
+
+# Carrega modulo de Knowledge Base para hooks automaticos de catalogacao
+if [ -f "${CLI_INSTALL_PATH:-.}/lib/kb.sh" ]; then
+    source "${CLI_INSTALL_PATH:-.}/lib/kb.sh"
+elif [ -f "lib/kb.sh" ]; then
+    source lib/kb.sh
+fi
 # ============================================================================
 
 # ============================================================================
@@ -177,7 +184,15 @@ skill_complete() {
             .skill_states[$skill].completed_at = $ts |
             .active_skill = null
         ' "$skills_file" > "$tmp_file" && mv "$tmp_file" "$skills_file"
- 
+
+        # Hook automatico para KB: cataloga licao quando skill de resolucao completa
+        if [[ "$skill_name" == "systematic-debugging" ]] ||
+           [[ "$skill_name" == "learned-lesson" ]]; then
+            if command -v _kb_on_resolution_complete >/dev/null 2>&1; then
+                _kb_on_resolution_complete "$skill_name"
+            fi
+        fi
+
         print_success "Skill '$skill_name' concluida!"
     fi
 }
@@ -206,7 +221,12 @@ skill_fail() {
             .skill_states[$skill].failure_reason = $reason |
             .active_skill = null
         ' "$skills_file" > "$tmp_file" && mv "$tmp_file" "$skills_file"
- 
+
+        # Hook automatico para KB: registra falha para correlacao futura
+        if command -v _kb_on_failure >/dev/null 2>&1; then
+            _kb_on_failure "$skill_name" "$reason"
+        fi
+
         print_error "Skill '$skill_name' falhou: $reason"
     fi
 }

@@ -16,6 +16,7 @@ if [ -f "${CLI_INSTALL_PATH:-.}/lib/kb.sh" ]; then
 elif [ -f "lib/kb.sh" ]; then
     source lib/kb.sh
 fi
+source lib/lessons.sh
 # ============================================================================
 
 # ============================================================================
@@ -194,6 +195,12 @@ skill_complete() {
         fi
 
         print_success "Skill '$skill_name' concluida!"
+
+        # Gatilho: Sugerir Learned Lesson apos bug fix ou tarefas complexas
+        if [[ "$skill_name" == "systematic-debugging" ]] || [[ "$skill_name" == "test-driven-development" ]]; then
+            print_warning "Detectada conclusao de tarefa tecnica. Deseja registrar uma licao aprendida ou padrao de sucesso?"
+            print_info "Trigger: skill_init 'learned-lesson'"
+        fi
     fi
 }
 
@@ -681,38 +688,9 @@ orchestrator_select_skill() {
 # Obtem licoes aprendidas relevantes
 # Uso: lessons=$(orchestrator_get_lessons)
 orchestrator_get_lessons() {
-    local install_path="${CLI_INSTALL_PATH:-.}"
-    local lessons_dir="$install_path/.aidev/memory/kb"
-    
-    if [ ! -d "$lessons_dir" ]; then
-        echo "[]"
-        return
-    fi
-    
-    # Lista ultimas 5 licoes (simples por enquanto)
-    # Idealmente seria busca vetorial, mas por bash usamos recencia
-    local lessons_json="["
-    local count=0
-    
-    # Loop seguro com nullglob
-    shopt -s nullglob
-    for lesson_file in "$lessons_dir"/*.md; do
-        if [ "$count" -ge 5 ]; then break; fi
-        
-        # Extrai titulo e conteudo resumido
-        local title=$(basename "$lesson_file" .md)
-        # Pega as primeiras 5 linhas do arquivo como resumo, escapando aspas
-        local content=$(head -n 5 "$lesson_file" | tr '\n' ' ' | sed 's/"/\\"/g')
-        
-        if [ "$count" -gt 0 ]; then lessons_json+=","; fi
-        
-        lessons_json+="{\"title\": \"$title\", \"summary\": \"$content\"}"
-        ((count++))
-    done
-    shopt -u nullglob
-    
-    lessons_json+="]"
-    echo "$lessons_json"
+    local query="${1:-}"
+    local lessons=$(lessons_search "$query")
+    echo "$lessons"
 }
 
 # Gera contexto completo para o orchestrador

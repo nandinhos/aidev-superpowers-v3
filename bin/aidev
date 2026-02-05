@@ -44,6 +44,7 @@ source "$AIDEV_LIB_DIR/loader.sh"
 load_essential_modules
 load_module "templates"
 load_module "mcp"
+load_module "lessons"
 
 # Tenta carregar ambiente (idioma, segredos)
 load_env 2>/dev/null || true
@@ -2039,142 +2040,89 @@ cmd_config() {
 # Subcomando: lessons
 # Gerencia e consulta base de conhecimento (KB)
 cmd_lessons() {
-    local action="${2:-list}"
-    local query="${3:-}"
-    
-    # Suporte a flags
-    local search_mode=false
-    local read_mode=false
-    local query_term=""
-    
-    # Parse simples de argumentos
-    local args=("$@")
-    for ((i=1; i<${#args[@]}+1; i++)); do
-        local arg="${args[$i]}"
-        case "$arg" in
-            --search|-s)
-                search_mode=true
-                query_term="${args[$((i+1))]}"
-                ((i++))
-                ;;
-            --read|-r)
-                read_mode=true
-                query_term="${args[$((i+1))]}"
-                ((i++))
-                ;;
-        esac
-    done
-
-    # Se usou argumento posicional sem flag
-    if [ "$search_mode" = false ] && [ "$read_mode" = false ]; then
-        if [ "$action" = "search" ]; then
-            search_mode=true
-            query_term="$query"
-        elif [ "$action" = "read" ]; then
-            read_mode=true
-            query_term="$query"
-        fi
-    fi
-
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
     local kb_dir="$install_path/.aidev/memory/kb"
 
-    if ! has_aidev_installed "$install_path"; then
-        print_error "AI Dev nao esta instalado neste diretorio"
-        exit 1
+    # Flags
+    local sync_mode=false
+    local search_mode=false
+    local read_mode=false
+    local query_term=""
+
+    # Se o primeiro argumento for um subcomando
+    case "$2" in
+        --sync|sync) sync_mode=true ;;
+        --search|-s|search)
+            search_mode=true
+            query_term="$3"
+            ;;
+        --read|-r|read)
+            read_mode=true
+            query_term="$3"
+            ;;
+    esac
+
+    # Se não identificou por case, tenta loop de flags
+    if [ "$sync_mode" = false ] && [ "$search_mode" = false ] && [ "$read_mode" = false ]; then
+        local args=("$@")
+        for ((i=1; i<${#args[@]}; i++)); do
+            case "${args[$i]}" in
+                --sync) sync_mode=true ;;
+                --search|-s) search_mode=true; query_term="${args[$((i+1))]}"; ((i++)) ;;
+                --read|-r) read_mode=true; query_term="${args[$((i+1))]}"; ((i++)) ;;
+            esac
+        done
     fi
 
     print_header "AI Dev Knowledge Base (KB)"
-    
-    if [ ! -d "$kb_dir" ]; then
-        print_warning "Diretorio de conhecimento nao encontrado: .aidev/memory/kb/"
-        ensure_dir "$kb_dir"
-        print_success "Diretorio criado."
+
+    if [ "$sync_mode" = true ]; then
+        lessons_sync
+        return
     fi
 
-    # Modo Leitura
-    if [ "$read_mode" = true ]; then
-        if [ -z "$query_term" ]; then
-            print_error "Especifique o nome ou ID do arquivo para ler."
-            exit 1
-        fi
-        
-        # Tenta achar arquivo exato ou parcial
-        local target_file=""
-        if [ -f "$kb_dir/$query_term" ]; then
-            target_file="$kb_dir/$query_term"
-        elif [ -f "$kb_dir/$query_term.md" ]; then
-            target_file="$kb_dir/$query_term.md"
-        else
-            # Busca por padrao
-            target_file=$(ls "$kb_dir"/*"$query_term"* 2>/dev/null | head -n 1)
-        fi
-        
-        if [ -n "$target_file" ] && [ -f "$target_file" ]; then
-            print_section "Licao: $(basename "$target_file")"
+    # Se nada foi solicitado, lista todos
+    if [ "$search_mode" = false ] && [ "$read_mode" = false ]; then
+        local files=($(ls -t "$kb_dir"/*.md 2>/dev/null))
+        if [ ${#files[@]} -gt 0 ]; then
+            print_section "Licoes Registradas (${#files[@]})"
+            for f in "${files[@]}"; do
+                echo "  📄 $(basename "$f")"
+                head -n 2 "$f" | sed 's/^/     /'
+            done
             echo ""
-            cat "$target_file"
-            echo ""
+            print_info "Use --search ou --read para mais detalhes."
         else
-            print_error "Licao nao encontrada: $query_term"
+            print_warning "Nenhuma licao encontrada. Use 'aidev lessons --sync' para capturar padroes."
         fi
         return
     fi
 
-    # Modo Busca/Listagem
-    local count=0
-    local files=()
-
-    # Verifica se diretorio existe e tem arquivos .md
-    if [ ! -d "$kb_dir" ] || [ -z "$(find "$kb_dir" -maxdepth 1 -name '*.md' -type f 2>/dev/null | head -1)" ]; then
-        echo ""
-        print_info "Nenhuma licao registrada ainda."
-        echo "Dica: Use a skill 'learned-lesson' apos corrigir um bug."
-        echo ""
-        return 0
-    fi
-
-    # Coleta arquivos
     if [ "$search_mode" = true ]; then
-        print_info "Buscando por: '$query_term'"
-        # Busca no nome ou conteudo
-        if [ -n "$query_term" ]; then
-            while IFS= read -r -d '' file; do
-                files+=("$file")
-            done < <(grep -l -Z "$query_term" "$kb_dir"/*.md 2>/dev/null || true)
+        print_info "Buscando por: '$query_term'..."
+        local results=$(lessons_search "$query_term")
+        if [ "$results" = "[]" ]; then
+            print_warning "Nenhum resultado encontrado."
+        else
+            echo "$results" | jq -r '.[] | "📄 \(.title)\n   └─ \(.summary)\n"'
         fi
-    else
-        # Lista todos, mais recentes primeiro
-        while IFS= read -r file; do
-            [ -n "$file" ] && files+=("$file")
-        done < <(find "$kb_dir" -maxdepth 1 -name '*.md' -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | cut -d' ' -f2-)
+        return
     fi
 
-    echo ""
-    if [ ${#files[@]} -gt 0 ]; then
-        print_section "Licoes Encontradas (${#files[@]})"
-        for file in "${files[@]}"; do
-            local filename=$(basename "$file")
-            local title=$(head -n 1 "$file" | sed 's/^# //')
-            if [ -z "$title" ]; then title="(Sem titulo)"; fi
-            
-            echo "  📄 $filename"
-            echo "     └─ $title"
-            ((count++)) || true
-        done
-        
-        echo ""
-        print_info "Para ler uma licao: aidev lessons --read <nome-arquivo>"
-    else
-        if [ "$search_mode" = true ]; then
-            print_warning "Nenhuma licao encontrada para '$query_term'."
+    if [ "$read_mode" = true ]; then
+        local target_file=""
+        if [ -f "$kb_dir/$query_term" ]; then target_file="$kb_dir/$query_term"
+        elif [ -f "$kb_dir/$query_term.md" ]; then target_file="$kb_dir/$query_term.md"
+        else target_file=$(ls "$kb_dir"/*"$query_term"* 2>/dev/null | head -n 1); fi
+
+        if [ -n "$target_file" ] && [ -f "$target_file" ]; then
+            print_section "Licao: $(basename "$target_file")"
+            cat "$target_file"
         else
-            print_info "Nenhuma licao registrada ainda."
-            echo "Dica: Use a skill 'learned-lesson' apos corrigir um bug."
+            print_error "Licao nao encontrada: $query_term"
         fi
     fi
-    echo ""
 }
 
 # Subcomando: config language

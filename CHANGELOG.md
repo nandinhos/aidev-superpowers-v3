@@ -5,6 +5,19 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.6.1] - 2026-02-05
+
+### 🚀 Features (Novidades)
+- **Memory Sync Cross-Project**: Abstração da sincronização de memória e base de conhecimento (KB) entre projetos.
+- **Lessons Indexer**: Novos subcomandos `aidev lessons index` e `search` otimizados via `.index.json`.
+- **Trigger System**: Sistema de triggers YAML para detecção proativa de oportunidades de aprendizado (ex: `lesson-capture.yaml`).
+
+### ⚡ Melhorias
+- **Documentação Técnica**: Adicionado guia detalhado do comportamento do instalador (`docs/INSTALLER_BEHAVIOR.md`).
+
+### 🐛 Fixes (Correções)
+- **Release Module**: Correção crítica no script de release que causava falha prematura em incrementos de contadores bash.
+
 ## [3.6.0] - 2026-02-05
 
 ### 🚀 Features (Novidades)

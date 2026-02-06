@@ -95,7 +95,7 @@ release_discover_version_points() {
 # ============================================================================
 
 # Atualiza a versao em todos os arquivos mapeados
-# Uso: release_bump_version "3.5.0" "3.6.0" "/path/to/project"
+# Uso: release_bump_version "3.5.0" "3.6.1" "/path/to/project"
 release_bump_version() {
     local old_version="$1"
     local new_version="$2"
@@ -111,10 +111,10 @@ release_bump_version() {
     if [ -f "$core_file" ]; then
         if sed -i "s/AIDEV_VERSION:-${escaped_old}/AIDEV_VERSION:-${new_version}/" "$core_file"; then
             print_success "lib/core.sh (SSOT)"
-            ((files_updated++))
+            ((files_updated++)) || true
         else
             print_error "lib/core.sh"
-            ((files_failed++))
+            ((files_failed++)) || true
         fi
     fi
 
@@ -123,10 +123,10 @@ release_bump_version() {
     if [ -f "$cli_file" ]; then
         if sed -i "s/AIDEV_VERSION:-${escaped_old}/AIDEV_VERSION:-${new_version}/g" "$cli_file"; then
             print_success "lib/cli.sh (fallbacks)"
-            ((files_updated++))
+            ((files_updated++)) || true
         else
             print_error "lib/cli.sh"
-            ((files_failed++))
+            ((files_failed++)) || true
         fi
     fi
 
@@ -135,10 +135,10 @@ release_bump_version() {
     if [ -f "$cache_file" ]; then
         if sed -i "s/AIDEV_VERSION:-${escaped_old}/AIDEV_VERSION:-${new_version}/g" "$cache_file"; then
             print_success "lib/cache.sh (fallback)"
-            ((files_updated++))
+            ((files_updated++)) || true
         else
             print_error "lib/cache.sh"
-            ((files_failed++))
+            ((files_failed++)) || true
         fi
     fi
 
@@ -147,10 +147,10 @@ release_bump_version() {
     if [ -f "$readme_file" ]; then
         if sed -i "s/version-${escaped_old}-blue/version-${new_version}-blue/g" "$readme_file"; then
             print_success "README.md (badge)"
-            ((files_updated++))
+            ((files_updated++)) || true
         else
             print_error "README.md"
-            ((files_failed++))
+            ((files_failed++)) || true
         fi
     fi
 
@@ -161,10 +161,10 @@ release_bump_version() {
         if sed -i "s/assert_equals \"[0-9]\+\.[0-9]\+\.[0-9]\+\" \"\$AIDEV_VERSION\"/assert_equals \"${new_version}\" \"\$AIDEV_VERSION\"/" "$test_file" && \
            sed -i "s/AIDEV_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+/AIDEV_VERSION = ${new_version}/" "$test_file"; then
             print_success "tests/unit/test-core.sh (assert)"
-            ((files_updated++))
+            ((files_updated++)) || true
         else
             print_error "tests/unit/test-core.sh"
-            ((files_failed++))
+            ((files_failed++)) || true
         fi
     fi
 

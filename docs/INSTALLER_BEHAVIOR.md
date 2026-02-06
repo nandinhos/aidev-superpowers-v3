@@ -98,6 +98,7 @@ should_write_file() {
 | `.aidev/memory/kb/` | Cria diretório | N/A |
 | `.aidev/AI_INSTRUCTIONS.md` | Instala | ❌ Pula se existe |
 | `.aidev/QUICKSTART.md` | Instala | ❌ Pula se existe |
+| `.aidev/triggers/` | Instala gatilhos | ❌ Pula se existe |
 | `.mcp.json` | Configura MCP | ❌ Pula se existe |
 | `.env` | Configura segredos | Adiciona keys (não sobrescreve) |
 | `.gitignore` | Adiciona entradas | Append (não sobrescreve) |
@@ -116,6 +117,7 @@ Mesmo que acima, mas **TODOS os arquivos são sobrescritos**.
 | `.aidev/skills/*/SKILL.md` | Reinstala | ✅ **Sim** |
 | `.aidev/AI_INSTRUCTIONS.md` | Reinstala | ✅ **Sim** |
 | `.aidev/QUICKSTART.md` | Reinstala | ✅ **Sim** |
+| `.aidev/triggers/` | Reinstala gatilhos | ✅ **Sim** |
 | Arquivos específicos de plataforma | Reinstala | ✅ **Sim** |
 | `.aidev/rules/*.md` | **NÃO reinstala** | ❌ Preservado |
 | `.mcp.json` | **NÃO atualiza** | ❌ Preservado |

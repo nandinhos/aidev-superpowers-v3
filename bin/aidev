@@ -23,6 +23,11 @@ error_handler() {
     echo ""
     echo "❌ $(_ "error_ops") (Erro: $exit_code na linha $line_no)"
     echo "🔍 $(_ "suggest_doctor")"
+    
+    # Monitoramento de triggers após erro
+    if type triggers__watch_errors &>/dev/null; then
+        triggers__watch_errors "${BASH_COMMAND:-}"
+    fi
     echo ""
 }
 
@@ -46,6 +51,7 @@ load_module "templates"
 load_module "mcp"
 load_module "lessons"
 load_module "kb"
+load_module "triggers"
 
 # Tenta carregar ambiente (idioma, segredos)
 load_env 2>/dev/null || true
@@ -1529,7 +1535,7 @@ install_memory_sync() {
 # Instala triggers de captura de lições
 install_triggers() {
     local path="$1"
-    local output_dir="$path/.aidev/rules/triggers"
+    local output_dir="$path/.aidev/triggers"
     local template_dir="$AIDEV_ROOT_DIR/templates/triggers"
     
     ensure_dir "$output_dir"
@@ -1546,6 +1552,59 @@ install_triggers() {
             fi
         done
     fi
+    echo ""
+    print_success "Configuração de triggers instalada com sucesso!"
+}
+
+# ============================================================================
+# Subcomando: triggers
+# ============================================================================
+cmd_triggers() {
+    shift # Consome 'triggers'
+    local subcmd="${1:-status}"
+    shift || true
+
+    load_module "triggers" 2>/dev/null || source "$AIDEV_LIB_DIR/triggers.sh"
+    triggers__load || true
+
+    case "$subcmd" in
+        status)
+            print_header "AI Dev - Triggers Status"
+            if [ -n "$AIDEV_TRIGGERS_JSON" ]; then
+                local count=$(echo "$AIDEV_TRIGGERS_JSON" | jq '.triggers | length')
+                print_info "Triggers carregados: $count"
+                print_info "Arquivo: .aidev/triggers/lesson-capture.yaml"
+            else
+                print_error "Triggers não carregados."
+            fi
+            ;;
+        list)
+            print_header "AI Dev - Lista de Triggers"
+            if [ -n "$AIDEV_TRIGGERS_JSON" ]; then
+                echo "$AIDEV_TRIGGERS_JSON" | jq -r '.triggers[] | "[\(.enabled)] \(.id) (\(.type)) -> \(.action)"'
+            else
+                print_error "Nenhum trigger carregado."
+            fi
+            ;;
+        test)
+            local test_id="$1"
+            if [ -z "$test_id" ]; then
+                print_error "Uso: aidev triggers test <id> [contexto]"
+                exit 1
+            fi
+            local context="${2:-contexto de teste}"
+            print_info "Testando trigger: $test_id"
+            echo "$AIDEV_TRIGGERS_JSON" | jq -c --arg id "$test_id" '.triggers[] | select(.id == $id)' | while read -r trigger; do
+                local message=$(echo "$trigger" | jq -r '.message')
+                local action=$(echo "$trigger" | jq -r '.action')
+                triggers__handle_match "$test_id" "$message" "$action" "$context"
+            done
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcmd (status, list, test)"
+            exit 1
+            ;;
+    esac
 }
 
 # Adiciona .aidev/state ao .gitignore do projeto se existir
@@ -2540,6 +2599,9 @@ main() {
             ;;
         metrics)
             cmd_metrics "$@"
+            ;;
+        triggers)
+            cmd_triggers "$@"
             ;;
         integrity)
             cmd_doctor "$@"

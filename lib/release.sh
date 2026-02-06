@@ -95,7 +95,7 @@ release_discover_version_points() {
 # ============================================================================
 
 # Atualiza a versao em todos os arquivos mapeados
-# Uso: release_bump_version "3.5.0" "3.6.1" "/path/to/project"
+# Uso: release_bump_version "3.5.0" "3.6.2" "/path/to/project"
 release_bump_version() {
     local old_version="$1"
     local new_version="$2"

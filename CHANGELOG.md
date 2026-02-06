@@ -5,6 +5,19 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.6.2] - 2026-02-05
+
+### Adicionado
+- **FASE 4 - Automação de Triggers**: Motor proativo para detecção de contextos de aprendizado.
+- **Módulo `lib/triggers.sh`**: Suporte a gatilhos via YAML com detecção de erros e intenções.
+- **Comando `aidev triggers`**: Gestão completa de gatilhos (status, list, test).
+- **Detecção de Erros Críticos**: Gancho automático no `error_handler` do CLI para sugerir lições da KB.
+- **Análise de Intenção**: Detecção de palavras-chave de sucesso para ativação automática de skills.
+
+### Segurança
+- **Persistência Segura**: Estado de triggers e cooldowns gerenciado em `.aidev/state/triggers.json`.
+- **Parsing Seguro**: Utilização de Python para processamento de YAML complexo de gatilhos.
+
 ## [3.6.1] - 2026-02-05
 
 ### 🚀 Features (Novidades)

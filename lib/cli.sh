@@ -67,7 +67,7 @@ show_help() {
     # ========================================================================
     # Correção de Alinhamento (ANSI-safe)
     # ------------------------------------------------------------------------
-    local version="${AIDEV_VERSION:-3.6.1}"
+    local version="${AIDEV_VERSION:-3.6.2}"
     local app_name="AI Dev Superpowers"
     
     # 1. Conteúdo limpo (sem cores) para cálculo de largura
@@ -154,7 +154,7 @@ show_help() {
 # Exibe versão
 # Uso: show_version
 show_version() {
-    echo "aidev v${AIDEV_VERSION:-3.6.1}"
+    echo "aidev v${AIDEV_VERSION:-3.6.2}"
 }
 
 # ============================================================================

@@ -8,7 +8,7 @@
 # Uso: source lib/core.sh
 # ============================================================================
 
-readonly AIDEV_VERSION="${AIDEV_VERSION:-3.8.0}" 2>/dev/null || true
+readonly AIDEV_VERSION="${AIDEV_VERSION:-3.8.1}" 2>/dev/null || true
 
 # ============================================================================
 # Cores e Formatação (Detecção de TTY)

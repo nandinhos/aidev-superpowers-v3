@@ -5,6 +5,20 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.8.1] - 2026-02-06
+### 🚀 Features (Sprint 4: Dashboards & System Management)
+- **Dashboard de Roadmap**: Novo comando `aidev roadmap status` exibe visualmente o progresso da sprint atual.
+- **Advanced Context Snapshotter**: `aidev snapshot` gera um resumo técnico portátil para migração de contexto entre IAs.
+- **System Management**: Novo subcomando `aidev system` para gerenciar a instalação global.
+    - `aidev system status`: Estado da instalação e backups.
+    - `aidev system deploy`: Sincroniza o desenvolvimento com o global com backup automático.
+    - `aidev system link`: Modo de desenvolvimento via links simbólicos.
+    - `aidev system rollback`: Reversão de segurança do último deploy.
+
+### 🐛 Fixes (Correções)
+- **Cores ANSI**: Correção definitiva da exibição de cores no terminal através do uso de strings ANSI-C (`$'\e'`).
+- **Sincronização Global**: Garantia de que a instalação em `~/.aidev-superpowers/` reflete exatamente a versão estável do repositório.
+
 ## [3.8.0] - 2026-02-06
 ### 🚀 Features (Portabilidade Multi-Ambiente)
 - **Smart Path Resolution**: Nova função `resolve_path` no Core para expansão dinâmica de `$HOME` e `~` em tempo de execução.

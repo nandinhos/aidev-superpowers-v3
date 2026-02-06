@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-3.8.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-3.8.1-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-122%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -41,16 +41,26 @@ aidev init
 
 ---
 
- ## 🛰️ Novidades da V3.8 `(Portabilidade Multi-Ambiente)`
+ ## 🛰️ Novidades da V3.8 `(Portabilidade & System Management)`
  
- ### Smart Path Resolution
- O AI Dev agora é 100% portátil. Através da nova função `resolve_path`, o sistema expande dinamicamente variáveis como `$HOME` e `~` em tempo de execução. Isso permite que você trabalhe no mesmo projeto em máquinas diferentes (ex: casa e trabalho) sem gerar conflitos de caminhos absolutos no Git.
- 
- ### Auto-Cura de Caminhos
- O comando `aidev doctor --fix` tornou-se ainda mais inteligente, detectando caminhos absolutos "hardcoded" e sugerindo a conversão automática para variáveis de ambiente portáteis.
- 
- ### Correções de Subcomandos
- Correção de bug crítico nos comandos `add-skill`, `add-agent` e `add-rule`, que agora capturam corretamente nomes customizados e respeitam o diretório alvo via `--install-in`.
+ ### System Management (Nova!)
+ Gerencie seu framework como um profissional. Sincronize o código de desenvolvimento com o global ou use o modo link para desenvolvimento em tempo real.
+ ```bash
+ aidev system status   # Verifica o estado global
+ aidev system deploy   # Atualiza o sistema com segurança (auto-backup)
+ aidev system link     # Ativa o modo de desenvolvimento (live sync)
+ aidev system rollback # Reverte para o último backup estável
+ ```
+
+ ### Dashboards & Snapshots
+ Visualize seu progresso e migre contextos sem perda de informação.
+ ```bash
+ aidev roadmap status  # Dashboard visual da Sprint
+ aidev snapshot        # Passaporte técnico para troca de IA
+ ```
+
+ ### ANSI Colors Fix
+ Correção definitiva de cores no terminal, agora 100% suportada em ambientes com redirecionamento e pipes.
  
  ---
  
@@ -260,6 +270,7 @@ seu-projeto/
 | `aidev add-skill` | Adiciona skill customizada |
 | `aidev add-agent` | Adiciona agente customizado |
 | `aidev self-upgrade` | Atualiza o CLI global (opcional `--force`) |
+| `aidev system` | **(v3.8.1)** Gestão global (status, deploy, link, rollback) |
 
 ### Ativacao do Modo Agente
 

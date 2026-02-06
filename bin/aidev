@@ -2175,12 +2175,13 @@ cmd_config_language() {
 
 # Subcomando: release
 # Gerencia ciclo de release e versionamento
+# Agora com bump automatico de versao em todos os arquivos mapeados
 cmd_release() {
-    # O primeiro argumento ($1) é 'release'.
-    # O segundo ($2) pode ser o tipo de bump (major, minor, patch).
+    # O primeiro argumento ($1) e 'release'.
+    # O segundo ($2) pode ser o tipo de bump (major, minor, patch, current).
     local bump_type="patch"
-    
-    # Verifica se o segundo argumento é um tipo de bump conhecido
+
+    # Verifica se o segundo argumento e um tipo de bump conhecido
     if [[ "$2" == "major" || "$2" == "minor" || "$2" == "patch" || "$2" == "current" ]]; then
         bump_type="$2"
         shift 2 # Consome 'release' e o tipo
@@ -2189,46 +2190,73 @@ cmd_release() {
     fi
 
     parse_args "$@"
-    
+
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
-    
+
     if ! has_aidev_installed "$install_path"; then
         print_error "AI Dev nao esta instalado neste diretorio"
         print_info "Execute 'aidev init' primeiro"
         exit 1
     fi
-    
-    # Carrega módulos necessários
+
+    # Carrega modulos necessarios
     load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
     load_module "orchestration" 2>/dev/null || source "$AIDEV_LIB_DIR/orchestration.sh"
-    
+    load_module "release" 2>/dev/null || source "$AIDEV_LIB_DIR/release.sh"
+
     local project_name=$(detect_project_name "$install_path")
     local stack=$(detect_stack "$install_path")
     local intent="release"
     local skill="release-management"
-    
+
     print_header "AI Dev - Release Manager"
     echo ""
-    
-    # Define Agentes baseados no intent (Orquestrador já sabe lidar com isso)
+
+    # === BUMP AUTOMATICO DE VERSAO ===
+    # Detecta o diretorio-fonte do projeto (repositorio de desenvolvimento)
+    local source_dir=""
+    if [ -f "$AIDEV_ROOT_DIR/lib/release.sh" ]; then
+        source_dir="$AIDEV_ROOT_DIR"
+    fi
+
+    if [ -n "$source_dir" ]; then
+        print_section "Bump Automatico de Versao"
+        release_execute_bump "$bump_type" "$source_dir"
+        local bump_result=$?
+
+        if [ $bump_result -ne 0 ]; then
+            print_error "Falha no bump automatico. Verifique os erros acima."
+            print_info "Voce pode corrigir manualmente e usar 'aidev release current' para sincronizar."
+            exit 1
+        fi
+    else
+        print_warning "Modulo release.sh nao encontrado no source. Bump manual necessario."
+    fi
+
+    # Versoes pos-bump
+    local old_version="${RELEASE_OLD_VERSION:-desconhecida}"
+    local new_version="${RELEASE_NEW_VERSION:-desconhecida}"
+
+    # Define Agentes baseados no intent
     local agents=$(orchestrator_select_agents "$intent")
-    
+
     # Configura fluxo no estado
     export CLI_INSTALL_PATH="$install_path"
     state_init
     state_write "active_intent" "$intent"
-    state_write "intent_description" "Prepare release ($bump_type) version bump"
+    state_write "intent_description" "Prepare release ($bump_type) $old_version -> $new_version"
     state_activate_skill "$skill"
-    
+
     print_section "Fluxo Configurado"
     echo "  Intent:  $intent"
     echo "  Tipo:    $bump_type"
+    echo "  Versao:  $old_version -> $new_version"
     echo "  Skill:   $skill"
     echo "  Agentes: $agents"
     echo ""
-    
-    print_section "Prompt de Ativacao (copie e cole na IA)"
+
+    print_section "Proximos Passos (para o agente IA)"
     echo "----------------------------------------"
     cat << EOF
 MODO AGENTE - Release Manager
@@ -2237,23 +2265,26 @@ Contexto:
 - Projeto: $project_name
 - Stack: $stack
 - Intent: $intent
+- Versao: $old_version -> $new_version
 - Tipo de Bump: $bump_type
 
-Instrucoes:
-1. Leia o arquivo .aidev/agents/orchestrator.md
-2. Ative o agente 'release-manager' e a skill '$skill'
-3. Execute o checklist de release:
-   - Identifique arquivos de versao
-   - Verifique integridade (testes, git status)
-   - Atualize versoes e changelog
-   - Gere comamndos de git tag
+Status do Bump Automatico:
+- Arquivos de versao: ATUALIZADOS automaticamente
+- Cache de ativacao: RECONSTRUIDO
 
-Confirme que entendeu e inicie a Verificacao de Integridade (Pre-check).
+Instrucoes (apenas o que resta):
+1. Atualize o CHANGELOG.md com as mudancas desde a ultima release
+2. Verifique com 'git diff' se as alteracoes estao corretas
+3. Crie commit de release: chore(release): prepare v$new_version
+4. Crie tag: git tag -a v$new_version -m "Release v$new_version"
+5. Push (com confirmacao): git push origin main --tags
+
+Confirme que entendeu e inicie a verificacao do CHANGELOG.
 EOF
     echo "----------------------------------------"
     echo ""
-    
-    print_success "Modo Release Manager configurado!"
+
+    print_success "Bump automatico concluido! Falta: CHANGELOG, commit e tag."
 }
 
 # Subcomando: self-upgrade

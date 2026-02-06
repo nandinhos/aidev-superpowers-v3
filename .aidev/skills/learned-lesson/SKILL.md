@@ -7,6 +7,10 @@ triggers:
   - "memorizar"
   - "learned"
   - "concluimos"
+  - "padrao"
+  - "sucesso"
+  - "excelencia"
+  - "decisao"
 globs:
   - ".aidev/memory/kb/*.md"
   - "docs/lessons/*.md"
@@ -29,10 +33,10 @@ previous_skill: systematic-debugging
 - **Artefato Final**: `.aidev/memory/kb/YYYY-MM-DD-<topic>.md`
 
 ## Quando Usar
-Ativa apos a conclusao de uma tarefa complexa, correcao de bug ou decisao arquitetural importante. O objetivo e economizar tokens e tempo em sessoes futuras.
+Ativa apos a conclusao de uma tarefa complexa, correcao de bug, **implementacao de um padrao de sucesso** ou decisao arquitetural importante. O objetivo e economizar tokens e tempo em sessoes futuras ao reutilizar solucoes de excelencia ou evitar erros repetidos.
 
 ## Proposito
-Capturar conhecimento tacito e transforma-lo em conhecimento explicito reutilizavel.
+Capturar conhecimento tacito (como resolvemos algo ou por que algo funcionou tao bem) e transforma-lo em conhecimento explicito reutilizavel.
 
 ---
 
@@ -42,10 +46,10 @@ Capturar conhecimento tacito e transforma-lo em conhecimento explicito reutiliza
 ### Acoes
 Documentar o contexto do aprendizado:
 
-1. Qual erro, excecao ou desafio foi resolvido?
-2. Qual era o comportamento esperado vs observado?
+1. Qual erro, excecao, desafio ou **padrao de excelencia** foi identificado?
+2. Qual era o comportamento esperado vs observado (para bugs) ou qual a vantagem competitiva (para padroes)?
 3. Qual a stack/tecnologia envolvida?
-4. Qual a frequencia/impacto do problema?
+4. Qual a frequencia/impacto ou potencial de reuso?
 
 ### Formato de Captura
 
@@ -102,12 +106,12 @@ Aplicar tecnica dos 5 Porques:
 ### Causa Raiz Identificada
 [Explicacao tecnica clara e concisa]
 
-### Tipo de Problema
+### Tipo de Problema / Padrao
 - [ ] Bug de codigo
 - [ ] Configuracao incorreta
-- [ ] Dependencia desatualizada
-- [ ] Race condition
-- [ ] Limite de recurso
+- [ ] Padrao de Codificacao (Sucesso)
+- [ ] Decisao Arquitetural
+- [ ] Otimizacao de Performance
 - [ ] Falta de validacao
 - [ ] Outro: ___
 ```
@@ -190,7 +194,7 @@ mcp__basic-memory__write_note
 
 **Data**: YYYY-MM-DD
 **Stack**: [Tecnologias envolvidas]
-**Tags**: [bug, config, performance, security, etc]
+**Tags**: [bug, success-pattern, arch-decision, performance, security, etc]
 
 ## Contexto
 [Resumo do contexto - do Step 1]
@@ -227,10 +231,11 @@ Como evitar no futuro:
 | Categoria | Descricao | Exemplo |
 |-----------|-----------|---------|
 | `bug` | Correcao de erro | NPE em campo nullable |
+| `success-pattern` | Padrao de Excelencia | Implementacao limpa de Repository |
+| `arch-decision` | Decisao Arquitetural | Uso de Event Sourcing |
 | `config` | Configuracao | Timeout de conexao |
 | `performance` | Otimizacao | N+1 query |
 | `security` | Vulnerabilidade | SQL injection |
-| `architecture` | Decisao arquitetural | Escolha de pattern |
 | `integration` | Integracao | API externa |
 | `deployment` | Deploy/infra | Docker/K8s |
 

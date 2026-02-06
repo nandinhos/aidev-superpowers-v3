@@ -39,10 +39,7 @@ These rules apply to ALL projects regardless of stack.
 ## Formato de Commit
 
 **REGRAS OBRIGATORIAS**:
-- Idioma: O idioma configurado na instalação (padrão: PORTUGUES).
-- Se `AIDEV_LANG=en`, use Inglês. Se `AIDEV_LANG=pt`, use Português.
-- Na dúvida, siga o idioma predominante do projeto. 
-- Regra de idioma é diretamente relacionado a tudo e enfaticamente à commits, planos, relatórios, pensamentos, comunicação no editor, comentários do código
+- Idioma: PORTUGUES (obrigatorio)
 - Emojis: PROIBIDOS
 - Co-autoria: PROIBIDA (sem Co-Authored-By)
 
@@ -96,4 +93,4 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - Architecture decisions
 
 
-## Project: aidev-superpowers-v3
+## Project: aidev-superpowers-v3-1

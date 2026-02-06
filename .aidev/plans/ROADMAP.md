@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP AI DEV SUPERPOWERS
 
 > Documento mestre de planejamento do Framework
-> Status: Ativo | Versão Atual: v3.7.0
+> Status: Ativo | Versão Atual: v3.8-pre
 
 ---
 
@@ -14,16 +14,10 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 **Objetivo:** Adicionar inteligência na detecção de ambiente e integração nativa com o ecossistema MCP.
 
 ### Funcionalidades:
-- [ ] **3.1 - MCP Aware & Bridge**:
-  - Detectar stacks (Laravel, Node, Python) e recomendar/configurar MCPs proprietários.
-  - Bridge inteligente para o Laravel Boost (executar queries, ler logs via aidev).
-- [ ] **3.2 - Skill: Meta-Planning**:
-  - Nova skill para decomposição automática de pedidos grandes em Roadmaps e Sprints.
-- [ ] **3.3 - Validação de Pré-Requisitos**:
-  - Sistema de bloqueio/aviso para skills (ex: não permitir TDD sem design).
-- [ ] **3.4 - Fixes de Estado (P1)**:
-  - Rollback para checkpoint específico.
-  - Checkpoint IDs baseados em milissegundos/nanossegundos.
+- [x] **3.1 - MCP Aware & Bridge**: Detecção de stack e recomendação de suporte especializado via `aidev mcp`.
+- [ ] **3.2 - Skill: Meta-Planning** (EM PROGRESSO): Nova skill para decomposição automática de tarefas.
+- [ ] **3.3 - Validação de Pré-Requisitos**: Bloqueio inteligente entre skills.
+- [x] **3.4 - Fixes de Estado (P1)**: Checkpoint IDs únicos e Rollback seguro.
 
 ---
 

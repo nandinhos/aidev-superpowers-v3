@@ -1589,17 +1589,52 @@ cmd_roadmap() {
 
     case "$subcmd" in
         status)
-            print_header "AI Dev - Roadmap Status"
+            print_header "AI Dev - Dashboard de Progresso"
             if [ -f ".aidev/plans/ROADMAP.md" ]; then
-                print_info "Roadmap encontrado em .aidev/plans/ROADMAP.md"
-                # Extrai progresso básico (opcional)
-                grep -E "###|####" ".aidev/plans/ROADMAP.md" | head -n 10
+                # Exibe versão e objetivo
+                local current_ver=$(grep "Versão Atual" ".aidev/plans/ROADMAP.md" | head -n 1 | sed 's/.*: //')
+                local objective=$(sed -n '/## 🎯 OBJETIVO/,/---/p' ".aidev/plans/ROADMAP.md" | grep -v "##" | grep -v -- "---" | xargs)
+                
+                print_info "Versão: $current_ver"
+                print_info "Meta:   $objective"
+                echo ""
+
+                # Exibe a Sprint atual (primeira que encontrar 'S3' ou 'EM CURSO')
+                print_section "Fase em Execução"
+                grep -A 20 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -E "^- \[[x ]\]" | head -n 10
+                
+                echo ""
+                print_info "Para detalhes completos, veja: .aidev/plans/ROADMAP.md"
             else
                 print_error "ROADMAP.md não encontrado. Use 'aidev init' para provisionar."
             fi
             ;;
         *)
             print_error "Subcomando desconhecido: $subcmd (status)"
+            exit 1
+            ;;
+    esac
+}
+
+# ============================================================================
+# Subcomando: mcp
+# ============================================================================
+cmd_mcp() {
+    shift # Consome 'mcp'
+    local subcmd="${1:-status}"
+    shift || true
+
+    load_module "mcp-bridge" 2>/dev/null || source "$AIDEV_LIB_DIR/mcp-bridge.sh"
+
+    case "$subcmd" in
+        status|suggest)
+            mcp_bridge_suggest
+            ;;
+        exec)
+            mcp_bridge_exec "$@"
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcmd (suggest, exec)"
             exit 1
             ;;
     esac
@@ -2706,6 +2741,9 @@ main() {
             ;;
         roadmap)
             cmd_roadmap "$@"
+            ;;
+        mcp)
+            cmd_mcp "$@"
             ;;
         feature)
             cmd_feature "$@"

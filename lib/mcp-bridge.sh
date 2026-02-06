@@ -69,9 +69,26 @@ mcp_bridge_exec() {
     local server="$1"
     local tool="$2"
     shift 2
+    local args="$*"
     
-    print_debug "MCP Bridge: Executando $server/$tool..."
+    print_debug "MCP Bridge: Roteando para $server/$tool (Args: $args)"
     
-    # Esta função é um placeholder para quando o framework puder invocar 
-    # ferramentas MCP programaticamente fora do chat direto.
+    if ! mcp_bridge_check "$server"; then
+        print_error "Servidor MCP '$server' nao disponivel no ambiente atual."
+        return 1
+    fi
+
+    # Lógica de ponte: Dependendo do servidor, podemos ter wrappers específicos
+    case "$server" in
+        "laravel-boost")
+            # Ex: Se o usuário rodar 'aidev mcp exec laravel-boost database-schema'
+            # Isso poderia chamar via terminal ou MCP CLI se existisse.
+            # No contexto do Antigravity, orientamos o Agente a usar a ferramenta diretamente.
+            print_info "💡 [BRIDGE] Para executar ferramentas do $server, use o MCP Laravel Boost diretamente."
+            print_info "Comando sugerido: $tool $args"
+            ;;
+        *)
+            print_warning "Bridge genérica para '$server' ainda não implementada."
+            ;;
+    esac
 }

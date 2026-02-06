@@ -2413,13 +2413,15 @@ cmd_self_upgrade() {
     print_info "Versao atual: $current_version"
 
     # Detecta source (projeto atual ou diretorio padrao)
-    if [ -f "./lib/core.sh" ]; then
+    if [ -f "./lib/core.sh" ] && [ -f "./bin/aidev" ]; then
          source_dir=$(pwd)
     elif [ -f "$AIDEV_ROOT_DIR/lib/core.sh" ] && [ "$AIDEV_ROOT_DIR" != "$global_install" ]; then
          source_dir="$AIDEV_ROOT_DIR"
-    elif [ -d "$HOME/projects/aidev-superpowers-v3" ]; then
+    elif [ -d "$HOME/projects/aidev-superpowers-v3-1" ] && [ "$HOME/projects/aidev-superpowers-v3-1" != "$global_install" ]; then
+         source_dir="$HOME/projects/aidev-superpowers-v3-1"
+    elif [ -d "$HOME/projects/aidev-superpowers-v3" ] && [ "$HOME/projects/aidev-superpowers-v3" != "$global_install" ]; then
          source_dir="$HOME/projects/aidev-superpowers-v3"
-    elif [ -d "$HOME/aidev-superpowers" ]; then
+    elif [ -d "$HOME/aidev-superpowers" ] && [ "$HOME/aidev-superpowers" != "$global_install" ]; then
          source_dir="$HOME/aidev-superpowers"
     fi
 

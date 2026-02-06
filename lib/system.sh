@@ -10,22 +10,22 @@
 # ============================================================================
 
 # Detecta o diretório raiz da instalação global do aidev
-# Uso: root=$(system__get_global_root)
 system__get_global_root() {
-    local aidev_bin=$(which aidev 2>/dev/null)
-    if [ -z "$aidev_bin" ]; then
-        # Fallback para caminho padrão se não estiver no PATH
-        aidev_bin="$HOME/.local/bin/aidev"
+    local global_default="$HOME/.aidev-superpowers"
+    
+    # Se o diretório padrão existe, ele é a raiz global independente do link
+    if [ -d "$global_default" ]; then
+        echo "$global_default"
+        return
     fi
 
-    if [ -L "$aidev_bin" ]; then
-        # Resolve symlink para encontrar a pasta real
+    # Fallback: tenta localizar via binário
+    local aidev_bin=$(which aidev 2>/dev/null)
+    if [ -n "$aidev_bin" ]; then
         local real_bin=$(readlink -f "$aidev_bin")
-        local bin_dir=$(dirname "$real_bin")
-        echo "$(dirname "$bin_dir")"
+        echo "$(dirname "$(dirname "$real_bin")")"
     else
-        # Se não for link, assume que o global está em ~/.aidev-superpowers
-        echo "$HOME/.aidev-superpowers"
+        echo "$global_default"
     fi
 }
 

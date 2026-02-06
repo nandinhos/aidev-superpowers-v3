@@ -1621,7 +1621,11 @@ cmd_feature() {
             ;;
         list)
             print_header "AI Dev - Features em Andamento"
-            ls -1 .aidev/plans/features/*.md 2>/dev/null | xargs -n 1 basename
+            if ls .aidev/plans/features/*.md >/dev/null 2>&1; then
+                ls -1 .aidev/plans/features/*.md 2>/dev/null | xargs -n 1 -r basename
+            else
+                print_info "Nenhuma funcionalidade em andamento no momento."
+            fi
             ;;
         *)
             print_error "Subcomando desconhecido: $subcmd (add, finish, list)"

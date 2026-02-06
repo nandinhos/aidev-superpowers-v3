@@ -39,7 +39,32 @@ aidev init
 
 ---
 
-## 🚀 Novidades da V3.5 `(Cache de Ativação & Economia de Tokens)`
+---
+ 
+ ## 🚀 Novidades da V3.6 `(Memory Sync & Automação de Triggers)`
+ 
+ ### Memory Sync Cross-Project
+ O conhecimento agora é **global**. Lições aprendidas em um projeto podem ser indexadas e consultadas em outros repositórios, criando um cérebro coletivo para o time de desenvolvimento.
+ 
+ ```bash
+ aidev lessons index   # Indexa todas as lições aprendidas
+ aidev lessons search  # Busca semântica por soluções no KB
+ ```
+ 
+ ### Automação de Triggers (FASE 4)
+ O sistema tornou-se **proativo**. Através de gatilhos configuráveis, ele monitora a sessão e age sozinho:
+ - **Ganchos de Erro**: Detecta erros críticos (SQL, Exceptions) e sugere soluções da KB.
+ - **Detector de Intenção**: Identifica quando um bug foi resolvido e sugere documentar a lição.
+ - **Gestão de Cooldown**: Respeita seu fluxo de trabalho, evitando sugestões repetitivas.
+ 
+ ```bash
+ aidev triggers list    # Lista gatilhos ativos
+ aidev triggers status  # Verifica saúde do motor de automação
+ ```
+ 
+ ---
+ 
+ ## ⚡ Novidades da V3.5 `(Cache de Ativação & Economia de Tokens)`
 
 ### Cache de Ativação Inteligente
 O sistema agora **pré-computa** todas as informações essenciais (agentes, skills, regras) em um único JSON, reduzindo o consumo de tokens na ativação em **até 96%**.
@@ -66,8 +91,51 @@ Instruções otimizadas para diferentes comportamentos de LLMs:
 - Fix: Listagem redundante de agentes quando cache existe
 
 ---
-
-## Novidades da V3.1 `(Greenfield & Brownfield)`
+ 
+ ## ⚡ Novidades da V3.5 `(MCP Manager & Runtime Detection)`
+ 
+ ### MCP Manager (Model Context Protocol)
+ Agora você pode gerenciar seus próprios servidores MCP diretamente pelo CLI. Adicione documentação customizada ou ferramentas de análise com facilidade.
+ 
+ ```bash
+ aidev mcp list             # Lista servidores ativos
+ aidev mcp add <nome>       # Registra um novo servidor
+ ```
+ 
+ ### Runtime & Slash Commands
+ O sistema detecta se você está no terminal puro, VS Code ou no modo Antigravity, adaptando os lembretes. No Antigravity, use `/aidev` para workflows automáticos.
+ 
+ ---
+ 
+ ## 🌍 Novidades da V3.3 `(Internacionalização & Release Manager)`
+ 
+ ### Multi-Idioma (i18n)
+ Suporte nativo completo para **Português (pt-BR)** e **Inglês (en)**. Mensagens, templates de agentes e regras agora falam a sua língua.
+ 
+ ```bash
+ aidev config language en    # Muda para Inglês
+ aidev config language pt-br # Volta para Português
+ ```
+ 
+ ### Automação de Releases
+ Novo comando `aidev release` coordenado pelo **Release Agent**. Ele automatiza o bump de versão, atualiza changelogs e cria tags git com um único comando.
+ 
+ ---
+ 
+ ## 💡 Novidades da V3.2 `(Comandos de Intenção & Smart Suggest)`
+ 
+ ### Comandos Baseados em Intenção
+ O CLI agora configura automaticamente o fluxo de trabalho da IA baseado no seu objetivo:
+ - `aidev new-feature`: Brainstorming -> Plano -> TDD.
+ - `aidev fix-bug`: Systematic Debugging.
+ - `aidev refactor`: Refatoração Segura.
+ 
+ ### Smart Suggest
+ O comando `aidev suggest` analisa o seu projeto (git status, arquivos, testes) e diz exatamente o que você deveria fazer agora.
+ 
+ ---
+ 
+ ## Novidades da V3.1 `(Greenfield & Brownfield)`
 
 ### Contexto Inteligente (Smart Context)
 O `aidev init` agora detecta automaticamente o estado do projeto:
@@ -118,11 +186,11 @@ seu-projeto/
 │   │   ├── systematic-debugging/
 │   │   └── learned-lesson/
 │   │
-│   ├── rules/            # Regras da stack
-│   │   ├── generic.md    # Inclui regras de commit em portugues
-│   │   └── [sua-stack].md
+│   ├── rules/            # Regras da stack (generic + stack específica)
 │   │
-│   └── state/            # Estado persistente (sessao)
+│   ├── triggers/         # Gatilhos automáticos de captura de lições (YAML)
+│   │
+│   └── state/            # Estado persistente (sessao e cooldowns)
 │
 ├── CLAUDE.md             # Instrucoes para Claude Code
 └── .mcp.json             # Configuracao MCP (se aplicavel)
@@ -141,6 +209,13 @@ seu-projeto/
 | `aidev cache --build` | **(v3.5)** Gera cache de ativação para economia de tokens |
 | `aidev cache --status` | **(v3.5)** Verifica integridade do cache |
 | `aidev cache --clear` | **(v3.5)** Remove cache (força leitura completa) |
+| `aidev config language <lang>` | **(v3.3)** Troca o idioma do CLI (pt-br, en) |
+| `aidev release <tipo>` | **(v3.3)** Automatiza ciclo de release (patch, minor, major) |
+| `aidev mcp list/add`  | **(v3.5)** Gerencia servidores Model Context Protocol |
+| `aidev lessons index` | **(v3.6)** Indexa lições para busca cross-project |
+| `aidev lessons search`| **(v3.6)** Busca soluções similares no Knowledge Base |
+| `aidev triggers list` | **(v3.6)** Lista gatilhos proativos ativos |
+| `aidev triggers status`| **(v3.6)** Status do motor de automação |
 | `aidev start` | Mostra instrucoes de ativacao |
 | `aidev upgrade` | Atualiza para versao mais recente |
 | `aidev status` | Dashboard de progresso e contexto Git |
@@ -149,6 +224,7 @@ seu-projeto/
 | `aidev snapshot` | Gera resumo de contexto para migracao de IA |
 | `aidev add-skill` | Adiciona skill customizada |
 | `aidev add-agent` | Adiciona agente customizado |
+| `aidev self-upgrade` | Atualiza o CLI global (opcional `--force`) |
 
 ### Ativacao do Modo Agente
 

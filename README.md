@@ -40,6 +40,34 @@ aidev init
 ---
 
 ---
+
+ ## 🛰️ Novidades da V3.8 `(Portabilidade Multi-Ambiente)`
+ 
+ ### Smart Path Resolution
+ O AI Dev agora é 100% portátil. Através da nova função `resolve_path`, o sistema expande dinamicamente variáveis como `$HOME` e `~` em tempo de execução. Isso permite que você trabalhe no mesmo projeto em máquinas diferentes (ex: casa e trabalho) sem gerar conflitos de caminhos absolutos no Git.
+ 
+ ### Auto-Cura de Caminhos
+ O comando `aidev doctor --fix` tornou-se ainda mais inteligente, detectando caminhos absolutos "hardcoded" e sugerindo a conversão automática para variáveis de ambiente portáteis.
+ 
+ ### Correções de Subcomandos
+ Correção de bug crítico nos comandos `add-skill`, `add-agent` e `add-rule`, que agora capturam corretamente nomes customizados e respeitam o diretório alvo via `--install-in`.
+ 
+ ---
+ 
+ ## 🗺️ Novidades da V3.7 `(Metodologia Roadmap & Sprints)`
+ 
+ ### Metodologia SGAITI Integrada
+ Implementação formal do modelo de Roadmaps e Sprints. Agora você pode planejar grandes funcionalidades em pequenos incrementos rastreáveis.
+ 
+ ```bash
+ aidev roadmap status  # Visualiza o progresso da sprint atual
+ aidev feature add     # Inicia uma nova funcionalidade no roadmap
+ ```
+ 
+ ### State Manager Agent
+ Um novo agente especializado em garantir que a troca de contexto ou de modelo de IA ocorra sem perda de informação, gerenciando "Snapshots" e sincronia de estado técnica.
+ 
+ ---
  
  ## 🚀 Novidades da V3.6 `(Memory Sync & Automação de Triggers)`
  
@@ -223,6 +251,8 @@ seu-projeto/
 | `aidev triggers status`| **(v3.6)** Status do motor de automação |
 | `aidev start` | Mostra instrucoes de ativacao |
 | `aidev upgrade` | Atualiza para versao mais recente |
+| `aidev roadmap` | **(v3.7)** Dashboard de progresso e gestão de Sprints |
+| `aidev feature` | **(v3.7)** Gestão do ciclo de vida de funcionalidades |
 | `aidev status` | Dashboard de progresso e contexto Git |
 | `aidev doctor` | Diagnostico de saude do ambiente |
 | `aidev doctor --fix` | **Auto-Cura**: Repara problemas detectados |

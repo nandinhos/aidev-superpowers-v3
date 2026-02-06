@@ -51,7 +51,7 @@ aidev init
  aidev lessons search  # Busca semântica por soluções no KB
  ```
  
- ### Automação de Triggers (FASE 4)
+ ### Automação de Triggers 
  O sistema tornou-se **proativo**. Através de gatilhos configuráveis, ele monitora a sessão e age sozinho:
  - **Ganchos de Erro**: Detecta erros críticos (SQL, Exceptions) e sugere soluções da KB.
  - **Detector de Intenção**: Identifica quando um bug foi resolvido e sugere documentar a lição.
@@ -92,7 +92,7 @@ Instruções otimizadas para diferentes comportamentos de LLMs:
 
 ---
  
- ## ⚡ Novidades da V3.5 `(MCP Manager & Runtime Detection)`
+ ## ⚡ Novidades da V3.4 `(MCP Manager & Runtime Detection)`
  
  ### MCP Manager (Model Context Protocol)
  Agora você pode gerenciar seus próprios servidores MCP diretamente pelo CLI. Adicione documentação customizada ou ferramentas de análise com facilidade.
@@ -167,7 +167,12 @@ seu-projeto/
 ├── .aidev/
 │   ├── QUICKSTART.md     # Arquivo consolidado para ativacao rapida
 │   │
-│   ├── agents/           # 9 agentes especializados
+│   ├── plans/            # [NOVO v3.7] Roadmaps e Sprints (Metodologia SGAITI)
+│   │   ├── ROADMAP.md
+│   │   ├── features/
+│   │   └── history/
+│   │
+│   ├── agents/           # 10 agentes especializados
 │   │   ├── orchestrator.md
 │   │   ├── architect.md
 │   │   ├── backend.md

@@ -190,6 +190,10 @@ EOF
     print_step "Configurando Memory Sync..."
     install_memory_sync "$install_path"
     install_triggers "$install_path"
+    
+    # Instala Planos e Roadmap (v3.7)
+    print_step "Provisionando Metodologia SGAITI..."
+    install_plans "$install_path"
 
     # Configura gitignore
     print_step "$(_ "step_gitignore")"
@@ -1395,6 +1399,8 @@ install_skills() {
                     fi
                 fi
             done
+            # Instala agentes de estado (v3.7)
+            process_agent_template "$AIDEV_ROOT_DIR/templates/agents/state-manager.md.tmpl" "$agents_dir" "$platform_dir"
         fi
     done
 }
@@ -1439,6 +1445,22 @@ configure_mcp() {
 
     # Setup completo do MCP Engine
     setup_mcp_engine "$path" "$platform"
+}
+
+# Instala estrutura de planos e roadmaps (v3.7)
+install_plans() {
+    local path="$1"
+    local plans_dir="$path/.aidev/plans"
+    
+    ensure_dir "$plans_dir"
+    ensure_dir "$plans_dir/features"
+    ensure_dir "$plans_dir/history"
+
+    local roadmap_template="$AIDEV_ROOT_DIR/templates/plans/ROADMAP.md.tmpl"
+    if [ -f "$roadmap_template" ]; then
+        process_template "$roadmap_template" "$plans_dir/ROADMAP.md"
+        print_debug "Instalado ROADMAP.md inicial"
+    fi
 }
 
 # Instala instruções de plataforma (lembrete de ativação)
@@ -1557,8 +1579,60 @@ install_triggers() {
 }
 
 # ============================================================================
-# Subcomando: triggers
+# Subcomando: roadmap
 # ============================================================================
+cmd_roadmap() {
+    shift # Consome 'roadmap'
+    local subcmd="${1:-status}"
+    shift || true
+
+    load_module "plans" 2>/dev/null || source "$AIDEV_LIB_DIR/plans.sh"
+
+    case "$subcmd" in
+        status)
+            print_header "AI Dev - Roadmap Status"
+            if [ -f ".aidev/plans/ROADMAP.md" ]; then
+                print_info "Roadmap encontrado em .aidev/plans/ROADMAP.md"
+                # Extrai progresso básico (opcional)
+                grep -E "###|####" ".aidev/plans/ROADMAP.md" | head -n 10
+            else
+                print_error "ROADMAP.md não encontrado. Use 'aidev init' para provisionar."
+            fi
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcmd (status)"
+            exit 1
+            ;;
+    esac
+}
+
+# ============================================================================
+# Subcomando: feature
+# ============================================================================
+cmd_feature() {
+    shift # Consome 'feature'
+    local subcmd="${1:-status}"
+    shift || true
+
+    load_module "plans" 2>/dev/null || source "$AIDEV_LIB_DIR/plans.sh"
+
+    case "$subcmd" in
+        add)
+            plans__feature_add "$@"
+            ;;
+        finish)
+            plans__feature_finish "$@"
+            ;;
+        list)
+            print_header "AI Dev - Features em Andamento"
+            ls -1 .aidev/plans/features/*.md 2>/dev/null | xargs -n 1 basename
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcmd (add, finish, list)"
+            exit 1
+            ;;
+    esac
+}
 cmd_triggers() {
     shift # Consome 'triggers'
     local subcmd="${1:-status}"
@@ -2623,6 +2697,12 @@ main() {
             ;;
         release)
             cmd_release "$@"
+            ;;
+        roadmap)
+            cmd_roadmap "$@"
+            ;;
+        feature)
+            cmd_feature "$@"
             ;;
         self-upgrade)
             cmd_self_upgrade "$@"

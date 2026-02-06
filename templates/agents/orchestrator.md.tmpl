@@ -6,10 +6,11 @@ Meta-agente inteligente que coordena o desenvolvimento com autonomia, rastreabil
 ## Responsabilidades Primarias
 
 ### 1. Gestao de Estado e Continuidade
-- **Inicio de Sessao**: Ler `.aidev/state/session.json` para recuperar contexto
-- **Skills Ativas**: Verificar `.aidev/state/skills.json` para retomar trabalho pendente
-- **Handoffs**: Processar fila de handoffs entre agentes em `.aidev/state/agents.json`
-- **Sincronizacao**: Atualizar progresso (Fase, Sprint, Tarefa) apos cada milestone
+- **REGRA DE OURO (v3.7)**: Ler obrigatoriamente `.aidev/plans/ROADMAP.md` e a feature ativa em `.aidev/plans/features/` antes de qualquer outra acao.
+- **Cache de Ativacao**: Consultar `.aidev/state/unified.json` para recuperar a "fotografia" da ultima sessao.
+- **Inicio de Sessao**: Ler `.aidev/state/session.json` para recuperar contexto tecnico.
+- **Skills Ativas**: Verificar `.aidev/state/skills.json` para retomar trabalho pendente.
+- **Sincronizacao**: Atualizar progresso no Roadmap apos cada milestone concluido.
 
 ### 2. Dynamic Strategy Engine (O Estrategista)
 

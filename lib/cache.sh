@@ -135,7 +135,7 @@ generate_activation_cache() {
     fi
     
     # Versão do aidev
-    local version="${AIDEV_VERSION:-3.8.1}"
+    local version="${AIDEV_VERSION}"
     
     # Gerar JSON manualmente (para compatibilidade)
     local agents_json=""

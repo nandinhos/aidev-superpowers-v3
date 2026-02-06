@@ -28,14 +28,19 @@ readonly RELEASE_VERSION_FILES=(
 # Uso: current=$(release_get_current_version "/path/to/project")
 release_get_current_version() {
     local project_path="${1:-.}"
-    local core_file="$project_path/lib/core.sh"
+    local version_file="$project_path/VERSION"
 
-    if [ ! -f "$core_file" ]; then
-        echo ""
+    if [ ! -f "$version_file" ]; then
+        # Fallback para core.sh se VERSION não existir
+        local core_file="$project_path/lib/core.sh"
+        if [ -f "$core_file" ]; then
+            grep "AIDEV_VERSION" "$core_file" | grep -oP '\d+\.\d+\.\d+' | head -1
+            return
+        fi
         return 1
     fi
 
-    grep "AIDEV_VERSION" "$core_file" | grep -oP '\d+\.\d+\.\d+' | head -1
+    cat "$version_file" | tr -d '[:space:]'
 }
 
 # Calcula a proxima versao baseado no tipo de bump
@@ -106,47 +111,36 @@ release_bump_version() {
 
     print_section "Bump de Versao: $old_version -> $new_version"
 
-    # 1. SSOT: lib/core.sh
-    local core_file="$project_path/lib/core.sh"
-    if [ -f "$core_file" ]; then
-        if sed -i "s/AIDEV_VERSION:-${escaped_old}/AIDEV_VERSION:-${new_version}/" "$core_file"; then
-            print_success "lib/core.sh (SSOT)"
+    # 1. SSOT: VERSION
+    local version_file="$project_path/VERSION"
+    if [ -f "$version_file" ]; then
+        if echo "$new_version" > "$version_file"; then
+            print_success "VERSION (SSOT)"
             ((files_updated++)) || true
         else
-            print_error "lib/core.sh"
+            print_error "VERSION"
             ((files_failed++)) || true
         fi
     fi
 
-    # 2. Fallbacks: lib/cli.sh
-    local cli_file="$project_path/lib/cli.sh"
-    if [ -f "$cli_file" ]; then
-        if sed -i "s/AIDEV_VERSION:-${escaped_old}/AIDEV_VERSION:-${new_version}/g" "$cli_file"; then
-            print_success "lib/cli.sh (fallbacks)"
+    # 2. CHANGELOG.md (Headers)
+    local changelog_file="$project_path/CHANGELOG.md"
+    if [ -f "$changelog_file" ]; then
+        # Adiciona nova versao no topo do changelog (abaixo do header principal)
+        if sed -i "/## \[[0-9]\+\.[0-9]\+\.[0-9]\+\]/i ## [$new_version] - $current_date\n" "$changelog_file"; then
+            print_success "CHANGELOG.md (header)"
             ((files_updated++)) || true
         else
-            print_error "lib/cli.sh"
+            print_error "CHANGELOG.md"
             ((files_failed++)) || true
         fi
     fi
 
-    # 3. Fallback: lib/cache.sh
-    local cache_file="$project_path/lib/cache.sh"
-    if [ -f "$cache_file" ]; then
-        if sed -i "s/AIDEV_VERSION:-${escaped_old}/AIDEV_VERSION:-${new_version}/g" "$cache_file"; then
-            print_success "lib/cache.sh (fallback)"
-            ((files_updated++)) || true
-        else
-            print_error "lib/cache.sh"
-            ((files_failed++)) || true
-        fi
-    fi
-
-    # 4. README badge
+    # 3. README.md (Badges)
     local readme_file="$project_path/README.md"
     if [ -f "$readme_file" ]; then
         if sed -i "s/version-${escaped_old}-blue/version-${new_version}-blue/g" "$readme_file"; then
-            print_success "README.md (badge)"
+            print_success "README.md (badges)"
             ((files_updated++)) || true
         else
             print_error "README.md"
@@ -154,13 +148,12 @@ release_bump_version() {
         fi
     fi
 
-    # 5. Teste unitario
+    # 4. Testes unitarios
     local test_file="$project_path/tests/unit/test-core.sh"
     if [ -f "$test_file" ]; then
-        # Atualiza qualquer versao hardcoded no assert de AIDEV_VERSION
         if sed -i "s/assert_equals \"[0-9]\+\.[0-9]\+\.[0-9]\+\" \"\$AIDEV_VERSION\"/assert_equals \"${new_version}\" \"\$AIDEV_VERSION\"/" "$test_file" && \
            sed -i "s/AIDEV_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+/AIDEV_VERSION = ${new_version}/" "$test_file"; then
-            print_success "tests/unit/test-core.sh (assert)"
+            print_success "tests/unit/test-core.sh"
             ((files_updated++)) || true
         else
             print_error "tests/unit/test-core.sh"

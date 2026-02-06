@@ -1307,50 +1307,45 @@ install_agents() {
     local agents_dir="$path/.aidev/agents"
     local lang_suffix=$(get_lang_suffix 2>/dev/null || echo "pt")
     
-    # Define diretórios de origem baseados no idioma
-    local base_templates_dir="$AIDEV_ROOT_DIR/templates/agents/$lang_suffix"
-    # Fallback para root
-    if [ ! -d "$base_templates_dir" ]; then
-        base_templates_dir="$AIDEV_ROOT_DIR/templates/agents"
-    fi
-    
-    local platform_templates_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents/$lang_suffix"
-    # Fallback para root da plataforma
-    if [ ! -d "$platform_templates_dir" ]; then
-        platform_templates_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents"
-    fi
-    
     # Exporta variáveis para os templates
     export PROJECT_NAME=$(detect_project_name "$path")
     export STACK="$CLI_STACK"
     export PLATFORM="$CLI_PLATFORM"
-    
-    # Itera sobre os templates base (se existirem)
-    if [ -d "$base_templates_dir" ]; then
-        for template in "$base_templates_dir"/*.md.tmpl; do
-            if [ -f "$template" ]; then
-                process_agent_template "$template" "$agents_dir" "$platform_templates_dir"
+
+    local base_dir="$AIDEV_ROOT_DIR/templates/agents"
+    local lang_dir="$base_dir/$lang_suffix"
+    local platform_dir="$AIDEV_ROOT_DIR/templates/platform/$CLI_PLATFORM/agents"
+    local platform_lang_dir="$platform_dir/$lang_suffix"
+
+    # Itera sobre todos os templates na raiz de agentes
+    if [ -d "$base_dir" ]; then
+        for template in "$base_dir"/*.md.tmpl; do
+            [ -f "$template" ] || continue
+            local name=$(basename "$template" .md.tmpl)
+            
+            # Ordem de precedência (mais específico para menos específico):
+            # 1. Plataforma + Idioma
+            # 2. Plataforma
+            # 3. Idioma
+            # 4. Base
+            local template_to_use="$template"
+            
+            if [ -f "$lang_dir/${name}.md.tmpl" ]; then
+                template_to_use="$lang_dir/${name}.md.tmpl"
             fi
-        done
-    fi
-    
-    # Se usou fallback base, itera sobre ele tambem (caso não tenha iterado acima)
-    if [ "$base_templates_dir" == "$AIDEV_ROOT_DIR/templates/agents" ]; then
-         for template in "$base_templates_dir"/*.md.tmpl; do
-            if [ -f "$template" ]; then
-                process_agent_template "$template" "$agents_dir" "$platform_templates_dir"
+            
+            if [ -f "$platform_dir/${name}.md.tmpl" ]; then
+                template_to_use="$platform_dir/${name}.md.tmpl"
             fi
-        done
-    fi
-    
-    # Hack para iterar sobre plataforma se existirem agentes EXCLUSIVOS da plataforma
-    if [ -d "$platform_templates_dir" ]; then
-         for template in "$platform_templates_dir"/*.md.tmpl; do
-            if [ -f "$template" ]; then
-                local name=$(basename "$template" .md.tmpl)
-                if [ ! -f "$agents_dir/${name}.md" ]; then
-                    process_agent_template "$template" "$agents_dir" "$platform_templates_dir"
-                fi
+            
+            if [ -f "$platform_lang_dir/${name}.md.tmpl" ]; then
+                template_to_use="$platform_lang_dir/${name}.md.tmpl"
+            fi
+
+            local output="$agents_dir/${name}.md"
+            if should_write_file "$output"; then
+                process_template "$template_to_use" "$output"
+                print_debug "Instalado agente: $name (de $(basename "$(dirname "$template_to_use")")/$(basename "$template_to_use"))"
             fi
         done
     fi
@@ -1399,8 +1394,6 @@ install_skills() {
                     fi
                 fi
             done
-            # Instala agentes de estado (v3.7)
-            process_agent_template "$AIDEV_ROOT_DIR/templates/agents/state-manager.md.tmpl" "$agents_dir" "$platform_dir"
         fi
     done
 }
@@ -1619,6 +1612,9 @@ cmd_feature() {
     case "$subcmd" in
         add)
             plans__feature_add "$@"
+            ;;
+        status)
+            plans__feature_status "$@"
             ;;
         finish)
             plans__feature_finish "$@"

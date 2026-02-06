@@ -89,5 +89,35 @@ plans__feature_finish() {
     mv "$source_file" "$history_dir/$safe_name-$(date +%d).md"
     
     print_success "Feature '$feature_name' finalizada e movida para o histórico."
+    
+    # Automação de Cache solicitada pelo usuário (v3.7)
+    print_info "Construindo cache de ativacao para garantir sincronia..."
+    aidev cache --build 2>/dev/null || true
+    
     print_info "Não esqueça de atualizar o ROADMAP.md!"
+}
+
+# Mostra o status/conteúdo de uma feature específica
+plans__feature_status() {
+    local feature_name="$1"
+    
+    if [ -z "$feature_name" ]; then
+        print_error "Uso: aidev feature status <nome-da-feature>"
+        return 1
+    fi
+
+    local safe_name=$(echo "$feature_name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+    local target_file=".aidev/plans/features/$safe_name.md"
+
+    if [ ! -f "$target_file" ]; then
+        # Tenta buscar no histórico se não estiver na pasta de features
+        target_file=$(find .aidev/plans/history -name "$safe_name*.md" | head -n 1)
+    fi
+
+    if [ -f "$target_file" ]; then
+        print_header "AI Dev Feature: $feature_name"
+        cat "$target_file"
+    else
+        print_error "Feature '$feature_name' não encontrada."
+    fi
 }

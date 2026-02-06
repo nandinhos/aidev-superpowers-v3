@@ -8,7 +8,7 @@
   "cross_project": {
     "enabled": false,
     "tags": [],
-    "shared_path": "/home/nandodev/.aidev-shared/kb",
+    "shared_path": "$HOME/.aidev-shared/kb",
     "sync_interval": "on_change"
   },
   "indexing": {

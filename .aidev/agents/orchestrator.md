@@ -296,6 +296,6 @@ O usuario pode invocar fluxos completos com comandos simples:
 
 
 ## Projeto Atual
-- **Nome**: aidev-superpowers-v3-1
+- **Nome**: aidev-superpowers-v3
 - **Stack**: generic
 - **Arquivos de regras**: `.aidev/rules/generic.md`

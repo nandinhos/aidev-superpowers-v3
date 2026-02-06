@@ -8,7 +8,7 @@
 # Uso: source lib/core.sh
 # ============================================================================
 
-readonly AIDEV_VERSION="${AIDEV_VERSION:-3.8-pre}" 2>/dev/null || true
+readonly AIDEV_VERSION="${AIDEV_VERSION:-3.8.0}" 2>/dev/null || true
 
 # ============================================================================
 # Cores (declaração segura para múltiplos sources)
@@ -34,8 +34,6 @@ AIDEV_DIRS_CREATED=0
 # Funções de Output
 # ============================================================================
 
-# Exibe header do script
-# Uso: print_header "Título Opcional"
 # Exibe header do script
 # Uso: print_header "Título Opcional"
 print_header() {
@@ -174,6 +172,23 @@ increment_files() {
 increment_dirs() {
     ((AIDEV_DIRS_CREATED++)) || true
 }
+
+# Resolve caminhos dinamicamente (expande $HOME, ~, etc)
+# Uso: resolved=$(resolve_path "$path")
+resolve_path() {
+    local path="$1"
+    
+    # Substitui ~ pelo HOME atual
+    if [[ "$path" == "~"* ]]; then
+        path="${path/#\~/$HOME}"
+    fi
+    
+    # Substitui literal $HOME pelo valor da variável
+    path="${path/\$HOME/$HOME}"
+    
+    echo "$path"
+}
+
 # ============================================================================
 # Persistência de Estado (Sessão)
 # ============================================================================

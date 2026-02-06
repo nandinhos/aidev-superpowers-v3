@@ -10,7 +10,7 @@
     },
     "serena": {
       "command": "uvx",
-      "args": ["serena", "--project=/home/nandodev/projects/aidev-superpowers-v3-1"],
+      "args": ["serena", "--project=."],
       "description": "Serena server for intelligent code navigation"
     },
     "basic-memory": {
@@ -20,7 +20,7 @@
     }
   },
   "projectConfig": {
-    "name": "aidev-superpowers-v3-1",
+    "name": "aidev-superpowers-v3",
     "stack": "generic",
     "version": "1.0.0"
   }

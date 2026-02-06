@@ -18,10 +18,20 @@ load_essential_modules
 test_section "Core - Variáveis"
 
 assert_not_empty "$AIDEV_VERSION" "AIDEV_VERSION está definida"
-assert_equals "3.7.0" "$AIDEV_VERSION" "AIDEV_VERSION = 3.7.0"
+assert_equals "3.8.0" "$AIDEV_VERSION" "AIDEV_VERSION = 3.8.0"
 assert_not_empty "$RED" "Cor RED definida"
 assert_not_empty "$GREEN" "Cor GREEN definida"
 assert_not_empty "$NC" "Cor NC (reset) definida"
+
+test_section "Core - Funções de Resolução"
+
+assert_command_succeeds "type resolve_path" "resolve_path existe"
+resolved=$(resolve_path "\$HOME/test")
+assert_equals "$HOME/test" "$resolved" "Resolve \$HOME literal"
+resolved=$(resolve_path "~/test")
+assert_equals "$HOME/test" "$resolved" "Resolve ~ (til)"
+resolved=$(resolve_path "/tmp/test")
+assert_equals "/tmp/test" "$resolved" "Mantém caminho absoluto fixo"
 
 test_section "Core - Funções de Output"
 

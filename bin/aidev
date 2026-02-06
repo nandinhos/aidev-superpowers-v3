@@ -270,6 +270,10 @@ cmd_upgrade() {
     install_memory_sync "$install_path"
     install_triggers "$install_path"
 
+    # Atualiza MCP (v3.8)
+    print_step "Atualizando configurações MCP..."
+    configure_mcp "$install_path" "$platform"
+
     print_summary "upgrade" "$CLI_STACK"
     print_success "Atualização concluída!"
     print_info "Backup salvo em: $backup_dir"
@@ -1232,6 +1236,36 @@ cmd_doctor() {
         fi
     else
         print_info ".mcp.json nao encontrado"
+    fi
+
+    # 4.2 Verificação de Portabilidade (Caminhos Absolutos)
+    print_section "Portabilidade e Caminhos"
+    local home_pattern="/home/[^/ /]+"
+    local found_abs_paths=0
+    local sync_file="$install_path/.aidev/mcp/memory-sync.json"
+    
+    if [ -f "$mcp_file" ] && grep -qE "$home_pattern" "$mcp_file"; then
+        print_warning ".mcp.json contém caminhos absolutos (dificulta portabilidade)"
+        found_abs_paths=1
+    fi
+    
+    if [ -f "$sync_file" ] && grep -qE "$home_pattern" "$sync_file"; then
+        print_warning "memory-sync.json contém caminhos absolutos"
+        found_abs_paths=1
+    fi
+    
+    if [ $found_abs_paths -eq 1 ]; then
+        if [ "$fix_mode" = "true" ]; then
+            print_info "Normalizando caminhos para portabilidade..."
+            [ -f "$mcp_file" ] && sed -i "s|/home/[^/ \"]*|\$HOME|g" "$mcp_file"
+            [ -f "$sync_file" ] && sed -i "s|/home/[^/ \"]*|\$HOME|g" "$sync_file"
+            print_success "Caminhos normalizados com \$HOME!"
+        else
+            print_info "Dica: Use 'aidev doctor --fix' para converter caminhos absolutos em \$HOME"
+            ((warnings++)) || true
+        fi
+    else
+        print_success "Configurações de caminhos parecem portáteis"
     fi
 
     # 5. Contexto
@@ -2623,7 +2657,7 @@ cmd_self_upgrade() {
 
 main() {
     local command="${1:-help}"
-    # shift || true # Deixa o comando original para o parse_args identificar
+    shift || true
     
     case "$command" in
         init)

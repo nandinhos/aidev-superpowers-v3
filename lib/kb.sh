@@ -12,7 +12,7 @@
 # Diretórios padrão
 KB_DIR=".aidev/memory/kb"
 KB_INDEX_FILE=".aidev/memory/kb/.index.json"
-SHARED_KB_DIR="${HOME}/.aidev-shared/kb"
+SHARED_KB_DIR=$(resolve_path "${AIDEV_SHARED_KB:-$HOME/.aidev-shared/kb}")
 
 # ============================================================================
 # Indexação de Lições

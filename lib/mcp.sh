@@ -54,9 +54,17 @@ generate_claude_mcp_config() {
     project_name=$(detect_project_name "$project_path")
 
     if should_write_file "$mcp_file"; then
+        # Normalização de path para portabilidade
+        local display_path="$project_path"
+        local abs_project_path=$(cd "$project_path" 2>/dev/null && pwd || echo "$project_path")
+        local abs_pwd=$(pwd)
+        if [ "$abs_project_path" = "$abs_pwd" ]; then
+            display_path="."
+        fi
+
         # Exporta variáveis para o template
         export CONTEXT7_API_KEY="${CONTEXT7_API_KEY:-}"
-        export PROJECT_PATH="$project_path"
+        export PROJECT_PATH="$display_path"
         export PROJECT_NAME="$project_name"
         export STACK="$stack"
 
@@ -80,7 +88,7 @@ generate_claude_mcp_config() {
     },
     "serena": {
       "command": "uvx",
-      "args": ["serena", "--project=$project_path"],
+      "args": ["serena", "--project=$display_path"],
       "description": "Serena server for intelligent code navigation"
     },
     "basic-memory": {
@@ -118,6 +126,12 @@ generate_antigravity_mcp_config() {
     stack=$(detect_stack "$project_path")
     
     if should_write_file "$config_file"; then
+        # Normalização de path para portabilidade
+        local display_path="$project_path"
+        if [ "$project_path" = "." ] || [ "$project_path" = "$(pwd)" ]; then
+            display_path="."
+        fi
+
         # Obtém API Key se disponível
         local context7_key="${CONTEXT7_API_KEY:-}"
 
@@ -164,6 +178,12 @@ generate_generic_mcp_config() {
     local config_file="$config_dir/${platform}-config.json"
 
     if should_write_file "$config_file"; then
+        # Normalização de path para portabilidade
+        local display_path="$project_path"
+        if [ "$project_path" = "." ] || [ "$project_path" = "$(pwd)" ]; then
+            display_path="."
+        fi
+
         local context7_key="${CONTEXT7_API_KEY:-}"
         cat > "$config_file" << EOF
 {
@@ -180,7 +200,7 @@ generate_generic_mcp_config() {
     "serena": {
       "enabled": true,
       "command": "uvx",
-      "args": ["serena", "--project=$project_path"]
+      "args": ["serena", "--project=$display_path"]
     },
     "basic-memory": {
       "enabled": true,

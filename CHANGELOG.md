@@ -3,7 +3,23 @@
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
+e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
+
+## [3.8.0] - 2026-02-06
+### 🚀 Features (Portabilidade Multi-Ambiente)
+- **Smart Path Resolution**: Nova função `resolve_path` no Core para expansão dinâmica de `$HOME` e `~` em tempo de execução.
+- **Configurações Portáteis**: Templates de `memory-sync.json` agora utilizam literais de variáveis de ambiente, permitindo sincronia entre diferentes máquinas (`nandodev` vs `gacpac`) sem conflitos de Git.
+- **Normalização Automática de Projeto**: O sistema agora prefere caminhos relativos (`.`) para o diretório do projeto nas configurações MCP, evitando quebras ao trocar de pasta ou máquina.
+- **Auto-Cura de Caminhos**: Comando `aidev doctor --fix` agora detecta caminhos absolutos de usuário e os converte automaticamente para variáveis portáteis.
+
+### ⚡ Melhorias
+- **Upgrade Sincronizado**: O comando `aidev upgrade` agora reconfigura automaticamente o motor MCP para garantir que as melhorias de portabilidade sejam aplicadas a projetos existentes.
+- **Robustez no Core**: Limpeza e otimização do módulo `lib/core.sh`.
+
+### 🐛 Fixes (Correções)
+- **Subcomandos `add-*`**: Correção de bug crítico no dispatcher do `bin/aidev` que impedia a captura correta do nome da skill/agente/rule e ignorava o parâmetro `--install-in`.
+- **Testes Unitários**: Atualização da suite de testes do Core para validar a nova lógica de resolução de caminhos.
+- **Uninstall Safety**: Melhoria nas validações de segurança do desinstalador.
 
 ## [3.7.0] - 2026-02-06
 ### Adicionado

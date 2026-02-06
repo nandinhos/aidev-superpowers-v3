@@ -140,9 +140,9 @@ assert_contains "$(cat /tmp/uninstall-dryrun.log)" "dry-run" "Mensagem de dry-ru
 unset AIDEV_DRY_RUN
 bash "$ROOT_DIR/uninstall.sh" <<< "y" > /tmp/uninstall-safe.log 2>&1 || true
 if [[ -d "$TEST_UNINSTALL_DIR" ]]; then
-    assert_true "false" "Uninstall normal deve deletar"
+    assert_equals "false" "true" "Uninstall normal deve deletar"
 else
-    assert_true "true" "Uninstall normal deletou com sucesso"
+    assert_equals "true" "true" "Uninstall normal deletou com sucesso"
 fi
 
 # Cleanup final

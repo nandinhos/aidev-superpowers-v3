@@ -1280,6 +1280,12 @@ cmd_doctor() {
     else
         print_error "Encontrados $issues problemas críticos. Verifique as mensagens acima."
     fi
+
+    # 7. Sugestões de Ecossistema (SGAITI v3.8)
+    if [ -f "$install_path/.aidev/plans/ROADMAP.md" ]; then
+        load_module "mcp-bridge" 2>/dev/null || source "$AIDEV_LIB_DIR/mcp-bridge.sh"
+        mcp_bridge_suggest
+    fi
     echo ""
 }
 

@@ -18,6 +18,8 @@ DETECTED_MATURITY=""
 DETECTED_STYLE=""
 DETECTED_FRAMEWORK_VERSION=""
 DETECTED_TECH_DEBT=""
+DETECTED_RUNTIME=""
+DETECTED_MCP_COMPATIBILITY=""
 
 # ============================================================================
 # Detecção de Stack
@@ -376,6 +378,7 @@ detect_project_context() {
     DETECTED_FRAMEWORK_VERSION=$(detect_framework_version "$path")
     DETECTED_TECH_DEBT=$(detect_technical_debt "$path")
     DETECTED_RUNTIME=$(detect_runtime)
+    DETECTED_MCP_COMPATIBILITY=$(detect_mcp_compatibility "$DETECTED_STACK")
     
     print_debug "Stack detectada: $DETECTED_STACK"
     print_debug "Versao Framework: $DETECTED_FRAMEWORK_VERSION"
@@ -547,3 +550,26 @@ detect_technical_debt() {
     
     echo "{\"todos\": $todo_count, \"fixmes\": $fixme_count, \"has_tests\": $has_tests}"
 }
+
+# Detecta compatibilidade com servidores MCP baseada na stack
+# Uso: detect_mcp_compatibility "laravel"
+# Retorna: lista de MCPs compativeis (separados por virgula)
+detect_mcp_compatibility() {
+    local stack="${1:-$DETECTED_STACK}"
+    local mcps=""
+    
+    case "$stack" in
+        laravel|filament|livewire)
+            mcps="laravel-boost"
+            ;;
+        javascript|typescript|nextjs|react|vue|express|node)
+            mcps="context7"
+            ;;
+        python|django|fastapi|flask)
+            mcps="context7"
+            ;;
+    esac
+    
+    echo "$mcps"
+}
+export -f detect_mcp_compatibility

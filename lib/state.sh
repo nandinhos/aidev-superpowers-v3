@@ -257,7 +257,7 @@ state_checkpoint() {
     if command -v jq >/dev/null 2>&1; then
         local tmp_file=$(mktemp)
         local timestamp=$(date -Iseconds)
-        local checkpoint_id="cp-$(date +%s)-${RANDOM}"
+        local checkpoint_id="cp-$(date +%s%N | cut -c1-13)-${RANDOM}"
         
         # Captura snapshot do estado atual (exceto rollback_stack para evitar recursao)
         local snapshot=$(jq 'del(.rollback_stack)' "$STATE_FILE")

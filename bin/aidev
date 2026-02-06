@@ -2536,7 +2536,7 @@ cmd_self_upgrade() {
 
     # Versao atual
     local current_version
-    current_version=$(grep "AIDEV_VERSION" "$global_install/lib/core.sh" 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "desconhecida")
+    current_version=$(grep "AIDEV_VERSION" "$global_install/lib/core.sh" 2>/dev/null | sed -E 's/.*:-([^"}]+).*/\1/' | head -1 || echo "desconhecida")
     print_info "Versao atual: $current_version"
 
     # Detecta source (projeto atual ou diretorio padrao)
@@ -2562,7 +2562,7 @@ cmd_self_upgrade() {
 
     # Versao do source
     local source_version
-    source_version=$(grep "AIDEV_VERSION" "$source_dir/lib/core.sh" 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "desconhecida")
+    source_version=$(grep "AIDEV_VERSION" "$source_dir/lib/core.sh" 2>/dev/null | sed -E 's/.*:-([^"}]+).*/\1/' | head -1 || echo "desconhecida")
     print_info "Versao no source: $source_version"
     print_info "Source: $source_dir"
     echo ""
@@ -2615,7 +2615,7 @@ cmd_self_upgrade() {
 
     # Verifica a nova versao
     local new_version
-    new_version=$("$global_install/bin/aidev" --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+' || echo "")
+    new_version=$("$global_install/bin/aidev" --version 2>/dev/null | sed -E 's/aidev v//' || echo "")
     if [ -n "$new_version" ]; then
         print_info "Verificado: aidev v$new_version"
     fi

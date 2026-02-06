@@ -119,6 +119,10 @@ load_module_with_deps() {
         "memory")
             load_module "core"
             ;;
+        "system")
+            load_module "core"
+            load_module "file-ops"
+            ;;
         "release")
             load_module "core"
             ;;

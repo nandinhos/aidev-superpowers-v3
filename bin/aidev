@@ -1664,6 +1664,46 @@ install_triggers() {
     print_success "Configuração de triggers instalada com sucesso!"
 }
 
+
+# ============================================================================
+# Subcomando: system
+# ============================================================================
+# Gestão de deploy e sincronização global
+cmd_system() {
+    load_module "system"
+    # Captura argumentos
+    local subcmd="${1:-status}"
+    shift || true
+    
+    case "$subcmd" in
+        status)
+            system__status
+            ;;
+        deploy)
+            # Confirmação simples
+            echo ""
+            echo -n "⚠️  Deseja realizar o deploy para a instalação global? (s/N): "
+            read -r confirm
+            if [[ "$confirm" =~ ^[sS] ]]; then
+                system__deploy
+            else
+                print_info "Operação cancelada."
+            fi
+            ;;
+        link)
+            system__link
+            ;;
+        rollback)
+            system__rollback
+            ;;
+        *)
+            print_error "Ação desconhecida: $subcmd"
+            echo "Uso: aidev system [status|deploy|link]"
+            exit 1
+            ;;
+    esac
+}
+
 # ============================================================================
 # Subcomando: roadmap
 # ============================================================================
@@ -2805,6 +2845,9 @@ main() {
             ;;
         roadmap)
             cmd_roadmap "$@"
+            ;;
+        system)
+            cmd_system "$@"
             ;;
         feature)
             cmd_feature "$@"

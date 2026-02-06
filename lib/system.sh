@@ -60,6 +60,14 @@ system__deploy() {
     for item in "${targets[@]}"; do
         if [ -e "$local_root/$item" ]; then
             print_debug "Sincronizando $item..."
+            # Se for um link simbólico, removemos antes para garantir cópia real
+            [ -L "$global_root/$item" ] && rm "$global_root/$item"
+            
+            # Se for um diretório real e o local também, limpamos o destino para evitar merge sujo
+            if [ -d "$global_root/$item" ] && [ ! -L "$global_root/$item" ]; then
+                rm -rf "${global_root:?}/$item"
+            fi
+            
             cp -r "$local_root/$item" "$global_root/"
         fi
     done

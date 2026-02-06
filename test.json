@@ -4,13 +4,13 @@
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
       "env": {
-        "CONTEXT7_API_KEY": "ctx7sk-060ff7f5-b768-4a1a-b945-0b909e518e89"
+        "CONTEXT7_API_KEY": "test-key"
       },
       "description": "Context7 server for documentation lookups"
     },
     "serena": {
       "command": "uvx",
-      "args": ["serena", "--project=/home/nandodev/projects/aidev-superpowers-v3-1"],
+      "args": ["serena", "--project=./"],
       "description": "Serena server for intelligent code navigation"
     },
     "basic-memory": {
@@ -20,7 +20,7 @@
     }
   },
   "projectConfig": {
-    "name": "aidev-superpowers-v3-1",
+    "name": "my-project",
     "stack": "generic",
     "version": "1.0.0"
   }

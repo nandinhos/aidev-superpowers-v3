@@ -27,6 +27,8 @@ generate_mcp_config() {
             generate_claude_mcp_config "$project_path"
             ;;
         "antigravity")
+            # Gera ambos para máxima compatibilidade no ambiente Gemini
+            generate_claude_mcp_config "$project_path"
             generate_antigravity_mcp_config "$project_path"
             ;;
         "gemini"|"opencode")

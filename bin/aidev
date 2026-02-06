@@ -1619,22 +1619,33 @@ cmd_roadmap() {
 # ============================================================================
 # Subcomando: mcp
 # ============================================================================
+# Gerencia e orquestra servidores MCP
 cmd_mcp() {
     shift # Consome 'mcp'
-    local subcmd="${1:-status}"
-    shift || true
+    local subcommand="${1:-status}"
+    shift 2>/dev/null || true
 
     load_module "mcp-bridge" 2>/dev/null || source "$AIDEV_LIB_DIR/mcp-bridge.sh"
-
-    case "$subcmd" in
+    
+    case "$subcommand" in
         status|suggest)
             mcp_bridge_suggest
             ;;
         exec)
             mcp_bridge_exec "$@"
             ;;
+        list|add|remove|configure)
+            # Delega para o módulo original de gerenciamento
+            load_module "mcp"
+            case "$subcommand" in
+                list) mcp_list_servers "." ;;
+                add) mcp_add_server "." "$@" ;;
+                remove) mcp_remove_server "." "$@" ;;
+                configure) configure_mcp "." "$(detect_platform)" ;;
+            esac
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcmd (suggest, exec)"
+            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove)"
             exit 1
             ;;
     esac
@@ -1780,64 +1791,6 @@ setup_secrets() {
 # Novos Comandos Intuitivos (v3.2)
 # ============================================================================
 
-# Subcomando: mcp
-# Gerencia servidores MCP
-cmd_mcp() {
-    local subcommand="${2:-}"
-    shift 2 2>/dev/null || true
-    
-    # NÃO chamamos parse_args aqui porque ele falha com flags específicas do subcomando (ex: --command)
-    # Assumimos path atual se não especificado (limitação: --install-in não funciona aqui por enquanto)
-    local install_path="."
-    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
-    
-    if ! has_aidev_installed "$install_path"; then
-        print_error "AI Dev não está instalado neste diretório"
-        exit 1
-    fi
-    
-    # Carrega módulo MCP
-    load_module "mcp"
-    
-    case "$subcommand" in
-        list|"")
-            mcp_list_servers "$install_path"
-            ;;
-        add)
-            local name=""
-            local command=""
-            local args=""
-            
-            # Parse args manually for this subcommand
-            while [[ $# -gt 0 ]]; do
-                case "$1" in
-                    --command) command="$2"; shift 2 ;;
-                    --args) args="$2"; shift 2 ;;
-                    *) 
-                        if [ -z "$name" ]; then 
-                            name="$1"
-                            shift
-                        else
-                            # Ignora outros argumentos desconhecidos para evitar erro
-                            shift 
-                        fi 
-                        ;;
-                esac
-            done
-            
-            mcp_add_server "$name" "$command" "$args" "$install_path"
-            ;;
-        remove|rm)
-            local name="$1"
-            mcp_remove_server "$name" "$install_path"
-            ;;
-        *)
-            print_error "Subcomando desconhecido: $subcommand"
-            echo "Uso: aidev mcp [list|add|remove]"
-            exit 1
-            ;;
-    esac
-}
 
 # Subcomando: new-feature
 # Inicia fluxo completo de nova feature: brainstorming -> planning -> TDD
@@ -2741,9 +2694,6 @@ main() {
             ;;
         roadmap)
             cmd_roadmap "$@"
-            ;;
-        mcp)
-            cmd_mcp "$@"
             ;;
         feature)
             cmd_feature "$@"

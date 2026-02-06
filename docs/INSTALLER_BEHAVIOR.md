@@ -1,6 +1,6 @@
 # 📖 AI Dev - Documentação Completa do Instalador
 
-> Versão analisada: **v3.8.0**  
+> Versão analisada: **v3.8.1**  
 > Última atualização: 2026-02-05
 
 ---

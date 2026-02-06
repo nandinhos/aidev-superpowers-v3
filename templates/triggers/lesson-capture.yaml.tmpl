@@ -1,0 +1,78 @@
+# AI Dev Memory Sync - Triggers de Captura de Lições
+# Este arquivo define padrões para detecção automática de oportunidades de aprendizado
+
+triggers:
+  # ============================================================================
+  # Detecta erros críticos no código/output
+  # ============================================================================
+  - id: error-pattern-critical
+    type: error_pattern
+    description: "Detecta padrões de erro comuns para sugerir documentação"
+    patterns:
+      - "SQLSTATE\\[.*\\]"           # Erros de banco de dados
+      - "Exception|Error|Failed"     # Exceções gerais
+      - "Connection refused"         # Problemas de conexão
+      - "Permission denied"          # Erros de permissão
+      - "No such file or directory"  # Arquivos não encontrados
+      - "undefined|null reference"   # Erros de referência
+    action: suggest_learned_lesson
+    message: "Detectei um erro crítico. Deseja documentar a solução?"
+    priority: high
+
+  # ============================================================================
+  # Palavras-chave do usuário indicam aprendizado
+  # ============================================================================
+  - id: debug-success-keywords
+    type: user_intent
+    description: "Detecta quando usuário indica que resolveu um problema"
+    keywords:
+      - "corrigimos"
+      - "resolvido"
+      - "funciona agora"
+      - "aprendi"
+      - "descobri que"
+      - "o problema era"
+      - "a solução foi"
+    action: activate_learned_lesson_skill
+    message: "Parece que você resolveu algo! Quer documentar como lição aprendida?"
+    priority: medium
+
+  # ============================================================================
+  # Detecta quando feature complexa termina
+  # ============================================================================
+  - id: complex-feature-complete
+    type: workflow_state
+    description: "Sugere documentação após features longas"
+    conditions:
+      - steps: "> 3"
+      - duration: "> 30min"
+    action: prompt_lesson_capture
+    message: "Feature complexa concluída! Recomendo documentar os aprendizados."
+    priority: low
+
+  # ============================================================================
+  # Padrões específicos por stack
+  # ============================================================================
+  - id: laravel-specific-errors
+    type: error_pattern
+    stack: ["laravel", "filament", "livewire"]
+    patterns:
+      - "Illuminate\\\\.*Exception"
+      - "CSRF token mismatch"
+      - "Model not found"
+      - "Undefined property.*\\$"
+    action: suggest_learned_lesson
+    message: "Erro Laravel detectado. Documentar solução?"
+    priority: high
+
+  - id: docker-specific-errors
+    type: error_pattern
+    tags: ["docker", "container"]
+    patterns:
+      - "Cannot connect to the Docker daemon"
+      - "port is already allocated"
+      - "no space left on device"
+      - "network .* not found"
+    action: suggest_learned_lesson
+    message: "Erro Docker detectado. Documentar solução?"
+    priority: high

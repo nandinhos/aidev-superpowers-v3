@@ -1,0 +1,25 @@
+{
+  "sync": {
+    "enabled": true,
+    "providers": ["basic-memory", "context7"],
+    "auto_index": true,
+    "index_on_save": true
+  },
+  "cross_project": {
+    "enabled": false,
+    "tags": [],
+    "shared_path": "/home/nandodev/.aidev-shared/kb",
+    "sync_interval": "on_change"
+  },
+  "indexing": {
+    "output_file": ".aidev/memory/kb/.index.json",
+    "auto_rebuild": true,
+    "include_patterns": ["*.md"],
+    "exclude_patterns": ["*.bak", "*.tmp", ".index.json"]
+  },
+  "search": {
+    "fuzzy_threshold": 0.7,
+    "max_results": 10,
+    "context_lines": 3
+  }
+}

@@ -45,6 +45,7 @@ load_essential_modules
 load_module "templates"
 load_module "mcp"
 load_module "lessons"
+load_module "kb"
 
 # Tenta carregar ambiente (idioma, segredos)
 load_env 2>/dev/null || true
@@ -179,6 +180,11 @@ EOF
     print_step "$(_ "step_platform")"
     install_platform_instructions "$install_path" "$CLI_PLATFORM"
 
+    # Instala Memory Sync e Triggers
+    print_step "Configurando Memory Sync..."
+    install_memory_sync "$install_path"
+    install_triggers "$install_path"
+
     # Configura gitignore
     print_step "$(_ "step_gitignore")"
     setup_gitignore "$install_path"
@@ -248,6 +254,11 @@ cmd_upgrade() {
     # Atualiza instruções de plataforma
     print_step "Atualizando instruções de plataforma..."
     install_platform_instructions "$install_path" "$platform"
+
+    # Atualiza Memory Sync e Triggers
+    print_step "Atualizando Memory Sync..."
+    install_memory_sync "$install_path"
+    install_triggers "$install_path"
 
     print_summary "upgrade" "$CLI_STACK"
     print_success "Atualização concluída!"
@@ -926,6 +937,47 @@ cmd_start() {
     echo ""
 }
 
+# Subcomando: lessons
+# Gerencia base de conhecimento (KB)
+cmd_lessons() {
+    local subcommand="${1:-}"
+    shift 2>/dev/null || true
+    
+    local install_path="."
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    case "$subcommand" in
+        index)
+            print_header "AI Dev KB - Indexador"
+            build_lessons_index "$install_path"
+            ;;
+        search)
+            local query="$1"
+            if [ -z "$query" ]; then
+                print_error "Uso: aidev lessons search \"termo\""
+                exit 1
+            fi
+            print_header "AI Dev KB - Busca"
+            search_lessons_formatted "$query" "$install_path"
+            ;;
+        list|"")
+            # Comportamento original (legado) ou listagem simples
+            print_header "AI Dev KB - Lições"
+            local kb_dir="$install_path/.aidev/memory/kb"
+            if [ -d "$kb_dir" ]; then
+                ls -1 "$kb_dir"/*.md 2>/dev/null | xargs -n 1 basename -s .md | sed 's/^/  • /'
+            else
+                print_info "Nenhuma lição encontrada."
+            fi
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcommand"
+            echo "Uso: aidev lessons [list|index|search]"
+            exit 1
+            ;;
+    esac
+}
+
 # Subcomando: metrics
 # Exibe dashboard de telemetria
 cmd_metrics() {
@@ -1458,6 +1510,42 @@ install_platform_instructions() {
             fi
             ;;
     esac
+}
+
+# Instala configuração de Memory Sync
+install_memory_sync() {
+    local path="$1"
+    local output="$path/.aidev/mcp/memory-sync.json"
+    local template="$AIDEV_ROOT_DIR/templates/mcp/memory-sync.json.tmpl"
+    
+    if [ -f "$template" ] && should_write_file "$output"; then
+        export CROSS_PROJECT_ENABLED="false"
+        export HOME="$HOME"
+        process_template "$template" "$output"
+        print_success "Configurado: .aidev/mcp/memory-sync.json"
+    fi
+}
+
+# Instala triggers de captura de lições
+install_triggers() {
+    local path="$1"
+    local output_dir="$path/.aidev/rules/triggers"
+    local template_dir="$AIDEV_ROOT_DIR/templates/triggers"
+    
+    ensure_dir "$output_dir"
+    
+    if [ -d "$template_dir" ]; then
+        for template in "$template_dir"/*.tmpl; do
+            if [ -f "$template" ]; then
+                local name=$(basename "$template" .tmpl)
+                local output="$output_dir/$name"
+                if should_write_file "$output"; then
+                    process_template "$template" "$output"
+                    print_debug "Instalado trigger: $name"
+                fi
+            fi
+        done
+    fi
 }
 
 # Adiciona .aidev/state ao .gitignore do projeto se existir

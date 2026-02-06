@@ -11,17 +11,30 @@
 readonly AIDEV_VERSION="${AIDEV_VERSION:-3.8.0}" 2>/dev/null || true
 
 # ============================================================================
-# Cores (declaração segura para múltiplos sources)
+# Cores e Formatação (Detecção de TTY)
 # ============================================================================
 
-RED=$'\e[0;31m'
-GREEN=$'\e[0;32m'
-YELLOW=$'\e[1;33m'
-BLUE=$'\e[0;34m'
-CYAN=$'\e[0;36m'
-MAGENTA=$'\e[0;35m'
-BOLD=$'\e[1m'
-NC=$'\e[0m' # No Color
+# Definição base para manter compatibilidade com echo e printf
+# Usamos strings ANSI-C ($'\e') para garantir o caractere ESC real
+if [[ -z "${NO_COLOR:-}" ]] && { [[ -u /dev/stdout ]] || [[ -t 1 ]] || [[ "${AIDEV_FORCE_COLOR:-false}" == "true" ]]; }; then
+    RED=$'\e[0;31m'
+    GREEN=$'\e[0;32m'
+    YELLOW=$'\e[1;33m'
+    BLUE=$'\e[0;34m'
+    CYAN=$'\e[0;36m'
+    MAGENTA=$'\e[0;35m'
+    BOLD=$'\e[1m'
+    NC=$'\e[0m' # No Color
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    CYAN=''
+    MAGENTA=''
+    BOLD=''
+    NC=''
+fi
 
 # ============================================================================
 # Contadores (inicializados em cada operação)
@@ -136,6 +149,36 @@ print_section() {
     echo ""
     echo -e "${BOLD}${CYAN}▸ $1${NC}"
     echo ""
+}
+
+# Desenha uma barra de progresso horizontal
+# Uso: print_progress <percentual> [largura] [estilo]
+print_progress() {
+    local percent="${1:-0}"
+    local width="${2:-30}"
+    local style="${3:-full}"
+    
+    # Garante que percent seja numérico entre 0 e 100
+    percent=${percent%.*}
+    [[ $percent -lt 0 ]] && percent=0
+    [[ $percent -gt 100 ]] && percent=100
+    
+    local filled=$(( (percent * width) / 100 ))
+    local empty=$(( width - filled ))
+    
+    local bar_char=$( [ "$style" = "full" ] && echo "█" || echo "=" )
+    local empty_char=$( [ "$style" = "full" ] && echo "░" || echo " " )
+    
+    local bar=""
+    for ((i=0; i<filled; i++)); do bar+="$bar_char"; done
+    for ((i=0; i<empty; i++)); do bar+="$empty_char"; done
+    
+    local color=$GREEN
+    if [ $percent -lt 40 ]; then color=$RED
+    elif [ $percent -lt 80 ]; then color=$YELLOW
+    fi
+    
+    echo -e "[${color}${bar}${NC}] ${percent}%"
 }
 
 # ============================================================================

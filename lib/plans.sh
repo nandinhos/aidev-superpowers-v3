@@ -121,3 +121,38 @@ plans__feature_status() {
         print_error "Feature '$feature_name' não encontrada."
     fi
 }
+
+# Lista todas as funcionalidades (Features)
+# Uso: plans__feature_list [diretorio]
+plans__feature_list() {
+    local project_path="${1:-.}"
+    local features_dir="$project_path/.aidev/plans/features"
+    
+    if [ ! -d "$features_dir" ]; then
+        return 0
+    fi
+    
+    shopt -s nullglob
+    local files=("$features_dir"/*.md)
+    if [ ${#files[@]} -gt 0 ]; then
+        print_section "Funcionalidades em Desenvolvimento"
+        for f in "${files[@]}"; do
+            local name=$(basename "$f" .md)
+            # Tenta extrair o nome real de dentro do arquivo
+            local display_name=$(grep "^# Feature:" "$f" | sed 's/# Feature: //')
+            [[ -z "$display_name" ]] && display_name="$name"
+            
+            local status_icon="⚪"
+            if grep -q "🟢" "$f"; then
+                status_icon="🟢"
+            elif grep -q "🟡" "$f"; then
+                status_icon="🟡"
+            elif grep -q "🔵" "$f"; then
+                status_icon="🔵"
+            fi
+            printf "  %-2s %-30s\n" "$status_icon" "$display_name"
+        done
+        echo ""
+    fi
+    shopt -u nullglob
+}

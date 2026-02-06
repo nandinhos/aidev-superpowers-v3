@@ -3,6 +3,8 @@
 ## Core Principles
 These rules apply to ALL projects regardless of stack.
 
+- **Comunicação**: Toda a interação entre Agente e Usuário deve ser em PORTUGUÊS (Brasil).
+
 ## 1. TDD is Mandatory
 - **RED**: Write failing test first
 - **GREEN**: Minimal code to pass
@@ -42,6 +44,7 @@ These rules apply to ALL projects regardless of stack.
 - Idioma: PORTUGUES (obrigatorio)
 - Emojis: PROIBIDOS
 - Co-autoria: PROIBIDA (sem Co-Authored-By)
+- Utilize Conventional Commits
 
 ### Formato
 ```

@@ -544,7 +544,35 @@ cmd_status() {
 # Subcomando: snapshot
 # Gera um resumo do contexto atual para migração entre IAs
 cmd_snapshot() {
-    parse_args "$@"
+    local feature_filter=""
+    local optimize=false
+    local include_paths=()
+
+    # Parsing local de flags avançadas
+    local args=()
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --feature)
+                feature_filter="$2"
+                shift 2
+                ;;
+            --optimize)
+                optimize=true
+                shift
+                ;;
+            --include)
+                include_paths+=("$2")
+                shift 2
+                ;;
+            *)
+                args+=("$1")
+                shift
+                ;;
+        esac
+    done
+    
+    # Chama parse_args original com os argumentos restantes
+    parse_args "${args[@]}"
     
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
@@ -554,8 +582,9 @@ cmd_snapshot() {
         exit 1
     fi
 
-    print_header "AI Dev Snapshot (Context Passport)"
-    print_info "Gerando resumo técnico para migração de modelo..."
+    print_header "AI Dev Advanced Snapshot"
+    [[ "$optimize" = "true" ]] && print_info "Otimização de tokens ativa (Logs/Temp removidos)"
+    [[ -n "$feature_filter" ]] && print_info "Filtro de Feature: $feature_filter"
     echo ""
 
     # Coleta dados
@@ -591,6 +620,12 @@ cmd_snapshot() {
 
     echo "## 📋 Decisões e Planos Ativos"
     local plans=""
+    if [ -n "$feature_filter" ]; then
+        local feat_file="$install_path/.aidev/plans/features/$feature_filter.md"
+        if [ -f "$feat_file" ]; then
+            plans="- .aidev/plans/features/$feature_filter.md (Feature Foco)\n"
+        fi
+    fi
     [ -f "$install_path/implementation_plan.md" ] && plans="$plans- ./implementation_plan.md\n"
     [ -d "$install_path/docs/plans" ] && plans="$plans$(ls "$install_path/docs/plans"/*.md 2>/dev/null | sed "s|$install_path/||" | sed 's/^/- /')\n"
     
@@ -611,8 +646,7 @@ cmd_snapshot() {
         
         if [ "$kb_count" -gt 0 ]; then
             echo "- $kb_count lições disponíveis em .aidev/memory/kb/"
-            echo "- Use a tool \`read_file\` se precisar de contexto específico."
-            # Lista as 3 mais recentes (precisa de ls -t pois glob nao garante ordem por data)
+            # Lista as 3 mais recentes
             ls -t "$kb_dir"/*.md 2>/dev/null | head -n 3 | sed 's/^/- /'
         else
             echo "- Nenhuma lição registrada."
@@ -622,14 +656,33 @@ cmd_snapshot() {
     fi
     echo ""
 
+    # Arquivos Adicionais (--include)
+    if [ ${#include_paths[@]} -gt 0 ]; then
+        echo "## 📂 Arquivos de Contexto Adicionais"
+        for p in "${include_paths[@]}"; do
+            if [ -f "$p" ]; then
+                echo "### Conteúdo de $p"
+                echo "\`\`\`"
+                cat "$p"
+                echo "\`\`\`"
+                echo ""
+            fi
+        done
+    fi
+
     # Estado Unificado
     local unified_state_file="$install_path/.aidev/state/unified.json"
     if [ -f "$unified_state_file" ]; then
         echo "## ⚡ Estado Técnico Unificado (Session State)"
         echo "\`\`\`json"
         if command -v jq >/dev/null 2>&1; then
-            # Otimizacao de Tokens: Mantem apenas os ultimos 5 checkpoints de rollback
-            jq '.rollback_stack |= (if length > 5 then .[-5:] else . end)' "$unified_state_file"
+            if [ "$optimize" = "true" ]; then
+                # Remove itens pesados se optimize estiver ativo
+                jq 'del(.rollback_stack) | del(.confidence_log) | del(.agent_queue)' "$unified_state_file"
+            else
+                # Otimizacao padrão: Mantem apenas os ultimos 3 checkpoints
+                jq '.rollback_stack |= (if length > 3 then .[-3:] else . end)' "$unified_state_file"
+            fi
         else
             cat "$unified_state_file"
         fi
@@ -1620,6 +1673,7 @@ cmd_roadmap() {
     shift || true
 
     load_module "plans" 2>/dev/null || source "$AIDEV_LIB_DIR/plans.sh"
+    load_module "state" 2>/dev/null || source "$AIDEV_LIB_DIR/state.sh"
 
     case "$subcmd" in
         status)
@@ -1633,9 +1687,29 @@ cmd_roadmap() {
                 print_info "Meta:   $objective"
                 echo ""
 
-                # Exibe a Sprint atual (primeira que encontrar 'S3' ou 'EM CURSO')
+                # Cálculo de Progresso Geral da Sprint Atual
+                local total_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -cE "^- \[[x ]\]")
+                local done_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -cE "^- \[x\]")
+                local progress=0
+                [[ $total_tasks -gt 0 ]] && progress=$(( (done_tasks * 100) / total_tasks ))
+
+                echo -n "  Progresso da Sprint: "
+                print_progress "$progress" 30 "full"
+
+                # Estado do Agente (Unified State)
+                local active_skill=$(state_read "active_skill" "Nenhuma")
+                local active_task=$(get_state_value "current_task" "Pendente")
+                
                 print_section "Fase em Execução"
+                echo "  Skill Ativa:  ${CYAN}${active_skill}${NC}"
+                echo "  Tarefa Atual: ${YELLOW}${active_task}${NC}"
+                echo ""
+                
+                # Exibe as tarefas da Sprint
                 grep -A 20 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -E "^- \[[x ]\]" | head -n 10
+                
+                # Lista funcionalidades rápidas
+                plans__feature_list
                 
                 echo ""
                 print_info "Para detalhes completos, veja: .aidev/plans/ROADMAP.md"
@@ -1643,8 +1717,11 @@ cmd_roadmap() {
                 print_error "ROADMAP.md não encontrado. Use 'aidev init' para provisionar."
             fi
             ;;
+        list|features)
+            plans__feature_list
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcmd (status)"
+            print_error "Subcomando desconhecido: $subcmd (status, list)"
             exit 1
             ;;
     esac

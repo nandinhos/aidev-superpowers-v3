@@ -1815,12 +1815,28 @@ cmd_mcp() {
             ;;
         laravel)
             # MCP Laravel Docker - Configuração automática de containers
-            local laravel_cli="$AIDEV_ROOT_DIR/.aidev/mcp/laravel/bin/aidev-mcp-laravel"
-            if [ -f "$laravel_cli" ]; then
+            # Procura em vários locais possíveis (desenvolvimento ou instalado)
+            local laravel_cli=""
+            local possible_paths=(
+                "$PWD/.aidev/mcp/laravel/bin/aidev-mcp-laravel"                    # Projeto atual
+                "$HOME/projects/aidev-superpowers-v3-1/.aidev/mcp/laravel/bin/aidev-mcp-laravel"  # Dev local
+                "$HOME/projects/aidev-superpowers/.aidev/mcp/laravel/bin/aidev-mcp-laravel"       # Dev alternativo
+                "$AIDEV_ROOT_DIR/.aidev/mcp/laravel/bin/aidev-mcp-laravel"       # Instalação global
+            )
+            
+            for path in "${possible_paths[@]}"; do
+                if [ -f "$path" ]; then
+                    laravel_cli="$path"
+                    break
+                fi
+            done
+            
+            if [ -n "$laravel_cli" ]; then
                 "$laravel_cli" "$@"
             else
                 print_error "MCP Laravel Docker não encontrado"
-                print_info "Certifique-se de que .aidev/mcp/laravel/ está instalado"
+                print_info "Certifique-se de que .aidev/mcp/laravel/ está instalado no projeto"
+                print_info "Execute de dentro do diretório do projeto ou do aidev-superpowers-v3-1"
                 exit 1
             fi
             ;;

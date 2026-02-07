@@ -2696,9 +2696,13 @@ cmd_self_upgrade() {
 
     print_info "Instalacao global: $global_install"
 
-    # Versao atual
+    # Versao atual (lê diretamente do arquivo VERSION)
     local current_version
-    current_version=$(grep "AIDEV_VERSION" "$global_install/lib/core.sh" 2>/dev/null | sed -E 's/.*:-([^"}]+).*/\1/' | head -1 || echo "desconhecida")
+    if [ -f "$global_install/VERSION" ]; then
+        current_version=$(cat "$global_install/VERSION" | tr -d '[:space:]')
+    else
+        current_version=$(grep "AIDEV_VERSION" "$global_install/lib/core.sh" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[^"]*' | head -1 || echo "desconhecida")
+    fi
     print_info "Versao atual: $current_version"
 
     # Detecta source (projeto atual ou diretorio padrao)
@@ -2722,9 +2726,13 @@ cmd_self_upgrade() {
         exit 1
     fi
 
-    # Versao do source
+    # Versao do source (lê diretamente do arquivo VERSION)
     local source_version
-    source_version=$(grep "AIDEV_VERSION" "$source_dir/lib/core.sh" 2>/dev/null | sed -E 's/.*:-([^"}]+).*/\1/' | head -1 || echo "desconhecida")
+    if [ -f "$source_dir/VERSION" ]; then
+        source_version=$(cat "$source_dir/VERSION" | tr -d '[:space:]')
+    else
+        source_version=$(grep "AIDEV_VERSION" "$source_dir/lib/core.sh" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[^"]*' | head -1 || echo "desconhecida")
+    fi
     print_info "Versao no source: $source_version"
     print_info "Source: $source_dir"
     echo ""

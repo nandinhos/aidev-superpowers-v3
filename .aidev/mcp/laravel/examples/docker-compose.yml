@@ -1,0 +1,183 @@
+version: '3.8'
+
+# Exemplo de docker-compose.yml otimizado para uso com MCP Laravel Docker
+# Este arquivo demonstra as melhores práticas para integração automática
+
+services:
+  # Aplicação Laravel principal
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-laravel-app
+    
+    # Labels para detecção automática
+    labels:
+      # Habilitar detecção pelo aidev-mcp-laravel
+      - "aidev.laravel.enabled=true"
+      # Nome do projeto (opcional)
+      - "aidev.laravel.project=my-laravel-project"
+      # Versão do PHP (opcional, ajuda na detecção)
+      - "aidev.laravel.php-version=8.2"
+    
+    volumes:
+      # Montar código fonte
+      - ./:/var/www/html
+      # Volume para persistir vendor (opcional)
+      - vendor_cache:/var/www/html/vendor
+    
+    working_dir: /var/www/html
+    
+    # Garantir que container tenha acesso ao Docker socket (se necessário)
+    # Nota: Use com cautela em produção
+    # volumes:
+    #   - /var/run/docker.sock:/var/run/docker.sock
+    
+    networks:
+      - laravel-network
+    
+    # Health check para Laravel
+    healthcheck:
+      test: ["CMD", "php", "artisan", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Variáveis de ambiente
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=mysql
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+
+  # Servidor Web (Nginx)
+  web:
+    image: nginx:alpine
+    container_name: my-laravel-web
+    
+    # Labels (opcional, se quiser detectar web server também)
+    labels:
+      - "aidev.nginx.enabled=true"
+    
+    ports:
+      - "8080:80"
+    
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    
+    depends_on:
+      app:
+        condition: service_healthy
+    
+    networks:
+      - laravel-network
+
+  # Banco de dados MySQL
+  database:
+    image: mysql:8.0
+    container_name: my-laravel-db
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    
+    volumes:
+      - mysql_data:/var/lib/mysql
+    
+    ports:
+      - "3306:3306"
+    
+    networks:
+      - laravel-network
+    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis para Cache/Queue
+  redis:
+    image: redis:alpine
+    container_name: my-laravel-redis
+    
+    volumes:
+      - redis_data:/data
+    
+    ports:
+      - "6379:6379"
+    
+    networks:
+      - laravel-network
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Queue Worker (opcional)
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-laravel-queue
+    
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    
+    labels:
+      - "aidev.laravel.worker=true"
+    
+    volumes:
+      - ./:/var/www/html
+    
+    depends_on:
+      - database
+      - redis
+    
+    networks:
+      - laravel-network
+    
+    # Não precisa de labels MCP aqui pois é um worker, não a app principal
+
+  # Scheduler (opcional)
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-laravel-scheduler
+    
+    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
+    
+    labels:
+      - "aidev.laravel.scheduler=true"
+    
+    volumes:
+      - ./:/var/www/html
+    
+    depends_on:
+      - database
+      - redis
+    
+    networks:
+      - laravel-network
+
+volumes:
+  mysql_data:
+  redis_data:
+  vendor_cache:
+
+networks:
+  laravel-network:
+    driver: bridge

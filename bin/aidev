@@ -1113,6 +1113,18 @@ cmd_doctor() {
     local install_path="${CLI_INSTALL_PATH:-.}"
     install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
     
+    # Detecta instalação global
+    local global_install=""
+    local aidev_path=$(which aidev 2>/dev/null || echo "")
+    if [ -n "$aidev_path" ]; then
+        if [ -L "$aidev_path" ]; then
+            local real_path=$(readlink -f "$aidev_path")
+            global_install=$(dirname "$(dirname "$real_path")")
+        else
+            global_install=$(dirname "$(dirname "$aidev_path")")
+        fi
+    fi
+    
     print_header "AI Dev Doctor"
     
     local issues=0
@@ -1330,7 +1342,13 @@ cmd_doctor() {
 
     # 6. Verificação de Integridade Crítica
     print_section "Integridade do Sistema"
-    local critical_dirs=(".aidev/agents" ".aidev/skills" ".aidev/rules" "bin")
+    local critical_dirs=(".aidev/agents" ".aidev/skills" ".aidev/rules")
+    
+    # O diretório bin só é vital na instalação global
+    if [ "$install_path" = "$global_install" ] || [ "$install_path" = "/usr/local" ]; then
+        critical_dirs+=("bin")
+    fi
+    
     for dir in "${critical_dirs[@]}"; do
         if [ -d "$install_path/$dir" ]; then
             print_success "Diretório vital ok: $dir"

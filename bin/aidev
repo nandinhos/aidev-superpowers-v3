@@ -1790,7 +1790,7 @@ cmd_roadmap() {
 # ============================================================================
 # Gerencia e orquestra servidores MCP
 cmd_mcp() {
-    shift # Consome 'mcp'
+    # NÃO fazer shift aqui - main() já consumiu 'mcp'
     local subcommand="${1:-status}"
     shift 2>/dev/null || true
 

@@ -1,0 +1,644 @@
+#!/usr/bin/env bash
+#
+# aidev-mcp-laravel - CLI Principal
+# Interface unificada para gerenciamento MCP Laravel em Docker
+#
+
+set -euo pipefail
+
+# Meta informações
+readonly VERSION="1.0.0"
+readonly SCRIPT_NAME="aidev-mcp-laravel"
+
+# Cores
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly CYAN='\033[0;36m'
+readonly PURPLE='\033[0;35m'
+readonly BOLD='\033[1m'
+readonly NC='\033[0m'
+
+# Diretórios
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly MCP_DIR="$(dirname "$SCRIPT_DIR")"
+readonly LIB_DIR="$MCP_DIR/lib"
+readonly STATE_DIR="$MCP_DIR/state"
+
+# ============================================
+# Header e UI
+# ============================================
+
+show_header() {
+    echo -e "${CYAN}"
+    echo "╔════════════════════════════════════════════════════════╗"
+    echo "║   AI Dev Superpowers - MCP Laravel Docker Manager      ║"
+    echo "║   v${VERSION}                                              ║"
+    echo "╚════════════════════════════════════════════════════════╝"
+    echo -e "${NC}"
+}
+
+show_footer() {
+    echo ""
+    echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
+    echo ""
+}
+
+# ============================================
+# Logging
+# ============================================
+
+log_info() {
+    echo -e "${BLUE}ℹ${NC}  $1"
+}
+
+log_success() {
+    echo -e "${GREEN}✓${NC}  $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}⚠${NC}  $1"
+}
+
+log_error() {
+    echo -e "${RED}✗${NC}  $1"
+}
+
+log_step() {
+    echo -e "${PURPLE}→${NC}  $1"
+}
+
+# ============================================
+# Comando: detect
+# ============================================
+
+cmd_detect() {
+    local force=false
+    local verbose=false
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -f|--force) force=true; shift ;;
+            -v|--verbose) verbose=true; shift ;;
+            *) shift ;;
+        esac
+    done
+    
+    show_header
+    log_step "Detectando containers Laravel..."
+    echo ""
+    
+    # Verificar Docker
+    if ! command -v docker &> /dev/null; then
+        log_error "Docker não está instalado"
+        show_footer
+        exit 1
+    fi
+    
+    # Executar detecção
+    local containers
+    if [ "$verbose" = true ]; then
+        "$LIB_DIR/docker-discovery.sh" discover | jq '.'
+    else
+        containers=$("$LIB_DIR/docker-discovery.sh" discover 2>/dev/null)
+        
+        # Mostrar resultados formatados
+        local count
+        count=$(echo "$containers" | jq 'length')
+        
+        if [ "$count" -eq 0 ]; then
+            log_warn "Nenhum container Laravel encontrado"
+            echo ""
+            echo -e "${YELLOW}Dica:${NC} Certifique-se de que:"
+            echo "  • O container está rodando (docker ps)"
+            echo "  • É uma imagem PHP/Laravel"
+            echo "  • Ou tem a label 'aidev.laravel.enabled=true'"
+        else
+            log_success "Encontrados $count container(s) Laravel:"
+            echo ""
+            
+            echo "$containers" | jq -r '.[] | "  \(.name) | PHP \(.php_version) | Laravel \(.laravel_version) | \(.status)"' | while read -r line; do
+                echo "  $line"
+            done
+            
+            echo ""
+            log_info "Para configurar MCP automaticamente, execute:"
+            echo -e "  ${CYAN}$SCRIPT_NAME setup${NC}"
+        fi
+    fi
+    
+    show_footer
+}
+
+# ============================================
+# Comando: setup
+# ============================================
+
+cmd_setup() {
+    local container_name="${1:-}"
+    local auto=false
+    local force=false
+    
+    shift || true
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --auto|-a) auto=true; shift ;;
+            --force|-f) force=true; shift ;;
+            *) shift ;;
+        esac
+    done
+    
+    show_header
+    log_step "Configurando MCP Laravel Boost..."
+    echo ""
+    
+    # Se não especificou container, detectar todos
+    if [ -z "$container_name" ]; then
+        if [ "$auto" = true ]; then
+            log_info "Modo auto: configurando todos containers..."
+            
+            local containers
+            containers=$("$LIB_DIR/docker-discovery.sh" discover 2>/dev/null)
+            
+            local container_list
+            container_list=$(echo "$containers" | jq -r '.[].name')
+            
+            if [ -z "$container_list" ]; then
+                log_error "Nenhum container Laravel encontrado"
+                show_footer
+                exit 1
+            fi
+            
+            # Configurar cada container
+            while IFS= read -r name; do
+                [ -z "$name" ] && continue
+                echo ""
+                log_info "Configurando: $name"
+                setup_single_container "$name" "$force"
+            done <<< "$container_list"
+            
+        else
+            # Modo interativo
+            log_info "Detectando containers..."
+            local containers
+            containers=$("$LIB_DIR/docker-discovery.sh" discover 2>/dev/null)
+            
+            local count
+            count=$(echo "$containers" | jq 'length')
+            
+            if [ "$count" -eq 0 ]; then
+                log_error "Nenhum container Laravel encontrado"
+                show_footer
+                exit 1
+            fi
+            
+            if [ "$count" -eq 1 ]; then
+                container_name=$(echo "$containers" | jq -r '.[0].name')
+                log_info "Container encontrado: $container_name"
+                setup_single_container "$container_name" "$force"
+            else
+                log_info "Múltiplos containers encontrados:"
+                echo ""
+                
+                local i=1
+                echo "$containers" | jq -r '.[].name' | while read -r name; do
+                    echo "  $i) $name"
+                    ((i++))
+                done
+                
+                echo ""
+                echo -n "Selecione o container (1-$count) ou 'all' para todos: "
+                read -r selection
+                
+                if [ "$selection" = "all" ]; then
+                    echo "$containers" | jq -r '.[].name' | while read -r name; do
+                        [ -z "$name" ] && continue
+                        echo ""
+                        log_info "Configurando: $name"
+                        setup_single_container "$name" "$force"
+                    done
+                else
+                    container_name=$(echo "$containers" | jq -r ".[$((selection-1))].name")
+                    if [ -n "$container_name" ] && [ "$container_name" != "null" ]; then
+                        setup_single_container "$container_name" "$force"
+                    else
+                        log_error "Seleção inválida"
+                        show_footer
+                        exit 1
+                    fi
+                fi
+            fi
+        fi
+    else
+        # Container específico
+        setup_single_container "$container_name" "$force"
+    fi
+    
+    echo ""
+    log_success "Configuração completa!"
+    show_footer
+}
+
+setup_single_container() {
+    local container_name="$1"
+    local force="${2:-false}"
+    
+    # Passo 1: Health Check
+    log_step "1/4 Verificando saúde do container..."
+    
+    if ! "$LIB_DIR/laravel-health-check.sh" check "$container_name" --timeout 30 > /dev/null 2>&1; then
+        log_warn "Container não está saudável, aguardando..."
+        if ! "$LIB_DIR/laravel-health-check.sh" wait "$container_name" --timeout 120 > /dev/null 2>&1; then
+            log_error "Container não ficou saudável no tempo limite"
+            return 1
+        fi
+    fi
+    log_success "Container saudável"
+    
+    # Passo 2: Instalar Laravel Boost se necessário
+    log_step "2/4 Verificando Laravel Boost..."
+    
+    local boost_status
+    boost_status=$("$LIB_DIR/laravel-boost-installer.sh" check "$container_name" 2>/dev/null || echo "not_installed")
+    
+    if [ "$boost_status" != "installed" ]; then
+        log_info "Instalando Laravel Boost..."
+        if ! "$LIB_DIR/laravel-boost-installer.sh" install "$container_name" > /dev/null 2>&1; then
+            log_error "Falha ao instalar Laravel Boost"
+            return 1
+        fi
+        log_success "Laravel Boost instalado"
+    else
+        log_success "Laravel Boost já instalado"
+    fi
+    
+    # Passo 3: Verificar instalação
+    log_step "3/4 Verificando instalação..."
+    
+    if ! "$LIB_DIR/boost-verification.sh" quick "$container_name" > /dev/null 2>&1; then
+        log_error "Verificação do Laravel Boost falhou"
+        return 1
+    fi
+    log_success "Laravel Boost verificado"
+    
+    # Passo 4: Gerar configuração MCP
+    log_step "4/4 Gerando configuração MCP..."
+    
+    local config_file
+    config_file=$("$LIB_DIR/mcp-config-generator.sh" save "$container_name" 2>/dev/null)
+    
+    if [ -n "$config_file" ]; then
+        log_success "Configuração salva: $config_file"
+        
+        # Atualizar multi-project
+        "$LIB_DIR/multi-project-manager.sh" register "$container_name" > /dev/null 2>&1 || true
+        
+        return 0
+    else
+        log_error "Falha ao gerar configuração"
+        return 1
+    fi
+}
+
+# ============================================
+# Comando: status
+# ============================================
+
+cmd_status() {
+    show_header
+    log_step "Status do MCP Laravel Docker"
+    echo ""
+    
+    # Status do Events Watcher
+    log_info "Events Watcher:"
+    if "$LIB_DIR/docker-events.sh" status 2>/dev/null | grep -q "rodando"; then
+        log_success "  Rodando (daemon ativo)"
+    else
+        log_warn "  Parado (daemon inativo)"
+        echo ""
+        log_info "Para iniciar: $SCRIPT_NAME watch"
+    fi
+    
+    echo ""
+    
+    # Lista de containers
+    log_info "Containers detectados:"
+    if [ -x "$LIB_DIR/docker-discovery.sh" ]; then
+        "$LIB_DIR/docker-discovery.sh" list 2>/dev/null || echo "  Nenhum container encontrado"
+    fi
+    
+    echo ""
+    
+    # Projetos registrados
+    log_info "Projetos registrados:"
+    if [ -x "$LIB_DIR/multi-project-manager.sh" ]; then
+        "$LIB_DIR/multi-project-manager.sh" list 2>/dev/null || echo "  Nenhum projeto registrado"
+    fi
+    
+    echo ""
+    
+    # Configuração MCP
+    log_info "Configuração MCP:"
+    local config_dir="$MCP_DIR/config"
+    if [ -d "$config_dir" ]; then
+        local config_count
+        config_count=$(find "$config_dir" -name "*.json" | wc -l)
+        log_success "  $config_count arquivo(s) de configuração"
+        
+        if [ "$config_count" -gt 0 ]; then
+            log_info "  Configurações:"
+            find "$config_dir" -name "*.json" -exec basename {} \; | sed 's/^/    - /'
+        fi
+    else
+        log_warn "  Diretório de configuração não existe"
+    fi
+    
+    echo ""
+    
+    # Docker status
+    log_info "Docker:"
+    if command -v docker &> /dev/null && docker info &> /dev/null; then
+        local docker_version
+        docker_version=$(docker --version | cut -d' ' -f3 | cut -d',' -f1)
+        log_success "  Docker $docker_version (disponível)"
+        
+        local running_count
+        running_count=$(docker ps -q | wc -l)
+        log_info "  Containers rodando: $running_count"
+    else
+        log_error "  Docker não disponível"
+    fi
+    
+    show_footer
+}
+
+# ============================================
+# Comando: watch
+# ============================================
+
+cmd_watch() {
+    local action="${1:-status}"
+    
+    show_header
+    
+    case "$action" in
+        start)
+            log_step "Iniciando Docker Events Watcher..."
+            "$LIB_DIR/docker-events.sh" start
+            echo ""
+            log_success "Watcher iniciado em background"
+            log_info "Logs: $LIB_DIR/docker-events.sh logs"
+            ;;
+        stop)
+            log_step "Parando Docker Events Watcher..."
+            "$LIB_DIR/docker-events.sh" stop
+            echo ""
+            log_success "Watcher parado"
+            ;;
+        restart)
+            log_step "Reiniciando Docker Events Watcher..."
+            "$LIB_DIR/docker-events.sh" restart
+            echo ""
+            log_success "Watcher reiniciado"
+            ;;
+        status)
+            "$LIB_DIR/docker-events.sh" status
+            ;;
+        logs)
+            echo "Logs do Events Watcher (Ctrl+C para sair):"
+            echo "──────────────────────────────────────────"
+            "$LIB_DIR/docker-events.sh" logs
+            ;;
+        *)
+            log_error "Ação desconhecida: $action"
+            echo "Uso: $SCRIPT_NAME watch {start|stop|restart|status|logs}"
+            ;;
+    esac
+    
+    show_footer
+}
+
+# ============================================
+# Comando: config
+# ============================================
+
+cmd_config() {
+    local subcommand="${1:-view}"
+    shift || true
+    
+    show_header
+    
+    case "$subcommand" in
+        view|show)
+            log_step "Configurações MCP:"
+            echo ""
+            
+            local config_dir="$MCP_DIR/config"
+            if [ -d "$config_dir" ]; then
+                for config in "$config_dir"/*.json; do
+                    [ -f "$config" ] || continue
+                    
+                    echo -e "${CYAN}$(basename "$config"):${NC}"
+                    jq '.' "$config"
+                    echo ""
+                done
+            else
+                log_warn "Nenhuma configuração encontrada"
+            fi
+            ;;
+        reload|apply)
+            log_step "Aplicando hot-reload..."
+            "$LIB_DIR/mcp-hot-reload.sh" reload
+            ;;
+        validate)
+            log_step "Validando configurações..."
+            "$LIB_DIR/mcp-hot-reload.sh" validate
+            ;;
+        backup)
+            log_step "Criando backup..."
+            local config_file="${1:-$MCP_DIR/config/combined-mcp.json}"
+            "$LIB_DIR/mcp-hot-reload.sh" backup "$config_file"
+            ;;
+        *)
+            log_error "Subcomando desconhecido: $subcommand"
+            echo "Uso: $SCRIPT_NAME config {view|reload|validate|backup}"
+            ;;
+    esac
+    
+    show_footer
+}
+
+# ============================================
+# Comando: doctor
+# ============================================
+
+cmd_doctor() {
+    show_header
+    log_step "Executando diagnóstico..."
+    echo ""
+    
+    local issues=0
+    
+    # Verificar Docker
+    echo -n "Docker... "
+    if command -v docker &> /dev/null && docker info &> /dev/null; then
+        log_success "OK"
+    else
+        log_error "Não disponível"
+        ((issues++))
+    fi
+    
+    # Verificar jq
+    echo -n "jq... "
+    if command -v jq &> /dev/null; then
+        log_success "OK"
+    else
+        log_error "Não instalado (necessário para JSON parsing)"
+        ((issues++))
+    fi
+    
+    # Verificar scripts
+    echo -n "Scripts da lib... "
+    local all_scripts_exist=true
+    for script in docker-discovery laravel-health-check mcp-config-generator docker-events trigger-orchestrator mcp-hot-reload laravel-boost-installer boost-verification multi-project-manager; do
+        if [ ! -x "$LIB_DIR/${script}.sh" ]; then
+            all_scripts_exist=false
+            break
+        fi
+    done
+    
+    if [ "$all_scripts_exist" = true ]; then
+        log_success "OK"
+    else
+        log_error "Alguns scripts faltando"
+        ((issues++))
+    fi
+    
+    # Verificar diretórios
+    echo -n "Diretórios... "
+    if [ -d "$STATE_DIR" ] && [ -d "$MCP_DIR/config" ]; then
+        log_success "OK"
+    else
+        log_warn "Diretórios de estado/config não existem (serão criados automaticamente)"
+    fi
+    
+    # Verificar containers
+    echo -n "Containers Laravel... "
+    local container_count
+    container_count=$("$LIB_DIR/docker-discovery.sh" discover 2>/dev/null | jq 'length')
+    if [ "$container_count" -gt 0 ]; then
+        log_success "$container_count encontrado(s)"
+    else
+        log_warn "Nenhum container Laravel rodando"
+    fi
+    
+    echo ""
+    
+    if [ "$issues" -eq 0 ]; then
+        log_success "Diagnóstico completo: Tudo OK!"
+    else
+        log_error "Diagnóstico completo: $issues problema(s) encontrado(s)"
+    fi
+    
+    show_footer
+}
+
+# ============================================
+# Help
+# ============================================
+
+show_help() {
+    show_header
+    
+    echo -e "${BOLD}Uso:${NC} $SCRIPT_NAME [COMANDO] [OPÇÕES]"
+    echo ""
+    echo -e "${BOLD}Comandos:${NC}"
+    echo ""
+    echo -e "  ${CYAN}detect${NC}              Detecta containers Laravel"
+    echo "    Opções: --verbose, --force"
+    echo ""
+    echo -e "  ${CYAN}setup${NC} [container]   Configura MCP para container(s)"
+    echo "    Opções: --auto (todos), --force"
+    echo ""
+    echo -e "  ${CYAN}status${NC}              Mostra status geral"
+    echo ""
+    echo -e "  ${CYAN}watch${NC} {start|stop|restart|status|logs}"
+    echo "                      Gerencia Docker Events Watcher"
+    echo ""
+    echo -e "  ${CYAN}config${NC} {view|reload|validate|backup}"
+    echo "                      Gerencia configurações MCP"
+    echo ""
+    echo -e "  ${CYAN}doctor${NC}              Executa diagnóstico"
+    echo ""
+    echo -e "  ${CYAN}help${NC}                Mostra esta ajuda"
+    echo ""
+    echo -e "${BOLD}Exemplos:${NC}"
+    echo ""
+    echo "  $SCRIPT_NAME detect              Detectar containers"
+    echo "  $SCRIPT_NAME setup               Configurar interativamente"
+    echo "  $SCRIPT_NAME setup --auto        Configurar todos containers"
+    echo "  $SCRIPT_NAME setup my-app-php    Configurar container específico"
+    echo "  $SCRIPT_NAME watch start         Iniciar monitoramento"
+    echo "  $SCRIPT_NAME status              Ver status"
+    echo "  $SCRIPT_NAME doctor              Diagnóstico"
+    echo ""
+    
+    show_footer
+}
+
+# ============================================
+# Main
+# ============================================
+
+main() {
+    local command="${1:-help}"
+    shift || true
+    
+    # Verificar dependências
+    if ! command -v jq &> /dev/null && [ "$command" != "doctor" ] && [ "$command" != "help" ]; then
+        show_header
+        log_error "jq não está instalado"
+        echo ""
+        echo "Por favor, instale jq:"
+        echo "  Ubuntu/Debian: sudo apt-get install jq"
+        echo "  macOS: brew install jq"
+        echo "  Outros: https://stedolan.github.io/jq/download/"
+        show_footer
+        exit 1
+    fi
+    
+    case "$command" in
+        detect|scan|find)
+            cmd_detect "$@"
+            ;;
+        setup|configure|install)
+            cmd_setup "$@"
+            ;;
+        status|info)
+            cmd_status
+            ;;
+        watch|monitor)
+            cmd_watch "$@"
+            ;;
+        config|cfg)
+            cmd_config "$@"
+            ;;
+        doctor|diagnose|check)
+            cmd_doctor
+            ;;
+        help|--help|-h)
+            show_help
+            ;;
+        *)
+            log_error "Comando desconhecido: $command"
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

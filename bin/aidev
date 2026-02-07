@@ -1795,8 +1795,19 @@ cmd_mcp() {
                 configure) configure_mcp "." "$(detect_platform)" ;;
             esac
             ;;
+        laravel)
+            # MCP Laravel Docker - Configuração automática de containers
+            local laravel_cli="$AIDEV_ROOT_DIR/.aidev/mcp/laravel/bin/aidev-mcp-laravel"
+            if [ -f "$laravel_cli" ]; then
+                "$laravel_cli" "$@"
+            else
+                print_error "MCP Laravel Docker não encontrado"
+                print_info "Certifique-se de que .aidev/mcp/laravel/ está instalado"
+                exit 1
+            fi
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove)"
+            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel)"
             exit 1
             ;;
     esac

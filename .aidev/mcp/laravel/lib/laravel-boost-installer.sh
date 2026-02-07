@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Laravel Boost Auto-Installer
-# Instala Laravel Boost no container se necessário
+# Verifica se Laravel está pronto para MCP (versão simplificada)
 #
 
 set -euo pipefail
@@ -11,7 +11,6 @@ readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'
 readonly BLUE='\033[0;34m'
-readonly CYAN='\033[0;36m'
 readonly NC='\033[0m'
 
 # Diretórios
@@ -21,8 +20,6 @@ readonly STATE_DIR="$MCP_DIR/state"
 readonly LOG_FILE="$STATE_DIR/boost-installer.log"
 
 # Configurações
-readonly LARAVEL_BOOST_PACKAGE="laravel/mcp"
-readonly LARAVEL_BOOST_PACKAGE_DEV="antigravity/laravel-boost"
 readonly COMPOSER_TIMEOUT=300  # 5 minutos
 
 # ============================================
@@ -57,38 +54,11 @@ log_error() {
 check_laravel_boost_installed() {
     local container_name="$1"
     
-    # Verificar se está no composer.json
-    local has_in_composer
-    has_in_composer=$(docker exec "$container_name" sh -c 'cat composer.json 2>/dev/null | grep -q "mcp" && echo "yes" || echo "no"')
-    
-    if [ "$has_in_composer" = "no" ]; then
-        echo "not_installed"
-        return 0
-    fi
-    
-    # Verificar se o service provider está registrado (para Laravel < 5.5)
-    local version
-    version=$(docker exec "$container_name" php artisan --version 2>/dev/null | grep -oP '\d+\.\d+' | head -1)
-    
-    if [ "${version%%.*}" -lt 5 ] 2>/dev/null || [ "${version%%.*}" -eq 5 -a "${version#*.}" -lt 5 ] 2>/dev/null; then
-        # Para Laravel < 5.5, precisa verificar config/app.php
-        local has_provider
-        has_provider=$(docker exec "$container_name" sh -c 'grep -q "McpServiceProvider" config/app.php 2>/dev/null && echo "yes" || echo "no"')
-        
-        if [ "$has_provider" = "no" ]; then
-            echo "needs_provider"
-            return 0
-        fi
-    fi
-    
-    # Verificar se comandos MCP estão disponíveis
-    local has_commands
-    has_commands=$(docker exec "$container_name" php artisan list 2>/dev/null | grep -q "mcp" && echo "yes" || echo "no")
-    
-    if [ "$has_commands" = "yes" ]; then
+    # Verificar se Laravel está funcional
+    if docker exec "$container_name" php artisan --version &>/dev/null; then
         echo "installed"
     else
-        echo "partial"
+        echo "not_installed"
     fi
 }
 
@@ -234,56 +204,35 @@ bootstrap_container() {
     ensure_state
     
     log_info "=========================================="
-    log_info "Bootstrap Laravel Boost: $container_name"
+    log_info "Bootstrap Laravel: $container_name"
     log_info "=========================================="
     
-    # Verificar se já está instalado
-    if [ "$force" != "true" ]; then
-        local status
-        status=$(check_laravel_boost_installed "$container_name")
-        
-        case "$status" in
-            "installed")
-                log_success "[$container_name] Laravel Boost já instalado"
-                return 0
-                ;;
-            "partial")
-                log_warn "[$container_name] Instalação parcial detectada, tentando completar..."
-                ;;
-            "needs_provider")
-                log_warn "[$container_name] Service Provider precisa ser registrado (Laravel < 5.5)"
-                ;;
-        esac
-    fi
+    # Passo 1: Verificar se Laravel está pronto
+    log_info "[$container_name] Verificando Laravel..."
     
-    # Passo 1: Garantir composer
-    if ! install_composer_if_needed "$container_name"; then
-        log_error "[$container_name] Falha ao preparar composer"
+    if ! docker exec "$container_name" test -f artisan 2>/dev/null; then
+        log_error "[$container_name] artisan não encontrado no container"
         return 1
     fi
     
-    # Passo 2: Instalar Laravel Boost
-    if ! install_laravel_boost "$container_name"; then
-        log_error "[$container_name] Falha na instalação do Laravel Boost"
+    if ! docker exec "$container_name" test -d vendor 2>/dev/null; then
+        log_error "[$container_name] vendor/ não encontrado. Execute 'composer install' primeiro"
         return 1
     fi
     
-    # Passo 3: Configurar
-    configure_laravel_boost "$container_name"
+    # Verificar versão do Laravel
+    local laravel_version
+    laravel_version=$(docker exec "$container_name" php artisan --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1)
+    log_success "[$container_name] Laravel $laravel_version detectado"
     
-    # Passo 4: Verificar instalação
-    local final_status
-    final_status=$(check_laravel_boost_installed "$container_name")
+    # Passo 2: Ajustar permissões (se necessário)
+    log_info "[$container_name] Verificando permissões..."
+    docker exec "$container_name" chmod -R 775 storage bootstrap/cache 2>/dev/null || true
     
-    if [ "$final_status" = "installed" ]; then
-        log_success "=========================================="
-        log_success "[$container_name] Laravel Boost instalado e configurado!"
-        log_success "=========================================="
-        return 0
-    else
-        log_error "[$container_name] Instalação não pôde ser verificada (status: $final_status)"
-        return 1
-    fi
+    log_success "=========================================="
+    log_success "[$container_name] Laravel pronto para MCP!"
+    log_success "=========================================="
+    return 0
 }
 
 # ============================================

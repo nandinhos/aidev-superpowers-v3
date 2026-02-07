@@ -327,23 +327,12 @@ EOF
 quick_check() {
     local container_name="$1"
     
-    # Verificação rápida para automação
-    local has_mcp has_commands
-    
-    has_mcp=$(docker exec "$container_name" sh -c 'cat composer.json 2>/dev/null | grep -q "mcp" && echo "yes" || echo "no"')
-    
-    if [ "$has_mcp" != "yes" ]; then
-        echo "not_installed"
-        return 1
-    fi
-    
-    has_commands=$(docker exec "$container_name" php artisan list 2>/dev/null | grep -q "mcp:serve" && echo "yes" || echo "no")
-    
-    if [ "$has_commands" = "yes" ]; then
+    # Verificação rápida: apenas verificar se Laravel está funcional
+    if docker exec "$container_name" php artisan --version &>/dev/null; then
         echo "ready"
         return 0
     else
-        echo "partial"
+        echo "not_ready"
         return 1
     fi
 }

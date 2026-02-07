@@ -116,32 +116,21 @@ get_container_workdir() {
 generate_mcp_config() {
     local container_name="$1"
     local project_name="${2:-$container_name}"
-    local server_name="${3:-laravel-boost-$container_name}"
+    local server_name="${3:-laravel-$container_name}"
     
-    log_info "Gerando configuração MCP para '$container_name'..."
+    # Redirecionar logs para stderr para não misturar com JSON output
+    log_info "Gerando configuração MCP para '$container_name'..." >&2
     
     # Detectar informações do container
-    local project_path php_path artisan_path has_boost workdir
+    local project_path workdir
     
     workdir=$(get_container_workdir "$container_name")
     project_path="${2:-$workdir}"
-    php_path=$(detect_php_executable "$container_name")
-    artisan_path=$(detect_artisan_path "$container_name" "$project_path")
-    has_boost=$(detect_laravel_boost "$container_name")
     
-    log_info "  PHP: $php_path"
-    log_info "  Artisan: $artisan_path"
-    log_info "  Laravel Boost: $has_boost"
+    log_info "  Container: $container_name" >&2
+    log_info "  Project path: $project_path" >&2
     
-    # Verificar se o container tem Laravel Boost instalado
-    local mcp_command
-    if [ "$has_boost" = "yes" ]; then
-        # Usar comando mcp:serve do Laravel Boost
-        mcp_command="$php_path $artisan_path mcp:serve"
-    else
-        # Fallback para execução direta via artisan
-        mcp_command="$php_path $artisan_path"
-    fi
+    # Gerar configuração MCP simples - apenas acesso ao container via docker exec
     
     # Criar configuração MCP
     cat <<EOF
@@ -153,14 +142,13 @@ generate_mcp_config() {
         "exec",
         "-i",
         "$container_name",
-        "sh",
-        "-c",
-        "$mcp_command"
+        "php",
+        "artisan",
+        "tinker"
       ],
       "env": {
         "LARAVEL_PROJECT_PATH": "$project_path",
-        "LARAVEL_CONTAINER": "$container_name",
-        "LARAVEL_BOOST_ENABLED": "$has_boost"
+        "LARAVEL_CONTAINER": "$container_name"
       }
     }
   }

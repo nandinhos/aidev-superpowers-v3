@@ -149,7 +149,8 @@ EOF
 # ============================================
 
 discover_all_containers() {
-    log_info "Iniciando descoberta de containers..."
+    # Redirecionar logs para stderr para não misturar com JSON output
+    log_info "Iniciando descoberta de containers..." >&2
     
     if ! check_docker_available; then
         return 1
@@ -166,10 +167,10 @@ discover_all_containers() {
         name=$(docker inspect --format='{{.Name}}' "$container_id" | sed 's/\///')
         image=$(docker inspect --format='{{.Config.Image}}' "$container_id")
         
-        log_info "Verificando container: $name ($image)"
+        log_info "Verificando container: $name ($image)" >&2
         
         if is_laravel_container "$name" "$image"; then
-            log_success "Container Laravel detectado: $name"
+            log_success "Container Laravel detectado: $name" >&2
             
             local container_info
             container_info=$(get_container_info "$container_id")
@@ -201,7 +202,7 @@ discover_all_containers() {
     local count
     count=$(echo "$containers_json" | jq 'length')
     
-    log_success "Descoberta completa. $count container(s) Laravel encontrado(s)."
+    log_success "Descoberta completa. $count container(s) Laravel encontrado(s)." >&2
     echo "$containers_json"
 }
 

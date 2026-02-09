@@ -53,12 +53,18 @@ log_error() {
 
 check_laravel_boost_installed() {
     local container_name="$1"
-    
-    # Verificar se Laravel está funcional
-    if docker exec "$container_name" php artisan --version &>/dev/null; then
+
+    # Verificar se Laravel esta funcional
+    if ! docker exec "$container_name" php artisan --version &>/dev/null; then
+        echo "not_installed"
+        return
+    fi
+
+    # Verificar se tem comandos MCP disponiveis (boost:mcp, mcp:serve, etc)
+    if docker exec "$container_name" php artisan list 2>/dev/null | grep -qE "boost:mcp|mcp:serve|mcp:start"; then
         echo "installed"
     else
-        echo "not_installed"
+        echo "laravel_only"
     fi
 }
 
@@ -80,55 +86,57 @@ check_composer_available() {
 
 install_laravel_boost() {
     local container_name="$1"
-    local version_constraint="${2:-^1.0}"
-    
-    log_info "[$container_name] Iniciando instalação do Laravel Boost..."
-    
+
+    log_info "[$container_name] Iniciando instalacao do Laravel Boost..."
+
     # Verificar composer
     if [ "$(check_composer_available "$container_name")" = "no" ]; then
-        log_error "[$container_name] Composer não encontrado no container"
+        log_error "[$container_name] Composer nao encontrado no container"
         return 1
     fi
-    
-    # Determinar versão do Laravel
+
+    # Determinar versao do Laravel para escolher o package correto
     local laravel_version
-    laravel_version=$(docker exec "$container_name" php artisan --version 2>/dev/null | grep -oP '\d+\.\d+' | head -1)
-    
+    laravel_version=$(docker exec "$container_name" php artisan --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1)
+    local laravel_major="${laravel_version%%.*}"
+
     log_info "[$container_name] Laravel version detectada: $laravel_version"
-    
-    # Escolher package correto baseado na versão
-    local package_name
-    if [ "${laravel_version%%.*}" -ge 11 ] 2>/dev/null; then
-        package_name="$LARAVEL_BOOST_PACKAGE"
-        version_constraint="^2.0"
-    elif [ "${laravel_version%%.*}" -ge 10 ] 2>/dev/null; then
-        package_name="$LARAVEL_BOOST_PACKAGE"
-        version_constraint="^1.0"
+
+    # Tentar instalar packages MCP conhecidos em ordem de prioridade
+    local packages_to_try=()
+    if [ "$laravel_major" -ge 11 ] 2>/dev/null; then
+        packages_to_try=("laravel/mcp:^1.0" "laravel-boost/laravel-boost:^2.0")
     else
-        package_name="$LARAVEL_BOOST_PACKAGE_DEV"
-        version_constraint="*"
+        packages_to_try=("laravel-boost/laravel-boost:^1.0")
     fi
-    
-    log_info "[$container_name] Instalando $package_name:$version_constraint..."
-    
-    # Instalar via composer
-    local install_output
-    if ! install_output=$(docker exec "$container_name" composer require "$package_name:$version_constraint" --no-interaction --quiet 2>&1); then
-        log_error "[$container_name] Falha na instalação: $install_output"
+
+    local installed=false
+    for package_spec in "${packages_to_try[@]}"; do
+        local pkg="${package_spec%%:*}"
+        local ver="${package_spec##*:}"
+
+        log_info "[$container_name] Tentando instalar $pkg:$ver..."
+
+        if docker exec "$container_name" composer require "$pkg:$ver" --no-interaction --quiet 2>/dev/null; then
+            log_success "[$container_name] Package $pkg instalado com sucesso"
+            installed=true
+            break
+        else
+            log_warn "[$container_name] Package $pkg nao disponivel, tentando proximo..."
+        fi
+    done
+
+    if [ "$installed" = false ]; then
+        log_error "[$container_name] Nenhum package MCP pôde ser instalado"
+        log_info "[$container_name] Instale manualmente: composer require <package-mcp>"
         return 1
     fi
-    
-    log_success "[$container_name] Package instalado com sucesso"
-    
-    # Publicar configurações
-    log_info "[$container_name] Publicando configurações..."
-    docker exec "$container_name" php artisan vendor:publish --provider="Laravel\Mcp\McpServiceProvider" --tag="config" --quiet 2>/dev/null || true
-    
+
     # Limpar cache
     log_info "[$container_name] Limpando cache..."
     docker exec "$container_name" php artisan config:clear --quiet 2>/dev/null || true
     docker exec "$container_name" php artisan cache:clear --quiet 2>/dev/null || true
-    
+
     return 0
 }
 
@@ -250,8 +258,7 @@ show_status() {
     local icon="❓"
     case "$status" in
         "installed") icon="✅" ;;
-        "partial") icon="⚠️" ;;
-        "needs_provider") icon="⚙️" ;;
+        "laravel_only") icon="⚠️" ;;
         "not_installed") icon="❌" ;;
     esac
     

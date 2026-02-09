@@ -504,7 +504,7 @@ cmd_doctor() {
     # Verificar scripts
     echo -n "Scripts da lib... "
     local all_scripts_exist=true
-    for script in docker-discovery laravel-health-check mcp-config-generator docker-events trigger-orchestrator mcp-hot-reload laravel-boost-installer boost-verification multi-project-manager; do
+    for script in docker-discovery laravel-health-check mcp-config-generator docker-events trigger-orchestrator mcp-hot-reload laravel-boost-installer boost-verification multi-project-manager artisan-detector; do
         if [ ! -x "$LIB_DIR/${script}.sh" ]; then
             all_scripts_exist=false
             break

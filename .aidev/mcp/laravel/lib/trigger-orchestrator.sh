@@ -25,6 +25,7 @@ readonly ORCHESTRATOR_LOG="$STATE_DIR/orchestrator.log"
 readonly DISCOVERY_SCRIPT="$LIB_DIR/docker-discovery.sh"
 readonly HEALTH_SCRIPT="$LIB_DIR/laravel-health-check.sh"
 readonly CONFIG_SCRIPT="$LIB_DIR/mcp-config-generator.sh"
+readonly HOT_RELOAD_SCRIPT="$LIB_DIR/mcp-hot-reload.sh"
 
 # Configurações
 readonly MAX_RETRIES=5
@@ -229,17 +230,24 @@ step_configure() {
 
 step_activate() {
     local container_name="$1"
-    
+
     log_info "[$container_name] Ativando..."
-    
-    # Aqui poderia fazer hot-reload do MCP server
-    # Por enquanto, apenas marca como ativo
-    
+
+    # Hot-reload: aplicar config MCP ao IDE
+    if [ -x "$HOT_RELOAD_SCRIPT" ]; then
+        log_info "[$container_name] Aplicando hot-reload da configuracao MCP..."
+        if "$HOT_RELOAD_SCRIPT" reload 2>/dev/null; then
+            log_success "[$container_name] Hot-reload aplicado com sucesso"
+        else
+            log_warn "[$container_name] Hot-reload falhou (aplique manualmente com: aidev mcp laravel config reload)"
+        fi
+    fi
+
     save_state "$container_name" "$STATE_ACTIVE"
-    
-    log_success "[$container_name] ✅ Laravel Boost MCP ativo!"
-    
-    # Notificar (se houver sistema de notificação)
+
+    log_success "[$container_name] Laravel Boost MCP ativo!"
+
+    # Notificar (se houver sistema de notificacao)
     if command -v notify-send &> /dev/null; then
         notify-send "AI Dev Superpowers" "Laravel Boost MCP configurado para $container_name" 2>/dev/null || true
     fi

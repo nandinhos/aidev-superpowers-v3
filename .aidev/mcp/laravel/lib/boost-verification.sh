@@ -326,14 +326,20 @@ EOF
 
 quick_check() {
     local container_name="$1"
-    
-    # Verificação rápida: apenas verificar se Laravel está funcional
-    if docker exec "$container_name" php artisan --version &>/dev/null; then
+
+    # Verificar se Laravel esta funcional
+    if ! docker exec "$container_name" php artisan --version &>/dev/null; then
+        echo "not_ready"
+        return 1
+    fi
+
+    # Verificar se tem comandos MCP disponiveis
+    if docker exec "$container_name" php artisan list 2>/dev/null | grep -qE "boost:mcp|mcp:serve|mcp:start"; then
         echo "ready"
         return 0
     else
-        echo "not_ready"
-        return 1
+        echo "laravel_only"
+        return 0
     fi
 }
 

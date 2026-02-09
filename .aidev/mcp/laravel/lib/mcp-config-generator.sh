@@ -65,35 +65,65 @@ detect_php_executable() {
 
 detect_artisan_path() {
     local container_name="$1"
-    local project_path="$2"
-    
-    # Verificar se artisan está na raiz do projeto
-    if docker exec "$container_name" test -f "$project_path/artisan" 2>/dev/null; then
-        echo "$project_path/artisan"
+    local project_path="${2:-/var/www/html}"
+
+    # Usar artisan-detector.sh se disponível
+    if [ -x "$SCRIPT_DIR/artisan-detector.sh" ]; then
+        "$SCRIPT_DIR/artisan-detector.sh" detect "$container_name" 2>/dev/null
+        return $?
+    fi
+
+    # Fallback: deteccao inline simplificada
+    local common_paths=(
+        "$project_path/artisan"
+        "/var/www/html/artisan"
+        "/var/www/artisan"
+        "/app/artisan"
+    )
+
+    for path in "${common_paths[@]}"; do
+        if docker exec "$container_name" test -f "$path" 2>/dev/null; then
+            echo "$path"
+            return 0
+        fi
+    done
+
+    # Busca recursiva
+    local found
+    found=$(docker exec "$container_name" sh -c 'find /var/www -name artisan -type f 2>/dev/null | head -1' || echo "")
+    if [ -n "$found" ]; then
+        echo "$found"
         return 0
     fi
-    
-    # Tentar encontrar artisan
-    local artisan_path
-    artisan_path=$(docker exec "$container_name" sh -c 'find /var/www -name artisan -type f 2>/dev/null | head -1' || echo "")
-    
-    if [ -n "$artisan_path" ]; then
-        echo "$artisan_path"
-        return 0
-    fi
-    
+
     # Fallback
     echo "$project_path/artisan"
 }
 
-detect_laravel_boost() {
+detect_boost_command() {
     local container_name="$1"
-    
-    # Verificar se Laravel Boost está instalado
-    local has_boost
-    has_boost=$(docker exec "$container_name" php artisan list 2>/dev/null | grep -q "mcp" && echo "yes" || echo "no")
-    
-    echo "$has_boost"
+    local artisan_path="${2:-artisan}"
+
+    # Usar artisan-detector.sh se disponível
+    if [ -x "$SCRIPT_DIR/artisan-detector.sh" ]; then
+        "$SCRIPT_DIR/artisan-detector.sh" command "$container_name" 2>/dev/null
+        return $?
+    fi
+
+    # Fallback: deteccao inline
+    local possible_commands=("boost:mcp" "mcp:serve" "mcp:start laravel-boost" "boost:serve")
+
+    for cmd in "${possible_commands[@]}"; do
+        local cmd_name="${cmd%% *}"
+        if docker exec "$container_name" php "$artisan_path" list 2>/dev/null | grep -q "$cmd_name"; then
+            echo "$cmd"
+            return 0
+        fi
+    done
+
+    # Fallback padrao
+    echo "boost:mcp"
+    return 1
 }
 
 get_container_workdir() {
@@ -116,63 +146,45 @@ get_container_workdir() {
 generate_mcp_config() {
     local container_name="$1"
     local project_name="${2:-$container_name}"
-    local server_name="${3:-laravel-$container_name}"
-    
-    # Redirecionar logs para stderr para não misturar com JSON output
-    log_info "Gerando configuração MCP para '$container_name'..." >&2
-    
-    # Detectar informações do container
-    local project_path workdir
-    
-    workdir=$(get_container_workdir "$container_name")
-    project_path="${2:-$workdir}"
-    
-    log_info "  Container: $container_name" >&2
-    log_info "  Project path: $project_path" >&2
-    
-    # Gerar configuração MCP simples - apenas acesso ao container via docker exec
-    
-    # Criar configuração MCP
-    cat <<EOF
-{
-  "mcpServers": {
-    "$server_name": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "$container_name",
-        "php",
-        "artisan",
-        "tinker"
-      ],
-      "env": {
-        "LARAVEL_PROJECT_PATH": "$project_path",
-        "LARAVEL_CONTAINER": "$container_name"
-      }
-    }
-  }
-}
-EOF
-}
+    local server_name="${3:-laravel-boost-$container_name}"
 
-generate_mcp_config_simple() {
-    local container_name="$1"
-    local server_name="laravel-boost-$container_name"
-    
-    # Versão simplificada que funciona na maioria dos casos
+    # Redirecionar logs para stderr para nao misturar com JSON output
+    log_info "Gerando configuração MCP para '$container_name'..." >&2
+
+    # Detectar informacoes do container
+    local workdir artisan_path boost_command
+
+    workdir=$(get_container_workdir "$container_name")
+
+    # Detectar caminho do artisan
+    artisan_path=$(detect_artisan_path "$container_name" "$workdir")
+    log_info "  Artisan: $artisan_path" >&2
+
+    # Detectar comando Boost disponivel
+    boost_command=$(detect_boost_command "$container_name" "$artisan_path")
+    log_info "  Comando: $boost_command" >&2
+
+    log_info "  Container: $container_name" >&2
+    log_info "  Server name: $server_name" >&2
+
+    # Separar boost_command em partes (ex: "mcp:start laravel-boost" -> 2 args)
+    local args_json
+    args_json=$(printf '        "exec",\n        "-i",\n        "%s",\n        "php",\n        "%s"' "$container_name" "$artisan_path")
+
+    # Adicionar cada parte do boost_command como argumento separado
+    local cmd_part
+    for cmd_part in $boost_command; do
+        args_json=$(printf '%s,\n        "%s"' "$args_json" "$cmd_part")
+    done
+
+    # Criar configuracao MCP
     cat <<EOF
 {
   "mcpServers": {
     "$server_name": {
       "command": "docker",
       "args": [
-        "exec",
-        "-i",
-        "$container_name",
-        "php",
-        "artisan",
-        "mcp:serve"
+$args_json
       ],
       "env": {
         "LARAVEL_CONTAINER": "$container_name"

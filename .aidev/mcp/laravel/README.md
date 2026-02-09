@@ -144,7 +144,8 @@ Verifica:
 │   ├── mcp-hot-reload.sh          # Hot-reload MCP
 │   ├── laravel-boost-installer.sh # Instalação Boost
 │   ├── boost-verification.sh      # Verificação Boost
-│   └── multi-project-manager.sh   # Gerenciamento multi-projeto
+│   ├── multi-project-manager.sh   # Gerenciamento multi-projeto
+│   └── artisan-detector.sh        # Detecção de artisan path e comando Boost
 ├── config/                        # Configurações geradas
 ├── state/                         # Estado persistente
 │   ├── projects.json             # Registro de projetos
@@ -179,8 +180,9 @@ services:
 4. **Orquestração**: `trigger-orchestrator.sh` gerencia o fluxo
 5. **Health Check**: Valida se Laravel está pronto (vendors, artisan, DB)
 6. **Instalação**: Se Laravel Boost não estiver instalado, instala automaticamente
-7. **Configuração**: Gera configuração MCP dinâmica
-8. **Hot-Reload**: Aplica configuração sem reiniciar IDE
+7. **Detecção**: Detecta caminho do artisan e comando Boost disponível
+8. **Configuração**: Gera configuração MCP dinâmica com comando correto
+9. **Hot-Reload**: Aplica configuração ao IDE (pode requerer restart dependendo do IDE)
 
 ### Estados do Orquestrador
 
@@ -282,10 +284,15 @@ Todos scripts em `lib/` podem ser usados independentemente:
 ./lib/laravel-boost-installer.sh install <container>
 ./lib/laravel-boost-installer.sh status <container>
 
+# Artisan Detector
+./lib/artisan-detector.sh detect <container>
+./lib/artisan-detector.sh command <container>
+
 # Multi-projeto
 ./lib/multi-project-manager.sh list
 ./lib/multi-project-manager.sh sync
 ./lib/multi-project-manager.sh combine
+./lib/multi-project-manager.sh import
 ```
 
 ## Integração com IDEs

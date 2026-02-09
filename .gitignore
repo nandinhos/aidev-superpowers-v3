@@ -52,6 +52,12 @@ node_modules/
 .aidev/memory/kb/*.md
 !.aidev/memory/kb/index.json
 
+# MCP Laravel - artefatos de runtime (gerados por aidev mcp laravel)
+.aidev/mcp/laravel/config/
+.aidev/mcp/laravel/state/
+.aidev/mcp/laravel/backups/
+.aidev/mcp/laravel/projects/
+
 # Serena (configuracao local)
 .serena/
 

@@ -366,6 +366,71 @@ get_active_project() {
 }
 
 # ============================================
+# Importacao de Configs Existentes
+# ============================================
+
+import_existing_configs() {
+    log_info "Procurando configuracoes Laravel Boost existentes..."
+
+    ensure_state
+
+    # Locais comuns de config MCP por IDE
+    local mcp_locations=(
+        "$HOME/.config/mcp/mcp.json"
+        "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+        "$HOME/.config/Claude/claude_desktop_config.json"
+        "$HOME/.cursor/mcp.json"
+        "$HOME/.vscode/mcp.json"
+    )
+
+    local found_count=0
+
+    for mcp_file in "${mcp_locations[@]}"; do
+        [ -f "$mcp_file" ] || continue
+
+        # Verificar se tem laravel-boost ou similar configurado
+        local laravel_servers
+        laravel_servers=$(jq -r '.mcpServers | to_entries[] | select(.key | test("laravel|boost")) | .key' "$mcp_file" 2>/dev/null || true)
+
+        [ -z "$laravel_servers" ] && continue
+
+        log_success "Encontrado em: $mcp_file"
+
+        while IFS= read -r server_name; do
+            [ -z "$server_name" ] && continue
+
+            local container artisan_path
+            container=$(jq -r ".mcpServers[\"$server_name\"].args[3] // empty" "$mcp_file" 2>/dev/null || echo "")
+
+            if [ -z "$container" ]; then
+                continue
+            fi
+
+            # Tentar extrair artisan path dos args
+            artisan_path=$(jq -r ".mcpServers[\"$server_name\"].args[5] // empty" "$mcp_file" 2>/dev/null || echo "")
+
+            log_info "  Server: $server_name"
+            log_info "  Container: $container"
+            [ -n "$artisan_path" ] && log_info "  Artisan: $artisan_path"
+
+            # Derivar nome do projeto pelo container
+            local project_name
+            project_name=$(echo "$container" | sed 's/-laravel.test-[0-9]*//; s/-app$//; s/_/-/g')
+
+            register_project "$container" "$project_name" "" "Importado de $mcp_file"
+            ((found_count++))
+        done <<< "$laravel_servers"
+    done
+
+    echo ""
+    if [ "$found_count" -gt 0 ]; then
+        log_success "$found_count configuracao(oes) importada(s)"
+    else
+        log_warn "Nenhuma configuracao existente encontrada"
+    fi
+}
+
+# ============================================
 # CLI
 # ============================================
 
@@ -382,6 +447,7 @@ Comandos:
   combine               Gera config combinada
   active [name]         Mostra/define projeto ativo
   info <name>           Mostra info do projeto
+  import                Importa configs existentes de IDEs
   cleanup               Remove projetos inativos
 
 Opções:
@@ -493,6 +559,9 @@ main() {
                 exit 1
             fi
             get_project_info "$container_name" | jq '.'
+            ;;
+        import|scan)
+            import_existing_configs
             ;;
         cleanup|prune)
             log_info "Limpando projetos inativos..."

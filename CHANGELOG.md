@@ -5,6 +5,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.8.4] - 2026-02-11
+
+### 🐛 Correções
+- **release.sh**: Corrige bug de inserção exponencial no CHANGELOG — `sed` agora usa `0,/pattern/` para inserir header apenas na primeira ocorrência
+- **release.sh**: Define variável `current_date` que estava ausente
+- **self-upgrade**: Inclui sincronização de arquivos raiz (`VERSION`, `CHANGELOG.md`, `README.md`, `install.sh`) no `cmd_self_upgrade`
+
+### 🧹 Manutenção
+- **CHANGELOG.md**: Limpeza de ~200 linhas fantasma acumuladas pelo bug do release
+
 ## [3.8.3] - 2026-02-11
 
 ### 🚀 Features (Sprint 1: Validation System Foundation)

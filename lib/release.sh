@@ -125,9 +125,11 @@ release_bump_version() {
 
     # 2. CHANGELOG.md (Headers)
     local changelog_file="$project_path/CHANGELOG.md"
+    local current_date
+    current_date=$(date +%Y-%m-%d)
     if [ -f "$changelog_file" ]; then
-        # Adiciona nova versao no topo do changelog (abaixo do header principal)
-        if sed -i "/## \[[0-9]\+\.[0-9]\+\.[0-9]\+\]/i ## [$new_version] - $current_date\n" "$changelog_file"; then
+        # Insere nova versao APENAS antes da PRIMEIRA ocorrencia de ## [x.y.z]
+        if sed -i "0,/^## \[[0-9]\+\.[0-9]\+\.[0-9]\+\]/s//## [$new_version] - $current_date\n\n&/" "$changelog_file"; then
             print_success "CHANGELOG.md (header)"
             ((files_updated++)) || true
         else

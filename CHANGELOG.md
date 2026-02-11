@@ -5,6 +5,34 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.8.3] - 2026-02-11
+
+### 🚀 Features (Sprint 1: Validation System Foundation)
+- **Sistema de Validação Automática**: Implementação completa do sistema de validação com 7 validadores:
+  - Validação de caminhos e diretórios
+  - Validação de mensagens de commit (padrões convencionais)
+  - Validação de emojis e prefixos
+  - Validação de idiomas (pt-BR/en)
+  - Validação de padrões de projeto
+  - Validação TDD (testes em vermelho/verde)
+  - Validação de Co-Authored-By
+- **Motor de Retry e Fallback**: Sistema inteligente de retry com exponential backoff e fallback graceful
+- **Context Passport**: Schema JSON padronizado para passagem de contexto entre agentes
+- **59 testes automatizados** cobrindo todo o sistema de validação
+
+### 🚀 Features (Sprint 2: Knowledge Management)
+- **Auto-Catalogação de Erros**: Detecção e catalogação automática de erros com análise de padrões
+- **Knowledge Base Search**: Motor de busca com relevance scoring para lições aprendidas
+- **Sistema de Backlog**: Gestão de erros e tarefas pendentes com priorização
+- **Integration Pipeline**: Validações integradas ao fluxo de desenvolvimento
+- **Sprint Manager**: Correções no sistema de detecção automática de tasks
+- **101 testes automatizados** (42 novos da Sprint 2)
+
+### 📚 Documentação
+- Documentação completa das Sprints 1 e 2
+- Guias de uso do sistema de validação
+- Documentação da Knowledge Base e workflows
+
 ## [3.8.2] - 2026-02-06
 ### 🚀 Features (Release Automation)
 - **Single Source of Truth (SSOT)**: Versão centralizada no arquivo `VERSION`, eliminando redundâncias.
@@ -25,8 +53,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Cores ANSI**: Correção definitiva da exibição de cores no terminal através do uso de strings ANSI-C (`$'\e'`).
 - **Sincronização Global**: Garantia de que a instalação em `~/.aidev-superpowers/` reflete exatamente a versão estável do repositório.
 
-## [3.8.2] - 
-
 ## [3.8.0] - 2026-02-06
 ### 🚀 Features (Portabilidade Multi-Ambiente)
 - **Smart Path Resolution**: Nova função `resolve_path` no Core para expansão dinâmica de `$HOME` e `~` em tempo de execução.
@@ -43,8 +69,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Testes Unitários**: Atualização da suite de testes do Core para validar a nova lógica de resolução de caminhos.
 - **Uninstall Safety**: Melhoria nas validações de segurança do desinstalador.
 
-## [3.8.2] - 
-
 ## [3.7.0] - 2026-02-06
 ### Adicionado
 - **Metodologia Roadmap & Sprints**: Integração formal do modelo SGAITI para planejamento de longo prazo.
@@ -52,8 +76,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **State Manager Agent**: Novo agente focado em sincronia de contexto, fotografias de estado (snapshots) e cache inteligente.
 - **Regra de Ouro (Orchestrator)**: Priorização na leitura do Roadmap e Features ativas para continuidade absoluta entre sessões.
 - **Templates de Planejamento**: `ROADMAP.md.tmpl` e `FEATURE.md.tmpl` para padronização de projetos.
-
-## [3.8.2] - 
 
 ## [3.6.2] - 2026-02-05
 
@@ -68,8 +90,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Persistência Segura**: Estado de triggers e cooldowns gerenciado em `.aidev/state/triggers.json`.
 - **Parsing Seguro**: Utilização de Python para processamento de YAML complexo de gatilhos.
 
-## [3.8.2] - 
-
 ## [3.6.1] - 2026-02-05
 
 ### 🚀 Features (Novidades)
@@ -83,8 +103,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### 🐛 Fixes (Correções)
 - **Release Module**: Correção crítica no script de release que causava falha prematura em incrementos de contadores bash.
 
-## [3.8.2] - 
-
 ## [3.6.0] - 2026-02-05
 
 ### 🚀 Features (Novidades)
@@ -96,8 +114,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ### ⚡ Melhorias
 - Orquestrador Brain: Integração profunda com `lessons_search` para injeção de contexto inteligente.
-
-## [3.8.2] - 
 
 ## [3.5.0] - 2026-02-05
 
@@ -115,8 +131,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### 🐛 Fixes (Correções)
 - **Self-Upgrade**: Correção crítica que impedia atualização quando executada da raiz do repositório (`fix source detection`).
 
-## [3.8.2] - 
-
 ## [3.3.2] - 2026-02-03
 
 ### 🐛 Fixes (Correções)
@@ -132,15 +146,11 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
     - Detecção de versão exata do framework (Laravel 11, Next.js 14, Django, etc).
     - Detecção de Dívida Técnica (contagem de TODOs/FIXMEs e existência de testes).
 
-## [3.8.2] - 
-
 ## [3.3.1] - 2026-02-03
 
 ### 🚀 Novidades
 - **Release Manager**: Agente e Skill para automação de releases.
 - **CLI Command**: Novo comando `aidev release` para gerenciar ciclo de vida de versões.
-
-## [3.8.2] - 
 
 ## [3.3.0] - 2026-02-03
 
@@ -157,8 +167,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Auto-Load Environment**: `bin/aidev` carrega automaticamente `.env` para persistência de config.
 - **Robustez CLI**: Melhoria na contagem de arquivos e tratamento de erros de shell no modo `set -e`.
 
-## [3.8.2] - 
-
 ## [3.2.0] - 2026-02-03
 
 ### 🚀 Novidades
@@ -173,9 +181,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - Correção no comando `status` para evitar crash quando o estado da sessão está parcial.
 - Melhoria na detecção de projetos Brownfield sem testes na skill `suggest`.
 
-
-
-## [3.8.2] - 
 
 ## [3.1.0] - 2026-02-02
 
@@ -196,8 +201,6 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 - Stress Test "The Legacy Calculator" executado com sucesso (Orquestração + Falha Planejada + Correção Automática).
 - Todos os testes de integração e unitários passando.
 
-
-## [3.8.2] - 
 
 ## [3.0.0] - 2026-01-29
 

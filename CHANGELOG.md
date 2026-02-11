@@ -5,6 +5,25 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Unreleased]
+
+### 🚀 Features
+- **Sprint Manager Integration**: Sistema de Sprint Manager agora integrado na inicialização do agente
+  - Dashboard visual com status, progresso e próxima ação
+  - Sincronização automática de `sprint_context` em `unified.json`
+  - Contexto inteligente da sprint incluído no prompt do LLM
+  - Métricas de sessão (checkpoints, tokens usados)
+  - 51 testes automatizados (27 unitários + 24 integração)
+  - Framework de testes reutilizável em `tests/helpers/test-framework.sh`
+
+### 🐛 Correções
+- **lib/core.sh**: Corrige erro de variável readonly `AIDEV_VERSION` ao carregar módulo múltiplas vezes
+- **state.sh**: Adiciona `state_sync_legacy_session()` para manter compatibilidade com `session.json`
+
+### 📚 Documentação
+- Documentação inline completa no módulo `sprint-manager.sh`
+- Testes documentados com casos de uso claros
+
 ## [3.8.4] - 2026-02-11
 
 ### 🐛 Correções

@@ -1,0 +1,276 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AI Dev Context Passport v1.0",
+  "description": "Schema padronizado para passagem de contexto entre agentes",
+  "type": "object",
+  "required": [
+    "passport_version",
+    "passport_id",
+    "task_id",
+    "agent_role",
+    "created_at",
+    "constraints"
+  ],
+  "properties": {
+    "passport_version": {
+      "type": "string",
+      "enum": ["1.0"],
+      "description": "Versão do schema do passport"
+    },
+    "passport_id": {
+      "type": "string",
+      "pattern": "^pp-[a-z0-9]+$",
+      "description": "Identificador único do passport (formato: pp-<timestamp>)"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Identificador da tarefa"
+    },
+    "parent_task_id": {
+      "type": ["string", "null"],
+      "description": "ID da tarefa pai (para subtarefas)"
+    },
+    "agent_role": {
+      "type": "string",
+      "enum": [
+        "orchestrator",
+        "architect",
+        "backend",
+        "frontend",
+        "qa",
+        "security-guardian",
+        "devops",
+        "code-reviewer",
+        "knowledge-manager",
+        "release-manager",
+        "state-manager",
+        "legacy-analyzer"
+      ],
+      "description": "Papel do agente nesta tarefa"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp ISO 8601 de criação"
+    },
+    "session_context": {
+      "type": "object",
+      "properties": {
+        "project_name": {
+          "type": "string",
+          "description": "Nome do projeto"
+        },
+        "stack": {
+          "type": "string",
+          "description": "Stack tecnológica (generic, laravel, react, etc)"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["pt-BR", "en", "es"],
+          "description": "Idioma da comunicação"
+        },
+        "maturity": {
+          "type": "string",
+          "enum": ["greenfield", "brownfield", "legacy"],
+          "description": "Maturidade do projeto"
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "required": ["test_required"],
+      "properties": {
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 500,
+          "maximum": 10000,
+          "default": 2000,
+          "description": "Limite máximo de tokens para contexto"
+        },
+        "max_time_minutes": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 120,
+          "default": 30,
+          "description": "Tempo máximo estimado para task"
+        },
+        "style_guide": {
+          "type": "string",
+          "description": "Path para arquivo de regras de estilo"
+        },
+        "test_required": {
+          "type": "boolean",
+          "default": true,
+          "description": "Se TDD é obrigatório"
+        },
+        "commit_language": {
+          "type": "string",
+          "enum": ["pt-BR", "en"],
+          "default": "pt-BR",
+          "description": "Idioma obrigatório para commits"
+        },
+        "forbidden_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["eval(", "innerHTML", "exec(", "system("],
+          "description": "Padrões proibidos no código"
+        }
+      }
+    },
+    "context_files": {
+      "type": "array",
+      "description": "Arquivos de contexto relevantes",
+      "items": {
+        "type": "object",
+        "required": ["path", "relevance"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Caminho do arquivo"
+          },
+          "relevance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Score de relevância (0.0 a 1.0)"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Resumo do conteúdo (opcional)"
+          },
+          "last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp da última modificação"
+          }
+        }
+      }
+    },
+    "output_format": {
+      "type": "string",
+      "enum": ["strict_json", "markdown", "yaml", "code", "text"],
+      "default": "markdown",
+      "description": "Formato esperado de output"
+    },
+    "handoff_chain": {
+      "type": "array",
+      "description": "Histórico de handoffs entre agentes",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "timestamp"],
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "Agente de origem"
+          },
+          "to": {
+            "type": "string",
+            "description": "Agente de destino"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp do handoff"
+          },
+          "artifact": {
+            "type": "string",
+            "description": "Path do artefato passado"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notas adicionais"
+          }
+        }
+      }
+    },
+    "kb_references": {
+      "type": "array",
+      "description": "Referências a lições aprendidas relevantes",
+      "items": {
+        "type": "object",
+        "required": ["lesson_id", "file"],
+        "properties": {
+          "lesson_id": {
+            "type": "string",
+            "description": "ID da lição"
+          },
+          "file": {
+            "type": "string",
+            "description": "Path do arquivo da lição"
+          },
+          "relevance_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Score de relevância da lição"
+          },
+          "applied": {
+            "type": "boolean",
+            "default": false,
+            "description": "Se a lição já foi aplicada"
+          }
+        }
+      }
+    },
+    "validation_rules": {
+      "type": "object",
+      "description": "Regras de validação específicas para esta task",
+      "properties": {
+        "enforce_safe_paths": {
+          "type": "boolean",
+          "default": true
+        },
+        "enforce_commit_format": {
+          "type": "boolean",
+          "default": true
+        },
+        "enforce_tdd": {
+          "type": "boolean",
+          "default": true
+        },
+        "enforce_no_emoji": {
+          "type": "boolean",
+          "default": true
+        },
+        "enforce_portuguese": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadados adicionais",
+      "properties": {
+        "estimated_tokens": {
+          "type": "integer",
+          "description": "Estimativa de tokens usados"
+        },
+        "actual_tokens": {
+          "type": "integer",
+          "description": "Tokens realmente usados"
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "git_branch": {
+          "type": "string",
+          "description": "Branch git atual"
+        },
+        "git_commit": {
+          "type": "string",
+          "description": "Hash do commit"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

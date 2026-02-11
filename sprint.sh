@@ -12,6 +12,35 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Função auxiliar para detectar task atual ou próxima
+_detect_current_or_next_task() {
+    local sprint_file="$1"
+    
+    # Primeiro verifica se há task em progresso
+    local in_progress=$(jq -r '.tasks[] | select(.status == "in_progress") | .task_id' "$sprint_file" | head -1)
+    if [ -n "$in_progress" ]; then
+        echo "🔄 $in_progress"
+        return 0
+    fi
+    
+    # Se não há em progresso, pega a primeira pendente
+    local pending=$(jq -r '.tasks[] | select(.status == "pending") | .task_id' "$sprint_file" | head -1)
+    if [ -n "$pending" ]; then
+        echo "⏸️  $pending (próxima)"
+        return 0
+    fi
+    
+    # Se não há pendentes, verifica se todas estão completadas
+    local total=$(jq '.tasks | length' "$sprint_file")
+    local completed=$(jq '[.tasks[] | select(.status == "completed")] | length' "$sprint_file")
+    
+    if [ "$completed" -eq "$total" ]; then
+        echo "✅ Todas completadas"
+    else
+        echo "Nenhuma"
+    fi
+}
+
 # Função para mostrar status atual
 show_status() {
     if [ ! -f "$CURRENT_SPRINT" ]; then
@@ -23,7 +52,7 @@ show_status() {
     local sprint_name=$(jq -r '.sprint_name' "$CURRENT_SPRINT")
     local status=$(jq -r '.status' "$CURRENT_SPRINT")
     local progress=$(jq -r '.overall_progress.percentage // (.overall_progress.completed * 100 / .overall_progress.total_tasks)' "$CURRENT_SPRINT")
-    local current_task=$(jq -r '.current_task // "Nenhuma"' "$CURRENT_SPRINT")
+    local current_task=$(_detect_current_or_next_task "$CURRENT_SPRINT")
     
     echo -e "${BLUE}╔════════════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║${NC}  ${YELLOW}$sprint_name${NC}"
@@ -41,6 +70,12 @@ show_status() {
             ;;
         "blocked")
             echo -e "${BLUE}║${NC}  Status: ${RED}🚨 Bloqueada${NC}"
+            ;;
+        "paused")
+            echo -e "${BLUE}║${NC}  Status: ${YELLOW}⏸️  Pausada${NC}"
+            ;;
+        *)
+            echo -e "${BLUE}║${NC}  Status: ${YELLOW}⚪ ${status}${NC}"
             ;;
     esac
     
@@ -123,15 +158,31 @@ update_task() {
        '.tasks = [.tasks[] | if .task_id == $task then .status = $status | .notes = $notes | .last_updated = $date else . end] | .last_updated = $date' \
        "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
     
-    # Se completou, atualiza contadores
+    # Se iniciou, atualiza current_task
+    if [ "$new_status" == "in_progress" ]; then
+        jq --arg task "$task_id" \
+           '.current_task = $task' \
+           "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
+    fi
+    
+    # Se completou, atualiza contadores e limpa current_task se for a atual
     if [ "$new_status" == "completed" ]; then
         local completed=$(jq '[.tasks[] | select(.status == "completed")] | length' "$CURRENT_SPRINT")
         local total=$(jq '.tasks | length' "$CURRENT_SPRINT")
+        local current=$(jq -r '.current_task' "$CURRENT_SPRINT")
         
-        jq --argjson completed "$completed" \
-           --argjson total "$total" \
-           '.overall_progress.completed = $completed | .overall_progress.pending = ($total - $completed)' \
-           "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
+        # Se a task completada é a atual, limpa current_task
+        if [ "$current" == "$task_id" ]; then
+            jq --argjson completed "$completed" \
+               --argjson total "$total" \
+               '.overall_progress.completed = $completed | .overall_progress.pending = ($total - $completed) | .current_task = null' \
+               "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
+        else
+            jq --argjson completed "$completed" \
+               --argjson total "$total" \
+               '.overall_progress.completed = $completed | .overall_progress.pending = ($total - $completed)' \
+               "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
+        fi
     fi
     
     echo -e "${GREEN}✅ Task $task_id atualizada para: $new_status${NC}"

@@ -1,0 +1,11 @@
+{
+  "checkpoint_id": "cp-1770787944997566",
+  "task_id": "unknown",
+  "timestamp": "2026-02-11T05:32:24Z",
+  "message": "Ajuste: Script sprint.sh agora detecta automaticamente task atual/próxima",
+  "git_commit": "bfae4fb",
+  "files_modified": [
+  ".aidev/state/sprints/current/sprint-status.json",
+  "sprint.sh"
+]
+}

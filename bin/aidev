@@ -2814,6 +2814,14 @@ cmd_self_upgrade() {
         rsync -a --delete "$source_dir/tests/" "$global_install/tests/" 2>/dev/null || true
     fi
 
+    # Sincroniza arquivos raiz essenciais
+    print_step "Sincronizando arquivos raiz..."
+    for root_file in VERSION CHANGELOG.md README.md install.sh; do
+        if [ -f "$source_dir/$root_file" ]; then
+            cp -f "$source_dir/$root_file" "$global_install/$root_file" 2>/dev/null || true
+        fi
+    done
+
     echo ""
     print_success "Atualizado com sucesso: $current_version -> $source_version"
 

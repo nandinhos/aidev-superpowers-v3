@@ -177,4 +177,4 @@ agent_handoff "legacy-analyzer" "architect" "Planejar refatoracao" ".aidev/analy
 ```
 
 
-## Analisando: aidev-superpowers-v3
+## Analisando: aidev-superpowers-v3-1

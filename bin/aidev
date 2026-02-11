@@ -740,6 +740,20 @@ cmd_agent() {
     print_info "Gerando prompt de ativacao..."
     echo ""
 
+    # NOVO: Carrega Sprint Manager ANTES de usar
+    load_module "sprint-manager"
+
+    # NOVO: Sincroniza sprint_context para unified.json
+    sprint_sync_to_unified "$install_path"
+
+    # NOVO: Renderiza dashboard de sprint antes do prompt
+    sprint_render_summary "$install_path"
+    if [ -n "$(sprint_get_current "$install_path")" ]; then
+        echo ""
+        print_separator
+        echo ""
+    fi
+
     # Verifica se existe cache e carrega
     load_module "cache"
     local cache_content=""
@@ -758,7 +772,7 @@ cmd_agent() {
         active_intent=$(jq -r '.active_intent // empty' "$unified_file")
         active_skill=$(jq -r '.active_skill // empty' "$unified_file")
         last_activity=$(jq -r '.session.last_activity // empty' "$unified_file")
-        
+
         if [ -n "$active_intent" ] || [ -n "$active_skill" ]; then
             session_context="
 CONTEXTO ATUAL (SESSAO ANTERIOR):
@@ -768,6 +782,27 @@ CONTEXTO ATUAL (SESSAO ANTERIOR):
 
 ATENCAO: VOCE DEVE CONTINUAR O TRABALHO ACIMA SE AINDA NAO ESTIVER CONCLUIDO.
 NAO SUGIRA 'legacy-analyzer' OU NOVAS TAREFAS SE HOUVER UMA INTENCAO ATIVA.
+"
+        fi
+    fi
+
+    # NOVO: Carrega contexto de sprint
+    local sprint_context=""
+    if [ -f "$unified_file" ] && command -v jq >/dev/null 2>&1; then
+        local sprint_id=$(jq -r '.sprint_context.sprint_id // "N/A"' "$unified_file" 2>/dev/null)
+        local sprint_status=$(jq -r '.sprint_context.status // "N/A"' "$unified_file" 2>/dev/null)
+        local completed=$(jq -r '.sprint_context.completed_tasks // 0' "$unified_file" 2>/dev/null)
+        local total=$(jq -r '.sprint_context.total_tasks // 0' "$unified_file" 2>/dev/null)
+        local progress=$(jq -r '.sprint_context.progress_percentage // 0' "$unified_file" 2>/dev/null)
+        local next_desc=$(jq -r '.sprint_context.next_action.description // "Nenhuma ação pendente"' "$unified_file" 2>/dev/null)
+
+        if [ "$sprint_id" != "N/A" ] && [ "$sprint_id" != "null" ] && [ -n "$sprint_id" ]; then
+            sprint_context="
+CONTEXTO DA SPRINT:
+- Sprint ID: $sprint_id
+- Status: $sprint_status
+- Progresso: $completed/$total tarefas ($progress%)
+- Próxima Ação: $next_desc
 "
         fi
     fi
@@ -787,7 +822,7 @@ STACK: $stack
 FASE: $fase | SPRINT: $sprint
 AGENTES: $agent_count especializados
 SKILLS: $skill_count automatizadas
-$session_context
+$session_context$sprint_context
 EOF
 
     if [ -n "$cache_content" ]; then
@@ -869,6 +904,10 @@ EOF
     print_success "Prompt gerado! Cole na sua IA para ativar o modo agente."
     echo ""
     print_info "Dica: Use 'aidev agent | pbcopy' (macOS) ou 'aidev agent | xclip' (Linux) para copiar automaticamente"
+
+    # NOVO: Sincroniza session.json legado
+    load_module "state"
+    state_sync_legacy_session
 }
 
 # Subcomando: cache

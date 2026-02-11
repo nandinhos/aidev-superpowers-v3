@@ -9,12 +9,15 @@
 # ============================================================================
 
 # Lê a versão do SSOT (arquivo VERSION na raiz do projeto)
-if [ -f "$AIDEV_ROOT_DIR/VERSION" ]; then
-    AIDEV_VERSION=$(cat "$AIDEV_ROOT_DIR/VERSION" | tr -d '[:space:]')
-else
-    AIDEV_VERSION="${AIDEV_VERSION:-0.0.0-unknown}"
+# Protege contra re-definição quando o módulo é sourced múltiplas vezes
+if [ -z "${AIDEV_VERSION:-}" ]; then
+    if [ -f "$AIDEV_ROOT_DIR/VERSION" ]; then
+        AIDEV_VERSION=$(cat "$AIDEV_ROOT_DIR/VERSION" | tr -d '[:space:]')
+    else
+        AIDEV_VERSION="0.0.0-unknown"
+    fi
+    readonly AIDEV_VERSION
 fi
-readonly AIDEV_VERSION
 
 # ============================================================================
 # Cores e Formatação (Detecção de TTY)

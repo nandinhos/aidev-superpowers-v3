@@ -608,3 +608,45 @@ state_export() {
         cat "$STATE_FILE"
     fi
 }
+
+# ============================================================================
+# SINCRONIZACAO LEGADA
+# ============================================================================
+
+# Sincroniza session.json (legado) com unified.json
+# Uso: state_sync_legacy_session
+# Mantem backward compatibility com codigo que ainda le session.json
+state_sync_legacy_session() {
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    local unified_file="$install_path/.aidev/state/unified.json"
+    local session_file="$install_path/.aidev/state/session.json"
+
+    # Se unified.json nao existe, nao faz nada
+    if [ ! -f "$unified_file" ]; then
+        return 0
+    fi
+
+    # Verifica se jq esta disponivel
+    if ! command -v jq >/dev/null 2>&1; then
+        return 1
+    fi
+
+    # Extrai session de unified.json e adiciona campos extras
+    local tmp_file=$(mktemp)
+    local timestamp=$(date -Iseconds 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S%z")
+
+    jq '.session + {
+        "agent_mode_active": true,
+        "last_activation": $ts
+    }' --arg ts "$timestamp" "$unified_file" > "$tmp_file"
+
+    # Move atomicamente
+    if [ -s "$tmp_file" ]; then
+        mkdir -p "$(dirname "$session_file")"
+        mv "$tmp_file" "$session_file"
+        print_debug "session.json sincronizado com unified.json"
+    else
+        rm -f "$tmp_file"
+        return 1
+    fi
+}

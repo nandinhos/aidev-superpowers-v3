@@ -1809,7 +1809,6 @@ cmd_system() {
 # Subcomando: roadmap
 # ============================================================================
 cmd_roadmap() {
-    shift # Consome 'roadmap'
     local subcmd="${1:-status}"
     shift || true
 
@@ -1829,9 +1828,9 @@ cmd_roadmap() {
                 echo ""
 
                 # Cálculo de Progresso Geral da Sprint Atual
-                local total_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -cE "^- \[[x ]\]")
-                local done_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -cE "^- \[x\]")
-                local progress=0
+                local total_tasks=0 done_tasks=0 progress=0
+                total_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -cE "^- \[[x ]\]") || true
+                done_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -cE "^- \[x\]") || true
                 [[ $total_tasks -gt 0 ]] && progress=$(( (done_tasks * 100) / total_tasks ))
 
                 echo -n "  Progresso da Sprint: "
@@ -1840,14 +1839,14 @@ cmd_roadmap() {
                 # Estado do Agente (Unified State)
                 local active_skill=$(state_read "active_skill" "Nenhuma")
                 local active_task=$(get_state_value "current_task" "Pendente")
-                
+
                 print_section "Fase em Execução"
                 echo "  Skill Ativa:  ${CYAN}${active_skill}${NC}"
                 echo "  Tarefa Atual: ${YELLOW}${active_task}${NC}"
                 echo ""
-                
-                # Exibe as tarefas da Sprint
-                grep -A 20 "EM CURSO" ".aidev/plans/ROADMAP.md" | grep -E "^- \[[x ]\]" | head -n 10
+
+                # Exibe as tarefas da Sprint (se houver sprint em curso)
+                grep -A 20 "EM CURSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -E "^- \[[x ]\]" | head -n 10 || true
                 
                 # Lista funcionalidades rápidas
                 plans__feature_list
@@ -1934,7 +1933,6 @@ cmd_mcp() {
 # Subcomando: feature
 # ============================================================================
 cmd_feature() {
-    shift # Consome 'feature'
     local subcmd="${1:-status}"
     shift || true
 
@@ -1965,7 +1963,6 @@ cmd_feature() {
     esac
 }
 cmd_triggers() {
-    shift # Consome 'triggers'
     local subcmd="${1:-status}"
     shift || true
 

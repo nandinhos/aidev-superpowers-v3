@@ -143,7 +143,8 @@ plans__feature_list() {
         for f in "${files[@]}"; do
             local name=$(basename "$f" .md)
             # Tenta extrair o nome real de dentro do arquivo
-            local display_name=$(grep "^# Feature:" "$f" | sed 's/# Feature: //')
+            local display_name=$(grep "^# Feature:" "$f" | sed 's/# Feature: //' || true)
+            [[ -z "$display_name" ]] && display_name=$(grep "^# " "$f" | head -n 1 | sed 's/# //' || true)
             [[ -z "$display_name" ]] && display_name="$name"
             
             local status_icon="⚪"

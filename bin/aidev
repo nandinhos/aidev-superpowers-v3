@@ -1829,8 +1829,8 @@ cmd_roadmap() {
 
                 # Cálculo de Progresso Geral da Sprint Atual
                 local total_tasks=0 done_tasks=0 progress=0
-                total_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -cE "^- \[[x ]\]") || true
-                done_tasks=$(grep -A 50 "EM CURSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -cE "^- \[x\]") || true
+                total_tasks=$(grep -A 50 -E "EM CURSO|EM PROGRESSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -cE "^- \[[x ]\]") || true
+                done_tasks=$(grep -A 50 -E "EM CURSO|EM PROGRESSO" ".aidev/plans/ROADMAP.md" 2>/dev/null | grep -cE "^- \[x\]") || true
                 [[ $total_tasks -gt 0 ]] && progress=$(( (done_tasks * 100) / total_tasks ))
 
                 echo -n "  Progresso da Sprint: "

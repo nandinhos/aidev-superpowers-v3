@@ -46,6 +46,7 @@ node_modules/
 .aidev/state/kb_failures.log
 .aidev/backups/
 .aidev/analysis/
+.aidev/state/sprints/
 
 # Memorias locais (geradas em runtime, nao versionadas)
 .aidev/memories/

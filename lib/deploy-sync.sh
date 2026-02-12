@@ -31,12 +31,17 @@ AIDEV_SYNC_FILES=(
     "lib/lessons.sh"
     "lib/metrics.sh"
     "lib/mcp.sh"
+    "lib/mcp-bridge.sh"
     "lib/release.sh"
     "lib/i18n.sh"
     "lib/triggers.sh"
     "lib/cache.sh"
     "lib/config-merger.sh"
     "lib/orchestration.sh"
+    "lib/plans.sh"
+    "lib/system.sh"
+    "lib/validation.sh"
+    "lib/yaml-parser.sh"
     "lib/deploy-sync.sh"
     "VERSION"
     "CHANGELOG.md"
@@ -210,6 +215,7 @@ deploy_sync_to_global() {
         if [ "$needs_update" = true ]; then
             if [ "$dry_run" = true ]; then
                 echo "  [SIMULAR] $file"
+                ((synced_count++)) || true
             else
                 if cp "$local_file" "$global_file" 2>/dev/null; then
                     echo "  ✅ $file"

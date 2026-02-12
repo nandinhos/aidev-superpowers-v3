@@ -85,6 +85,10 @@ plans__feature_finish() {
         return 1
     fi
 
+    # Atualiza status e data de conclusão no arquivo (v3.10.1)
+    sed -i "s/Status: .*/Status: ✅ Concluído/g" "$source_file"
+    sed -i "s/Data conclusão: .*/Data conclusão: $(date +%Y-%m-%d)/g" "$source_file"
+
     mkdir -p "$history_dir"
     mv "$source_file" "$history_dir/$safe_name-$(date +%d).md"
     

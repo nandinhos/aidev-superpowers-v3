@@ -17,10 +17,11 @@ Meta-agente inteligente que coordena o desenvolvimento com autonomia, rastreabil
 Antes de executar qualquer acao, voce DEVE:
 
 1. **Analisar**: Entender profundamente o pedido + contexto do projeto
-2. **Classificar**: Identificar o intent com precisao (ver tabela abaixo)
-3. **Planejar**: Selecionar agentes e skills apropriados
-4. **Validar**: Verificar pre-requisitos antes de prosseguir
-5. **Executar**: Coordenar agentes em sequencia otimizada
+2. **Validar Alinhamento (v5.4)**: Consultar o `sprint-guard` para verificar se a ação proposta está alinhada com a task ativa no Roadmap.
+3. **Classificar**: Identificar o intent com precisao (ver tabela abaixo)
+4. **Planejar**: Selecionar agentes e skills apropriados
+5. **Validar**: Verificar pre-requisitos antes de prosseguir
+6. **Executar**: Coordenar agentes em sequencia otimizada
 
 ### 3. Classificacao de Intent (Detalhada)
 
@@ -169,6 +170,18 @@ SE skill_falha:
      c) Abortar skill
   4. Registrar licao aprendida (se aplicavel)
 ```
+
+### 10. Sprint Guard (Alinhamento)
+
+Para garantir que o desenvolvimento não desvie do Roadmap, o Orchestrator deve utilizar o módulo `lib/sprint-guard.sh`:
+
+**Protocolo de Alinhamento:**
+1. Obter a descrição da task ativa via `sprint-manager` ou `sprint.sh`.
+2. Executar `guard_check "descrição da ação proposta" "nome da task ativa"`.
+3. SE o score for baixo (retorno != 0):
+   - Notificar o usuário sobre o possível desvio.
+   - Justificar por que a ação é necessária ou pedir confirmação para mudar de foco.
+   - SE o usuário confirmar, atualizar a task ativa ou pausar a atual.
 
 ## Fluxos de Trabalho Detalhados
 

@@ -5,6 +5,11 @@
 SPRINT_DIR=".aidev/state/sprints"
 CURRENT_SPRINT="$SPRINT_DIR/current/sprint-status.json"
 
+# Carrega módulos do AI Dev se disponíveis
+if [ -f "lib/context-git.sh" ]; then
+    source lib/context-git.sh
+fi
+
 # Cores para output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -114,6 +119,12 @@ start_sprint() {
        '.status = "in_progress" | .start_date = $date | .last_updated = $date' \
        "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
     
+    # Log de contexto
+    if command -v ctxgit_log >/dev/null; then
+        local sprint_id=$(jq -r '.sprint_id' "$CURRENT_SPRINT")
+        ctxgit_log "start_sprint" "$sprint_id" "Iniciando sprint de desenvolvimento" "" "gemini-cli"
+    fi
+
     echo -e "${GREEN}✅ Sprint iniciada!${NC}"
     echo ""
     show_status
@@ -163,6 +174,11 @@ update_task() {
         jq --arg task "$task_id" \
            '.current_task = $task' \
            "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
+        
+        # Log de contexto
+        if command -v ctxgit_log >/dev/null; then
+            ctxgit_log "start_task" "$task_id" "Iniciando execução da tarefa" "$task_id" "gemini-cli"
+        fi
     fi
     
     # Se completou, atualiza contadores e limpa current_task se for a atual
@@ -182,6 +198,11 @@ update_task() {
                --argjson total "$total" \
                '.overall_progress.completed = $completed | .overall_progress.pending = ($total - $completed)' \
                "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
+        fi
+
+        # Log de contexto
+        if command -v ctxgit_log >/dev/null; then
+            ctxgit_log "complete_task" "$task_id" "Tarefa concluída com sucesso" "$task_id" "gemini-cli"
         fi
     fi
     
@@ -211,6 +232,11 @@ EOF
     # Atualiza contador
     jq '.session_context.checkpoints_created += 1' "$CURRENT_SPRINT" > "${CURRENT_SPRINT}.tmp" && mv "${CURRENT_SPRINT}.tmp" "$CURRENT_SPRINT"
     
+    # Log de contexto
+    if command -v ctxgit_log >/dev/null; then
+        ctxgit_log "checkpoint" "$checkpoint_id" "$message" "$task_id" "gemini-cli"
+    fi
+
     echo -e "${GREEN}✅ Checkpoint criado: $checkpoint_id${NC}"
 }
 

@@ -5,6 +5,28 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.0.0] - 2026-02-12
+
+### 🚀 Features (Sprint 5: Orquestração por Estado Ubíquo)
+- **Protocolo Universal de Handoff**:
+  - Checkpoints enriquecidos com `cognitive_context` (chain_of_thought, mental_model, hypotheses).
+  - Comando CLI `aidev handoff` para transição entre LLMs.
+- **Handoff Agnóstico de Tooling**:
+  - Geração automática de artefatos Markdown para ambientes sem MCP.
+  - Comando CLI `aidev fallback` para gestão de artefatos de recuperação.
+- **Sync de Roadmap em Tempo Real**:
+  - Módulo `lib/context-git.sh` para registro de micro-logs de ações.
+  - Integração com `sprint.sh` e `unified.json`.
+  - Comando CLI `aidev log` para visualização da timeline de ações.
+- **Autonomia de Alinhamento de Sprint**:
+  - Módulo `lib/sprint-guard.sh` com scoring semântico de alinhamento.
+  - Alertas automáticos no Orchestrator para evitar desvios do Roadmap.
+  - Comando CLI `aidev guard` para auditoria de alinhamento.
+
+### 🧪 Métricas
+- **133 novos testes** garantindo a robustez das funcionalidades da Sprint 5.
+- **Cobertura total** de todos os novos módulos (`context-git`, `sprint-guard`, `fallback-generator`).
+
 ## [3.10.2] - 2026-02-12
 
 ### ✨ Estilização (Cache UX)

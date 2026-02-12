@@ -5,13 +5,13 @@
   "status": "in_progress",
   "start_date": "2026-02-12T12:00:00Z",
   "target_end_date": "2026-02-28T23:59:00Z",
-  "last_updated": "2026-02-12T20:00:00Z",
-  "current_task": "task-5.2.1-context-git",
+  "last_updated": "2026-02-12T22:39:11Z",
+  "current_task": null,
   "overall_progress": {
     "total_tasks": 14,
-    "completed": 7,
+    "completed": 14,
     "in_progress": 1,
-    "pending": 6,
+    "pending": 0,
     "blocked": 0
   },
   "tasks": [
@@ -102,99 +102,99 @@
     {
       "task_id": "task-5.2.1-context-git",
       "name": "Criar modulo context-git.sh",
-      "status": "in_progress",
+      "status": "completed",
       "priority": "high",
       "estimated_time": "45 min",
       "actual_time": null,
       "file": "lib/context-git.sh",
       "feature": "5.2",
-      "notes": "",
-      "last_updated": "2026-02-12T20:00:00Z"
+      "notes": "Modulo implementado com 13 testes unitarios passing",
+      "last_updated": "2026-02-12T20:52:37Z"
     },
     {
       "task_id": "task-5.2.2-context-git-sprint-integration",
       "name": "Integrar context-git com sprint-manager",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "estimated_time": "20 min",
       "actual_time": null,
       "file": "lib/sprint-manager.sh",
       "feature": "5.2",
-      "notes": "",
-      "last_updated": "2026-02-12T12:00:00Z"
+      "notes": "Integrado com sucesso no script sprint.sh (start_sprint, update_task, checkpoint)",
+      "last_updated": "2026-02-12T21:35:53Z"
     },
     {
       "task_id": "task-5.2.3-context-git-unified",
       "name": "Integrar context-git com unified.json",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "estimated_time": "15 min",
       "actual_time": null,
       "file": "lib/sprint-manager.sh",
       "feature": "5.2",
-      "notes": "",
-      "last_updated": "2026-02-12T12:00:00Z"
+      "notes": "Sincronização do log de contexto (últimas 5 entradas) implementada em lib/sprint-manager.sh",
+      "last_updated": "2026-02-12T21:53:38Z"
     },
     {
       "task_id": "task-5.2.4-cli-log",
       "name": "Comando CLI aidev log",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "estimated_time": "25 min",
       "actual_time": null,
       "file": "bin/aidev",
       "feature": "5.2",
-      "notes": "",
-      "last_updated": "2026-02-12T12:00:00Z"
+      "notes": "Implementado comando CLI aidev log (show, clear) em bin/aidev",
+      "last_updated": "2026-02-12T22:00:44Z"
     },
     {
       "task_id": "task-5.4.1-sprint-guard",
       "name": "Criar modulo sprint-guard.sh",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "estimated_time": "40 min",
       "actual_time": null,
       "file": "lib/sprint-guard.sh",
       "feature": "5.4",
-      "notes": "",
-      "last_updated": "2026-02-12T12:00:00Z"
+      "notes": "Modulo implementado com 12 testes unitários",
+      "last_updated": "2026-02-12T22:38:48Z"
     },
     {
       "task_id": "task-5.4.2-guard-orchestrator",
       "name": "Integrar sprint-guard com orchestrator agent",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "estimated_time": "15 min",
       "actual_time": null,
       "file": ".aidev/agents/orchestrator.md",
       "feature": "5.4",
-      "notes": "",
-      "last_updated": "2026-02-12T12:00:00Z"
+      "notes": "Instruções adicionadas ao orchestrator.md",
+      "last_updated": "2026-02-12T22:38:59Z"
     },
     {
       "task_id": "task-5.4.3-cli-guard",
       "name": "Comando CLI aidev guard",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "estimated_time": "25 min",
       "actual_time": null,
       "file": "bin/aidev",
       "feature": "5.4",
-      "notes": "",
-      "last_updated": "2026-02-12T12:00:00Z"
+      "notes": "Comando aidev guard implementado em bin/aidev",
+      "last_updated": "2026-02-12T22:39:11Z"
     }
   ],
   "session_context": {
     "last_llm_session": "2026-02-12T20:00:00Z",
     "tokens_used_in_sprint": 0,
     "rate_limit_hits": 0,
-    "checkpoints_created": 0,
+    "checkpoints_created": 1,
     "sessions_count": 2
   },
   "next_action": {
-    "task_id": "task-5.2.1-context-git",
-    "step": "write_failing_tests",
-    "description": "Escrever testes que falham para context-git.sh (RED phase TDD)",
+    "task_id": "task-5.4.1-sprint-guard",
+    "step": "implement_sprint_guard_base",
+    "description": "Criar modulo sprint-guard.sh com logica de scoring",
     "estimated_tokens": 2500
   },
   "risks": [

@@ -1930,6 +1930,99 @@ cmd_mcp() {
 }
 
 # ============================================================================
+# Subcomando: log
+# ============================================================================
+# Visualiza timeline de acoes do Context Git
+cmd_log() {
+    local subcmd="${1:-show}"
+    shift 2>/dev/null || true
+
+    load_module "context-git" 2>/dev/null || source "$AIDEV_LIB_DIR/context-git.sh"
+
+    case "$subcmd" in
+        show)
+            local limit=20
+            local llm_filter=""
+
+            while [[ $# -gt 0 ]]; do
+                case "$1" in
+                    --limit) limit="$2"; shift ;;
+                    --llm) llm_filter="$2"; shift ;;
+                    *) ;;
+                esac
+                shift
+            done
+
+            print_header "AI Dev Context Log"
+            ctxgit_render_timeline "$limit" "$llm_filter"
+            ;;
+        clear)
+            rm -f "$CTXGIT_STORAGE"
+            print_success "Log de contexto removido."
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcmd (show, clear)"
+            exit 1
+            ;;
+    esac
+}
+
+# ============================================================================
+# Subcomando: guard
+# ============================================================================
+# Status do alinhamento da sprint
+cmd_guard() {
+    local subcmd="${1:-status}"
+    shift 2>/dev/null || true
+
+    load_module "sprint-guard" 2>/dev/null || source "$AIDEV_LIB_DIR/sprint-guard.sh"
+    load_module "sprint-manager" 2>/dev/null || source "$AIDEV_LIB_DIR/sprint-manager.sh"
+
+    case "$subcmd" in
+        status)
+            local sprint_file=$(sprint_get_current ".")
+            local task_name="Nenhuma task ativa"
+            if [ -n "$sprint_file" ]; then
+                task_name=$(jq -r '.tasks[] | select(.status == "in_progress") | .name' "$sprint_file" | head -n 1)
+                [[ -z "$task_name" ]] && task_name="Nenhuma task em progresso"
+            fi
+            
+            print_header "AI Dev Sprint Guard"
+            echo "Tarefa Ativa: $task_name"
+            guard_render_status "1.0" # Score base
+            ;;
+        check)
+            local action="$1"
+            local sprint_file=$(sprint_get_current ".")
+            local task_name=""
+            if [ -n "$sprint_file" ]; then
+                task_name=$(jq -r '.tasks[] | select(.status == "in_progress") | .name' "$sprint_file" | head -n 1)
+            fi
+            
+            if [ -z "$task_name" ]; then
+                print_warning "Nenhuma tarefa em progresso para validar alinhamento."
+                exit 0
+            fi
+            
+            guard_check "$action" "$task_name"
+            ;;
+        threshold)
+            local val="$1"
+            if [ -n "$val" ]; then
+                export GUARD_THRESHOLD="$val"
+                print_success "Threshold do Sprint Guard alterado para $val (apenas nesta sessão)."
+            else
+                guard_get_threshold
+            fi
+            ;;
+        *)
+            print_error "Subcomando desconhecido: $subcmd (status, check, threshold)"
+            exit 1
+            ;;
+    esac
+}
+
+# ============================================================================
 # Subcomando: feature
 # ============================================================================
 cmd_feature() {
@@ -3396,6 +3489,12 @@ main() {
             ;;
         release)
             cmd_release "$@"
+            ;;
+        log)
+            cmd_log "$@"
+            ;;
+        guard)
+            cmd_guard "$@"
             ;;
         roadmap)
             cmd_roadmap "$@"

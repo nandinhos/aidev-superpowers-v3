@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP AI DEV SUPERPOWERS
 
 > Documento mestre de planejamento do Framework
-> Status: Ativo | Versão Atual: v3.10.2 (Estável)
+> Status: Ativo | Versão Atual: v4.0.0 (Estável)
 
 ---
 
@@ -69,10 +69,11 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-## 📅 SPRINT 5: Orquestração por Estado Ubíquo (EM PROGRESSO) 🌐
-**Objetivo:** Transformar o aidev na "Âncora de Verdade" para colaboração entre diferentes LLMs (Claude Code, Gemini CLI, Antigravity) através de persistência de estado agnóstica.
-**Versão:** v4.0.0 (Próxima Major)
-**Progresso:** 7/14 tasks (50%)
+## 📅 SPRINT 5: Orquestração por Estado Ubíquo (CONCLUÍDA) ✨
+**Objetivo:** Transformar o aidev na "Âncora de Verdade" para colaboração entre diferentes LLMs (Claude Code, Gemini CLI, Antigravity) através de persistência de estado agnóstica e reconstrução cognitiva.
+**Período:** 2026-02-12 → 2026-02-12
+**Versão:** v4.0.0 (Major)
+**Status:** ✅ 100% Completa (14/14 tasks)
 
 ### Funcionalidades:
 - [x] **5.1 - Protocolo Universal de Handoff** (65 testes):
@@ -87,27 +88,31 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
   - Comando CLI `aidev fallback` (generate/show/clean)
   - Artefatos: last-checkpoint.md, sprint-context.md, active-files.md, reconstruction-guide.md
 
-- [ ] **5.2 - Sync de Roadmap em Tempo Real**:
+- [x] **5.2 - Sync de Roadmap em Tempo Real** (13 testes):
   - Mecanismo de "Context Git" onde cada ação gera um micro-log que mantém a sprint sincronizada, independente de qual CLI está sendo usada.
+  - Módulo `lib/context-git.sh` com rotação de logs e renderização de timeline.
+  - Comando CLI `aidev log` para visualização em tempo real.
 
-- [ ] **5.4 - Autonomia de Alinhamento de Sprint**:
-  - O Orquestrador detecta automaticamente se a LLM atual está desviando da tarefa ativa na sprint e força o realinhamento via contrato (.aidev/agents).
+- [x] **5.4 - Autonomia de Alinhamento de Sprint** (12 testes):
+  - Módulo `lib/sprint-guard.sh` com scoring de alinhamento semântico.
+  - O Orquestrador detecta automaticamente desvios da tarefa ativa e alerta o usuário.
+  - Comando CLI `aidev guard` para verificação manual de alinhamento.
 
 ---
 
 ## 📊 MÉTRICAS DO PROJETO
 
 ### Testes
-- **Sprint 5 (parcial)**: 108 testes (Features 5.1 + 5.3)
+- **Sprint 5**: 133 testes (100% passando)
 - **Sprint 3**: 119 testes (100% passando)
 - **Sprint 2**: 101 testes
 - **Sprint 1**: 59 testes
-- **Total**: 387+ testes automatizados
+- **Total**: 412+ testes automatizados
 
 ### Versões
-- **Atual**: v3.10.0 (Context Monitor)
-- **Anterior**: v3.9.0 (Sprint Manager)
-- **Próxima**: v4.0.0 (Estado Ubíquo)
+- **Atual**: v4.0.0 (Estado Ubíquo)
+- **Anterior**: v3.10.2 (Elegant Cache UX)
+- **Próxima**: v4.1.0 (Smart Upgrade)
 
 ### Economia de Tokens
 - Sprint 3: 60%+ economia com Basic Memory
@@ -115,9 +120,23 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-**Última atualização:** 2026-02-12  
-**Próximo Passo:** Sprint 5 - Feature 5.2 (Sync de Roadmap em Tempo Real)
+## 📅 SPRINT 6: Auto-Cura & Smart Upgrade (EM CURSO) 🛠️
+**Objetivo:** Implementar o merge inteligente de atualizações e reforçar a auto-cura do sistema.
+**Versão:** v4.1.0
+**Status:** 🏗️ Iniciada
+
+### Funcionalidades:
+- [ ] **6.1 - Smart Upgrade Merge**:
+  - Proteção de customizações do usuário durante o `aidev upgrade`.
+  - Sistema de fingerprints de templates.
+- [ ] **6.2 - Advanced Error Recovery**:
+  - Melhorias no `error_handler` para sugerir correções automáticas baseadas na KB.
 
 ---
 
-*Roadmap gerenciado por AI Dev Superpowers v3.10.0*
+**Última atualização:** 2026-02-12  
+**Próximo Passo:** Feature 6.1 (Smart Upgrade Merge)
+
+---
+
+*Roadmap gerenciado por AI Dev Superpowers v4.0.0*

@@ -17,6 +17,10 @@ elif [ -f "lib/core.sh" ]; then
     source lib/core.sh
 fi
 
+if [ -f "lib/context-git.sh" ]; then
+    source lib/context-git.sh
+fi
+
 # ============================================================================
 # FUNCOES PRINCIPAIS
 # ============================================================================
@@ -128,6 +132,13 @@ sprint_sync_to_unified() {
     local sessions=$(jq -r '.session_context.sessions_count // 0' "$sprint_file")
     local tokens=$(jq -r '.session_context.tokens_used_in_sprint // 0' "$sprint_file")
 
+    # Extrai resumo do log de contexto (v5.2.3)
+    local context_log_summary="[]"
+    if command -v ctxgit_get_recent >/dev/null; then
+        context_log_summary=$(ctxgit_get_recent 5)
+        [[ -z "$context_log_summary" ]] && context_log_summary="[]"
+    fi
+
     # Timestamp de sincronizacao
     local timestamp=$(date -Iseconds 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S%z")
 
@@ -144,6 +155,7 @@ sprint_sync_to_unified() {
        --argjson checkpoints "$checkpoints" \
        --argjson sessions "$sessions" \
        --argjson tokens "$tokens" \
+       --argjson context_log "$context_log_summary" \
        --arg timestamp "$timestamp" \
        '.sprint_context = {
            "sprint_id": $sprint_id,
@@ -159,6 +171,7 @@ sprint_sync_to_unified() {
                "sessions_count": $sessions,
                "tokens_used": $tokens
            },
+           "context_log": $context_log,
            "last_sync": $timestamp
        }' "$unified_file" > "$tmp_file" && mv "$tmp_file" "$unified_file"
 }

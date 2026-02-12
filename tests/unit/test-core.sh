@@ -8,6 +8,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
+source "$SCRIPT_DIR/../test-runner.sh"
 source "$ROOT_DIR/lib/loader.sh"
 load_essential_modules
 
@@ -18,7 +19,7 @@ load_essential_modules
 test_section "Core - Variáveis"
 
 assert_not_empty "$AIDEV_VERSION" "AIDEV_VERSION está definida"
-assert_equals "3.8.4" "$AIDEV_VERSION" "AIDEV_VERSION = 3.8.4"
+assert_equals "3.10.0" "$AIDEV_VERSION" "AIDEV_VERSION = 3.10.0"
 assert_not_empty "$RED" "Cor RED definida"
 assert_not_empty "$GREEN" "Cor GREEN definida"
 assert_not_empty "$NC" "Cor NC (reset) definida"

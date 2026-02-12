@@ -740,6 +740,10 @@ cmd_agent() {
     print_info "Gerando prompt de ativacao..."
     echo ""
 
+    # Verifica divergencia local vs global
+    load_module "deploy-sync" 2>/dev/null || source "$AIDEV_LIB_DIR/deploy-sync.sh" 2>/dev/null || true
+    deploy_sync_check_on_init
+
     # NOVO: Carrega Sprint Manager ANTES de usar
     load_module "sprint-manager"
 
@@ -1753,9 +1757,49 @@ cmd_system() {
         rollback)
             system__rollback
             ;;
+        sync)
+            # Sincronização local → global
+            load_module "deploy-sync" 2>/dev/null || source "$AIDEV_LIB_DIR/deploy-sync.sh"
+            
+            local sync_option="${1:-}"
+            
+            case "$sync_option" in
+                --check|-c)
+                    deploy_sync_check_divergence "."
+                    ;;
+                --dry-run|-d)
+                    deploy_sync_to_global "." "--dry-run"
+                    ;;
+                *)
+                    echo ""
+                    echo "🔄 Sincronização: Local → Global"
+                    echo ""
+                    
+                    # Primeiro verifica se há divergência
+                    if deploy_sync_check_divergence "." 2>/dev/null; then
+                        echo "✅ Já está sincronizado!"
+                        return 0
+                    fi
+                    
+                    echo ""
+                    echo -n "⚠️  Confirma sincronização? (s/N): "
+                    read -r confirm
+                    if [[ "$confirm" =~ ^[sS] ]]; then
+                        deploy_sync_to_global "."
+                    else
+                        print_info "Operação cancelada."
+                    fi
+                    ;;
+            esac
+            ;;
         *)
             print_error "Ação desconhecida: $subcmd"
-            echo "Uso: aidev system [status|deploy|link]"
+            echo "Uso: aidev system [status|deploy|link|sync]"
+            echo ""
+            echo "Comandos sync:"
+            echo "  aidev system sync          # Sincroniza local → global"
+            echo "  aidev system sync --check  # Verifica divergência apenas"
+            echo "  aidev system sync --dry-run # Simula sincronização"
             exit 1
             ;;
     esac
@@ -2735,6 +2779,12 @@ EOF
     echo ""
 
     print_success "Bump automatico concluido! Falta: CHANGELOG, commit e tag."
+
+    # Sync automatico com instalacao global apos release
+    load_module "deploy-sync" 2>/dev/null || source "$AIDEV_LIB_DIR/deploy-sync.sh" 2>/dev/null || true
+    if type deploy_sync_after_release &>/dev/null; then
+        deploy_sync_after_release
+    fi
 }
 
 # Subcomando: self-upgrade

@@ -69,22 +69,22 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-## 📅 SPRINT 5: Multi-Agente Distribuído (PLANEJADA)
-**Objetivo:** Colaboração entre agentes em múltiplos modelos de IA simultâneos.  
-**Versão:** v4.0.0 (previsto)
+## 📅 SPRINT 5: Orquestração por Estado Ubíquo (EM PLANEJAMENTO) 🌐
+**Objetivo:** Transformar o aidev na "Âncora de Verdade" para colaboração entre diferentes LLMs (Claude Code, Gemini CLI, Antigravity) através de persistência de estado agnóstica.
+**Versão:** v4.0.0 (Próxima Major)
 
 ### Funcionalidades Planejadas:
-- [ ] **5.1 - Orquestração Multi-LLM**:
-  - Coordenação entre Claude, GPT, Gemini simultaneamente
-  - Distribuição inteligente de tarefas por capacidade
+- [ ] **5.1 - Protocolo Universal de Handoff**:
+  - Enriquecimento dos checkpoints com metadados de intenção e "cadeia de pensamento" (CoT) para reconstrução mental em qualquer LLM.
   
-- [ ] **5.2 - Contexto Compartilhado**:
-  - Sincronização de estado entre diferentes LLMs
-  - Basic Memory como fonte de verdade unificada
+- [ ] **5.2 - Sync de Roadmap em Tempo Real**:
+  - Mecanismo de "Context Git" onde cada ação gera um micro-log que mantém a sprint sincronizada, independente de qual CLI está sendo usada.
   
-- [ ] **5.3 - Handoff Inteligente**:
-  - Transição automática entre agentes especializados
-  - Preservação de contexto durante handoffs
+- [ ] **5.3 - Handoff Agnośtico de Tooling**:
+  - Sistema de "Fallback de Artefatos": Se uma LLM não possui uma ferramenta (ex: MCP), o aidev fornece snapshots de dados em Markdown gerados por outra LLM.
+  
+- [ ] **5.4 - Autonomia de Alinhamento de Sprint**:
+  - O Orquestrador detecta automaticamente se a LLM atual está desviando da tarefa ativa na sprint e força o realinhamento via contrato (.aidev/agents).
 
 ---
 
@@ -99,7 +99,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ### Versões
 - **Atual**: v3.10.0 (Context Monitor)
 - **Anterior**: v3.9.0 (Sprint Manager)
-- **Próxima**: v4.0.0 (Multi-Agente)
+- **Próxima**: v4.0.0 (Estado Ubíquo)
 
 ### Economia de Tokens
 - Sprint 3: 60%+ economia com Basic Memory
@@ -108,7 +108,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ---
 
 **Última atualização:** 2026-02-12  
-**Próximo Passo:** Sprint 5 - Planejamento de Multi-Agente Distribuído
+**Próximo Passo:** Sprint 5 - Orquestração por Estado Ubíquo
 
 ---
 

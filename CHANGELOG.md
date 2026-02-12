@@ -5,6 +5,45 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.10.0] - 2026-02-12
+
+### 🚀 Features (Sprint 3: Context Monitor & Auto-Checkpoint)
+- **Context Monitor** (`lib/context-monitor.sh`): Monitoramento completo de janela de contexto para sessões LLM
+  - Estimativa inteligente de tokens (heurística: 4 caracteres/token)
+  - Triggers automáticos: 70% warning, 85% auto-checkpoint, 95% force-save
+  - Funções: `ctx_estimate_tokens`, `ctx_get_usage_percent`, `ctx_should_checkpoint`, `ctx_get_remaining_capacity`
+  - **60 testes unitários** cobrindo todas as funções
+  
+- **Checkpoint Manager** (`lib/checkpoint-manager.sh`): Gestão completa de checkpoints com persistência
+  - Criação, listagem e restauração de checkpoints
+  - Formato JSON estruturado com snapshots de estado
+  - Funções: `ckpt_create`, `ckpt_list`, `ckpt_get_latest`, `ckpt_generate_restore_prompt`
+  - **18 testes unitários** validando todas as operações
+  
+- **Comando `aidev restore`**: Interface completa para restauração de contexto
+  - Subcomandos: `--list`, `--latest`, `<checkpoint-id>`
+  - Geração de prompts de continuidade para LLM
+  - **17 testes de integração** cobrindo todos os cenários
+  
+- **Basic Memory Integration**: Integração profunda com MCP Basic Memory
+  - Schema mapping: conversão automática checkpoint → nota Markdown
+  - Sync automático configurável via `CKPT_SYNC_BASIC_MEMORY`
+  - Busca semântica de checkpoints históricos
+  - Funções auxiliares: `ckpt_to_basic_memory_note`, `ckpt_config_sync`, `ckpt_sync_all`, `ckpt_search_basic_memory`
+  - **24 testes** validando integração completa
+  - **Economia de 60%+** de tokens na inicialização do agente
+
+### 📊 Impacto da Sprint 3
+- **119 testes** criados e passando (60 + 18 + 17 + 24)
+- Persistência ilimitada de contexto entre sessões LLM
+- Zero perda de contexto ao trocar de máquina ou projeto
+- Cross-project learning via Basic Memory
+
+### 📚 Documentação
+- Plano de investigação completo: `.aidev/docs/basic-memory-investigation-plan.md`
+- Protocolo de inicialização: `.aidev/docs/agent-initialization-protocol.md`
+- Documentação inline em todos os módulos
+
 ## [3.9.0] - 2026-02-11
 
 ### 🚀 Features

@@ -2872,10 +2872,150 @@ cmd_self_upgrade() {
     fi
 }
 
+# Subcomando: restore
+# Restaura checkpoints de sessao anteriores
+cmd_restore() {
+    # Nao faz shift aqui - main() ja removeu o comando 'restore'
+    # Nao chama parse_args para preservar subcomandos como --latest
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        exit 1
+    fi
+
+    # Carrega modulos
+    load_module "context-monitor" 2>/dev/null || source "$install_path/lib/context-monitor.sh" 2>/dev/null || true
+    load_module "checkpoint-manager" 2>/dev/null || source "$install_path/lib/checkpoint-manager.sh" 2>/dev/null || true
+
+    local subcmd="${1:-list}"
+
+    case "$subcmd" in
+        --list|list)
+            print_header "Checkpoints Disponiveis"
+            local ckpt_dir="$install_path/.aidev/state/sprints/current/checkpoints"
+            
+            if [ ! -d "$ckpt_dir" ]; then
+                print_info "Nenhum checkpoint encontrado"
+                return 0
+            fi
+            
+            # Get checkpoint files sorted by time (newest first)
+            local files
+            files=$(ls -t "$ckpt_dir"/ckpt-*.json 2>/dev/null) || true
+
+            if [ -z "$files" ]; then
+                print_info "Nenhum checkpoint encontrado"
+                return 0
+            fi
+
+            local count=0
+            # Use while read to handle filenames with spaces
+            echo "$files" | while IFS= read -r f; do
+                [ -f "$f" ] || continue
+                
+                if command -v jq >/dev/null 2>&1; then
+                    local ckpt_id trigger desc created
+                    ckpt_id=$(jq -r '.checkpoint_id // "unknown"' "$f" 2>/dev/null) || ckpt_id="unknown"
+                    trigger=$(jq -r '.trigger // "unknown"' "$f" 2>/dev/null) || trigger="unknown"
+                    desc=$(jq -r '.description // ""' "$f" 2>/dev/null) || desc=""
+                    created=$(jq -r '.created_at // "unknown"' "$f" 2>/dev/null) || created="unknown"
+                    echo "  [$((count+1))] $ckpt_id"
+                    echo "      Trigger: $trigger | $created"
+                    echo "      $desc"
+                    echo ""
+                else
+                    # Fallback without jq
+                    echo "  [$((count+1))] $(basename "$f" .json)"
+                    echo ""
+                fi
+                count=$((count + 1))
+            done
+            
+            # Count total
+            local total
+            total=$(echo "$files" | wc -l)
+            echo "Total: $total checkpoints"
+            ;;
+
+        --latest|latest)
+            print_header "Restaurar Ultimo Checkpoint"
+            
+            local latest_id=""
+            if type ckpt_get_latest &>/dev/null; then
+                latest_id=$(ckpt_get_latest "$install_path")
+            else
+                # Fallback implementation
+                local ckpt_dir="$install_path/.aidev/state/sprints/current/checkpoints"
+                if [ -d "$ckpt_dir" ]; then
+                    local latest_file
+                    latest_file=$(ls -t "$ckpt_dir"/ckpt-*.json 2>/dev/null | head -1) || true
+                    if [ -n "$latest_file" ]; then
+                        latest_id=$(basename "$latest_file" .json)
+                    fi
+                fi
+            fi
+
+            if [ -z "$latest_id" ]; then
+                print_error "Nenhum checkpoint encontrado"
+            else
+                local ckpt_file="$install_path/.aidev/state/sprints/current/checkpoints/${latest_id}.json"
+                
+                # Gera prompt de restauracao
+                echo ""
+                echo "============================================================"
+                echo "  RESTAURAR CONTEXTO - Checkpoint: $latest_id"
+                echo "============================================================"
+                echo ""
+                if type ckpt_generate_restore_prompt &>/dev/null; then
+                    ckpt_generate_restore_prompt "$ckpt_file"
+                else
+                    # Fallback simple output
+                    echo "Arquivo: $ckpt_file"
+                    echo ""
+                    echo "INSTRUCAO: Retome o trabalho a partir deste checkpoint."
+                    echo "============================================================"
+                fi
+            fi
+            ;;
+
+        *)
+            # Tenta restaurar por ID especifico
+            local ckpt_id="$subcmd"
+            local ckpt_file="$install_path/.aidev/state/sprints/current/checkpoints/${ckpt_id}.json"
+
+            if [ ! -f "$ckpt_file" ]; then
+                print_error "Checkpoint nao encontrado: $ckpt_id"
+                echo ""
+                echo "Use 'aidev restore --list' para ver checkpoints disponiveis"
+                return 1
+            fi
+
+            print_header "Restaurar Checkpoint: $ckpt_id"
+            
+            if type ckpt_generate_restore_prompt &>/dev/null; then
+                ckpt_generate_restore_prompt "$ckpt_file"
+            else
+                # Fallback simple output
+                echo ""
+                echo "============================================================"
+                echo "  RESTAURAR CONTEXTO - Checkpoint: $ckpt_id"
+                echo "============================================================"
+                echo ""
+                echo "Arquivo: $ckpt_file"
+                echo ""
+                echo "INSTRUCAO: Retome o trabalho a partir deste checkpoint."
+                echo "============================================================"
+            fi
+            ;;
+    esac
+}
+
 main() {
     local command="${1:-help}"
     shift || true
-    
+
     case "$command" in
         init)
             cmd_init "$@"
@@ -2954,6 +3094,9 @@ main() {
             ;;
         self-upgrade)
             cmd_self_upgrade "$@"
+            ;;
+        restore)
+            cmd_restore "$@"
             ;;
         -h|--help|help)
             show_help

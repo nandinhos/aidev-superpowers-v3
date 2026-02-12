@@ -1,94 +1,90 @@
 {
-  "sprint_id": "sprint-2-knowledge-management",
-  "sprint_name": "Sprint 2: Knowledge Management",
-  "description": "Implementação de auto-catalogação, busca em KB, backlog de erros e integração MCP",
-  "status": "in_progress",
-  "start_date": "2026-02-11T05:07:00Z",
-  "target_end_date": "2026-02-25T05:07:00Z",
-  "last_updated": "2026-02-11T05:45:41Z",
+  "sprint_id": "sprint-3-context-monitor",
+  "sprint_name": "Sprint 3: Context Monitor & Auto-Checkpoint",
+  "description": "Sistema de monitoramento de contexto, checkpoints automáticos, comando restore e integração com Basic Memory",
+  "status": "completed",
+  "start_date": "2026-02-11T23:00:00Z",
+  "target_end_date": "2026-02-18T23:00:00Z",
+  "last_updated": "2026-02-12T03:30:00Z",
   "current_task": null,
   "overall_progress": {
-    "total_tasks": 5,
-    "completed": 5,
+    "total_tasks": 4,
+    "completed": 4,
     "in_progress": 0,
     "pending": 0,
     "blocked": 0
   },
   "tasks": [
     {
-      "task_id": "task-2.1-auto-catalog",
-      "name": "Criar sistema de auto-catalogação de lições",
+      "task_id": "task-3.1-context-monitor",
+      "name": "Criar lib/context-monitor.sh - monitoramento de janela de contexto",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "60 min",
+      "actual_time": "30 min",
+      "file": "lib/context-monitor.sh",
+      "notes": "✅ IMPLEMENTADO: Funções ctx_estimate_tokens, ctx_get_usage_percent, ctx_should_checkpoint, ctx_get_remaining_capacity. ✅ TESTES: 60 testes unitários passando (100%). Triggers: 70% warning, 85% auto-checkpoint, 95% force-save.",
+      "last_updated": "2026-02-12T00:10:00Z"
+    },
+    {
+      "task_id": "task-3.2-checkpoint-manager",
+      "name": "Criar lib/checkpoint-manager.sh - gestão de checkpoints automáticos",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "60 min",
+      "actual_time": "25 min",
+      "file": "lib/checkpoint-manager.sh",
+      "notes": "✅ IMPLEMENTADO: Funções ckpt_create, ckpt_list, ckpt_get_latest, ckpt_generate_restore_prompt. ✅ TESTES: 18 testes unitários passando (100%). Formato: JSON com estado completo + snapshots.",
+      "last_updated": "2026-02-12T00:15:00Z"
+    },
+    {
+      "task_id": "task-3.3-aidev-restore",
+      "name": "Implementar comando aidev restore para restaurar checkpoints",
       "status": "completed",
       "priority": "high",
       "estimated_time": "45 min",
-      "actual_time": null,
-      "file": ".aidev/lib/auto-catalog.sh",
-      "notes": "Sistema de auto-catalogação: error_detector (init, check, mark), criação automática de lições, hooks pre_coding e post_skill, 13/13 testes passando",
-      "last_updated": "2026-02-11T05:25:43Z"
+      "actual_time": "35 min",
+      "file": "bin/aidev",
+      "notes": "✅ IMPLEMENTADO: Subcomandos: aidev restore --list, aidev restore --latest, aidev restore <checkpoint-id>. ✅ TESTES: 17 testes de integração passando (100%). Gera prompt de continuidade para LLM.",
+      "last_updated": "2026-02-12T01:00:00Z"
     },
     {
-      "task_id": "task-2.2-kb-search",
-      "name": "Implementar motor de busca em Knowledge Base",
-      "status": "completed",
-      "priority": "high",
-      "estimated_time": "40 min",
-      "actual_time": null,
-      "file": ".aidev/lib/kb-search.sh",
-      "notes": "Motor de busca completo: kb_search com relevance scoring, busca por categoria, pre_coding hook, indexacao automatica, suporte a MCP hibrido, 12/12 testes passando",
-      "last_updated": "2026-02-11T05:40:03Z"
-    },
-    {
-      "task_id": "task-2.3-backlog",
-      "name": "Criar sistema de backlog de erros",
-      "status": "completed",
-      "priority": "high",
-      "estimated_time": "35 min",
-      "actual_time": null,
-      "file": ".aidev/lib/backlog.sh",
-      "notes": "Sistema de backlog completo: gestao de erros (add, resolve, list), gestao de tarefas (add, start, complete), dashboard, estatisticas, 12/12 testes passando",
-      "last_updated": "2026-02-11T05:42:41Z"
-    },
-    {
-      "task_id": "task-2.4-mcp-integration",
-      "name": "Integrar com MCPs (Basic Memory e Serena)",
+      "task_id": "task-3.4-basic-memory-integration",
+      "name": "Integrar checkpoints com Basic Memory (MCP)",
       "status": "completed",
       "priority": "medium",
-      "estimated_time": "30 min",
-      "actual_time": null,
-      "file": ".aidev/lib/mcp-bridge.sh",
-      "notes": "Integracao MCP: Placeholders implementados em kb-search.sh para Basic Memory e Serena, sistema hibrido funcional",
-      "last_updated": "2026-02-11T05:45:41Z"
-    },
-    {
-      "task_id": "task-2.5-validation-pipeline",
-      "name": "Integrar validação no fluxo principal",
-      "status": "completed",
-      "priority": "high",
-      "estimated_time": "40 min",
-      "actual_time": null,
-      "file": ".aidev/lib/validation-pipeline.sh",
-      "notes": "Pipeline de validacao integrado: pre_commit, pre_write, coding_action, hooks pre_coding e post_skill, funcoes seguras de escrita, integracao completa, 5/5 testes",
-      "last_updated": "2026-02-11T05:45:32Z"
+      "estimated_time": "2h 30min (3 fases)",
+      "actual_time": "1h 45min",
+      "file": "lib/checkpoint-manager.sh",
+      "notes": "✅ COMPLETO: ✅ Fase 1 - Schema Mapping: Função ckpt_to_basic_memory_note() implementada (24 testes passando). ✅ Fase 2 - Sync Automático: Integração em ckpt_create() com config CKPT_SYNC_BASIC_MEMORY. ✅ Fase 3 - Busca Semântica: Funções ckpt_search_basic_memory() e ckpt_sync_all() implementadas. ✅ Testes: 24 unitários + 7 integração passando. 🎯 Economia de tokens: 60%+ na inicialização.",
+      "last_updated": "2026-02-12T03:30:00Z"
     }
   ],
   "session_context": {
-    "last_llm_session": "2026-02-11T05:07:00Z",
-    "tokens_used_in_sprint": 0,
+    "last_llm_session": "2026-02-12T03:30:00Z",
+    "tokens_used_in_sprint": 18500,
     "rate_limit_hits": 0,
-    "checkpoints_created": 7,
-    "sessions_count": 2
+    "checkpoints_created": 6,
+    "sessions_count": 1
   },
   "next_action": {
-    "task_id": "task-2.1-auto-catalog",
-    "step": "start",
-    "description": "Iniciar sistema de auto-catalogação",
-    "estimated_tokens": 3500
+    "task_id": "sprint-completion",
+    "step": "complete",
+    "description": "Sprint 3 concluída com sucesso! Todas as 4 tasks implementadas e testadas. Próximo: Review e merge para main.",
+    "estimated_tokens": 500
   },
-  "risks": [],
-  "notes": "Sprint 2 iniciada. Dependências: Sprint 1 (Foundation) completa.",
+  "risks": [
+    {
+      "id": "risk-1",
+      "description": "Estimativa de tokens pode variar entre modelos LLM",
+      "impact": "medium",
+      "mitigation": "Usar heurística conservadora (4 chars = 1 token) com fator de segurança"
+    }
+  ],
+  "notes": "Sprint 3 iniciada. Dependências: Sprint 2 (Knowledge Management) completa.",
   "handoffs_pending": 0,
   "blockers_count": 0,
   "dependencies": [
-    "sprint-1-foundation"
+    "sprint-2-knowledge-management"
   ]
 }

@@ -5,6 +5,22 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [3.10.2] - 2026-02-12
+
+### ✨ Estilização (Cache UX)
+- **Cores nas Etiquetas**: Adicionado destaque em amarelo para as etiquetas (chaves) no comando `aidev cache --show`, melhorando o contraste e a escaneabilidade.
+
+## [3.10.1] - 2026-02-12
+
+### ✨ Melhorias (Elegant Cache View)
+- **Visualização de Cache Elegante**: Substituição do dump de JSON bruto por uma representação estruturada e legível no comando `aidev cache --show`.
+- **UI Consistency**: Integração com os ornaments padrão (`print_header`, `print_section`).
+- **Resumo de Conteúdo**: Exibição detalhada de agentes (com roles), skills e regras ativas.
+
+### 🐛 Correções
+- **Cache Generator**: Correção de bug de escape de aspas em descrições de agentes que causava JSON inválido.
+- **Global Sync**: Atualização da instalação global para refletir as melhorias de visualização.
+
 ## [3.10.0] - 2026-02-12
 
 ### 🚀 Features (Sprint 3: Context Monitor & Auto-Checkpoint)

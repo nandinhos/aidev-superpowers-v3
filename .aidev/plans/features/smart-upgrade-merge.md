@@ -47,7 +47,7 @@ Cada arquivo instalado pelo aidev tera um "fingerprint" armazenado em `.aidev/st
 
 ```json
 {
-  "version": "3.10.0",
+  "version": "3.10.2",
   "files": {
     ".aidev/agents/orchestrator.md": {
       "template_hash": "abc123...",

@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP AI DEV SUPERPOWERS
 
 > Documento mestre de planejamento do Framework
-> Status: Ativo | Versão Atual: v3.10.0 (Estável)
+> Status: Ativo | Versão Atual: v3.10.2 (Estável)
 
 ---
 
@@ -13,7 +13,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ## 📅 SPRINT 3: Context Monitor & Auto-Checkpoint (CONCLUÍDA) ✨
 **Objetivo:** Sistema de monitoramento de contexto, checkpoints automáticos e integração com Basic Memory.  
 **Período:** 2026-02-11 → 2026-02-12  
-**Versão:** v3.10.0  
+**Versão:** v3.10.2  
 **Status:** ✅ 100% Completa (4/4 tasks)
 
 ### Funcionalidades:

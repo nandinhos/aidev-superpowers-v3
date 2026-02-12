@@ -92,11 +92,11 @@ generate_activation_cache() {
             agents+=("$name")
             
             # Extrair Role ou Identity (primeira linha util após header ## Role ou # Identity)
-            local role=$(grep -A 2 -E "## Role|# Identity" "$f" | grep -vE "## Role|# Identity|^--" | grep -v "^$" | head -n 1 | sed 's/[#*`]//g' | tr '\n' ' ' | sed 's/"/\\"/g' | xargs | head -c 200)
+            local role=$(grep -A 2 -E "## Role|# Identity" "$f" | grep -vE "## Role|# Identity|^--" | grep -v "^$" | head -n 1 | sed 's/[#*`]//g' | tr '\n' ' ' | xargs | head -c 200 | sed 's/"/\\"/g')
             
             if [ -z "$role" ]; then
                 # Fallback: pegar primeira linha útil do arquivo que não seja header
-                role=$(grep -vE "^#|^$" "$f" | head -n 1 | sed 's/[#*`]//g' | tr '\n' ' ' | sed 's/"/\\"/g' | xargs | head -c 200)
+                role=$(grep -vE "^#|^$" "$f" | head -n 1 | sed 's/[#*`]//g' | tr '\n' ' ' | xargs | head -c 200 | sed 's/"/\\"/g')
             fi
 
             if [ -n "$agent_details_json" ]; then agent_details_json+=", "; fi
@@ -280,8 +280,54 @@ show_cache_status() {
         echo "  Versão:    $version"
         echo "  Hash:      ${hash}..."
         echo "  Gerado em: $generated_at"
-    else
-        echo -e "${GREY:-}○${NC:-} Sem cache"
     fi
+    echo ""
+}
+
+# Exibe conteúdo detalhado do cache
+# Uso: print_cache_content "/path/to/project"
+print_cache_content() {
+    local project_path="${1:-.}"
+    local cache_file="$project_path/$CACHE_DIR/$CACHE_FILE"
+    
+    if [ ! -f "$cache_file" ]; then
+        print_error "Arquivo de cache não encontrado em $cache_file"
+        return 1
+    fi
+    
+    if ! command -v jq >/dev/null 2>&1; then
+        cat "$cache_file"
+        return 0
+    fi
+
+    # Extrair dados básicos
+    local version=$(jq -r '.version' "$cache_file")
+    local project=$(jq -r '.project' "$cache_file")
+    local stack=$(jq -r '.stack' "$cache_file")
+    local hash=$(jq -r '.hash' "$cache_file" | head -c 12)
+    local generated_at=$(jq -r '.generated_at' "$cache_file")
+    
+    print_header "Cache de Ativação"
+    
+    print_section "Metadados"
+    echo -e "  ${YELLOW}Projeto:${NC}    $project"
+    echo -e "  ${YELLOW}Stack:${NC}      $stack"
+    echo -e "  ${YELLOW}Versão:${NC}     $version"
+    echo -e "  ${YELLOW}Hash:${NC}       ${hash}..."
+    echo -e "  ${YELLOW}Gerado em:${NC}  $generated_at"
+    
+    # Agentes
+    print_section "Agentes ($(jq -r '.agents_count' "$cache_file"))"
+    jq -r --arg yellow "$YELLOW" --arg nc "$NC" '.agent_roles | to_entries[] | "  • \($yellow)\(.key)\($nc): \(.value)"' "$cache_file"
+    
+    # Skills
+    print_section "Skills ($(jq -r '.skills_count' "$cache_file"))"
+    jq -r '.skills[] | "  • \(.)"' "$cache_file"
+    
+    # Rules
+    local rules_count=$(jq -r '.rules | length' "$cache_file")
+    print_section "Rules ($rules_count)"
+    jq -r '.rules[] | "  • \(.)"' "$cache_file"
+    
     echo ""
 }

@@ -968,7 +968,7 @@ cmd_cache() {
             print_step "Conteúdo do cache:"
             local cache_file="$install_path/$CACHE_DIR/$CACHE_FILE"
             if [ -f "$cache_file" ]; then
-                cat "$cache_file"
+                print_cache_content "$install_path"
             else
                 print_warning "Cache não existe. Use 'aidev cache --build' para criar."
             fi

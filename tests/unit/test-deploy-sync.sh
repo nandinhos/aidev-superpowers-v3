@@ -53,8 +53,8 @@ create_synced_files() {
     echo "#!/bin/bash" > "$TEST_GLOBAL_DIR/bin/aidev"
     echo "# core" > "$TEST_LOCAL_DIR/lib/core.sh"
     echo "# core" > "$TEST_GLOBAL_DIR/lib/core.sh"
-    echo "3.10.0" > "$TEST_LOCAL_DIR/VERSION"
-    echo "3.10.0" > "$TEST_GLOBAL_DIR/VERSION"
+    echo "3.10.2" > "$TEST_LOCAL_DIR/VERSION"
+    echo "3.10.2" > "$TEST_GLOBAL_DIR/VERSION"
 }
 
 # Helper: cria divergencia
@@ -64,7 +64,7 @@ create_divergent_files() {
     echo "# core v2" > "$TEST_LOCAL_DIR/lib/core.sh"
     echo "# core v1" > "$TEST_GLOBAL_DIR/lib/core.sh"
     echo "3.11.0" > "$TEST_LOCAL_DIR/VERSION"
-    echo "3.10.0" > "$TEST_GLOBAL_DIR/VERSION"
+    echo "3.10.2" > "$TEST_GLOBAL_DIR/VERSION"
 }
 
 # ============================================================================

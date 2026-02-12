@@ -15,13 +15,17 @@
 # ============================================================================
 
 # Cria um novo checkpoint com snapshot completo do estado
-# Uso: ckpt_create <install_path> <trigger> <description>
+# Uso: ckpt_create <install_path> <trigger> <description> [chain_of_thought] [hypothesis] [mental_model] [observations]
 # Triggers: "manual" | "task_completed" | "auto_checkpoint" | "force_save" | "architectural_decision"
 # Retorna: checkpoint ID
 ckpt_create() {
     local install_path="${1:-${CLI_INSTALL_PATH:-.}}"
     local trigger="${2:-manual}"
     local description="${3:-Checkpoint}"
+    local cot="${4:-}"
+    local hypothesis="${5:-}"
+    local mental_model="${6:-}"
+    local observations="${7:-}"
     local ckpt_dir="$install_path/.aidev/state/sprints/current/checkpoints"
     local unified_file="$install_path/.aidev/state/unified.json"
     local sprint_file="$install_path/.aidev/state/sprints/current/sprint-status.json"
@@ -47,7 +51,7 @@ ckpt_create() {
         sprint_snapshot=$(jq '.' "$sprint_file" 2>/dev/null || echo "{}")
     fi
 
-    # Monta checkpoint JSON
+    # Monta checkpoint JSON com cognitive_context
     if command -v jq >/dev/null 2>&1; then
         jq -n \
             --arg id "$ckpt_id" \
@@ -56,14 +60,33 @@ ckpt_create() {
             --arg created "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --argjson state "$state_snapshot" \
             --argjson sprint "$sprint_snapshot" \
+            --arg cot "$cot" \
+            --arg hyp "$hypothesis" \
+            --arg mm "$mental_model" \
+            --arg obs "$observations" \
             '{
                 checkpoint_id: $id,
                 trigger: $trigger,
                 description: $desc,
                 created_at: $created,
                 state_snapshot: $state,
-                sprint_snapshot: $sprint
+                sprint_snapshot: $sprint,
+                cognitive_context: {
+                    chain_of_thought: $cot,
+                    current_hypothesis: $hyp,
+                    mental_model: $mm,
+                    observations: $obs,
+                    confidence: 0,
+                    decisions_pending: []
+                }
             }' > "$ckpt_file"
+    fi
+
+    # Gera fallback artifacts (Feature 5.3)
+    if [ "${CKPT_GENERATE_FALLBACK:-false}" = "true" ] && [ -f "$ckpt_file" ]; then
+        if type fallback_generate_all &>/dev/null; then
+            fallback_generate_all "$install_path" "$ckpt_file" > /dev/null 2>&1 || true
+        fi
     fi
 
     # Sync para Basic Memory (Fase 2)
@@ -175,6 +198,12 @@ ckpt_generate_restore_prompt() {
     local completed=$(jq -r '.sprint_snapshot.overall_progress.completed // 0' "$ckpt_file")
     local total=$(jq -r '.sprint_snapshot.overall_progress.total_tasks // 0' "$ckpt_file")
 
+    # Contexto cognitivo (Sprint 5 - Feature 5.1)
+    local cot=$(jq -r '.cognitive_context.chain_of_thought // ""' "$ckpt_file")
+    local hypothesis=$(jq -r '.cognitive_context.current_hypothesis // ""' "$ckpt_file")
+    local mental_model=$(jq -r '.cognitive_context.mental_model // ""' "$ckpt_file")
+    local observations=$(jq -r '.cognitive_context.observations // ""' "$ckpt_file")
+
     cat << EOF
 ============================================================
 RESTAURAR CONTEXTO - AI Dev Superpowers
@@ -195,6 +224,19 @@ Nome: $sprint_name
 Status: $sprint_status
 Progresso: $completed/$total tarefas
 Task Atual: $current_task
+EOF
+
+    # Secao cognitiva - so exibe se ha conteudo preenchido
+    if [ -n "$cot" ] || [ -n "$hypothesis" ] || [ -n "$mental_model" ]; then
+        echo ""
+        echo "CONTEXTO COGNITIVO:"
+        [ -n "$cot" ] && echo "Raciocinio: $cot"
+        [ -n "$hypothesis" ] && echo "Hipotese: $hypothesis"
+        [ -n "$mental_model" ] && echo "Modelo Mental: $mental_model"
+        [ -n "$observations" ] && echo "Observacoes: $observations"
+    fi
+
+    cat << EOF
 
 INSTRUCAO: Retome o trabalho a partir deste checkpoint.
 Consulte o estado completo e continue de onde parou.
@@ -267,6 +309,13 @@ ckpt_to_basic_memory_note() {
         tags="$tags #$trigger"
     fi
     
+    # Contexto cognitivo (Sprint 5 - Feature 5.1)
+    local cot hypothesis mental_model observations
+    cot=$(jq -r '.cognitive_context.chain_of_thought // ""' "$ckpt_file")
+    hypothesis=$(jq -r '.cognitive_context.current_hypothesis // ""' "$ckpt_file")
+    mental_model=$(jq -r '.cognitive_context.mental_model // ""' "$ckpt_file")
+    observations=$(jq -r '.cognitive_context.observations // ""' "$ckpt_file")
+
     # Gera nota em Markdown
     cat << EOF
 ---
@@ -281,10 +330,10 @@ version: $version
 
 # Checkpoint: $ckpt_id
 
-**Trigger**: $trigger  
-**Sprint**: $sprint_name ($sprint_id)  
-**Task**: $task  
-**Data**: $date_formatted  
+**Trigger**: $trigger
+**Sprint**: $sprint_name ($sprint_id)
+**Task**: $task
+**Data**: $date_formatted
 **Tags**: $tags
 
 ## Resumo
@@ -307,6 +356,19 @@ $desc
 - **Nome**: $sprint_name
 - **Status**: $status
 - **Task em Execução**: $task
+EOF
+
+    # Secao cognitiva - so exibe se ha conteudo preenchido
+    if [ -n "$cot" ] || [ -n "$hypothesis" ] || [ -n "$mental_model" ]; then
+        echo ""
+        echo "## Contexto Cognitivo"
+        [ -n "$cot" ] && echo "- **Raciocinio**: $cot"
+        [ -n "$hypothesis" ] && echo "- **Hipotese**: $hypothesis"
+        [ -n "$mental_model" ] && echo "- **Modelo Mental**: $mental_model"
+        [ -n "$observations" ] && echo "- **Observacoes**: $observations"
+    fi
+
+    cat << EOF
 
 ## Progresso
 - **Completado**: $completed/$total tasks

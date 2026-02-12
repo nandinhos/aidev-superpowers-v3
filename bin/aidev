@@ -2914,6 +2914,280 @@ cmd_self_upgrade() {
 
 # Subcomando: restore
 # Restaura checkpoints de sessao anteriores
+# ============================================================================
+# HANDOFF - Handoff cognitivo entre sessoes LLM (Sprint 5 - Feature 5.1)
+# ============================================================================
+cmd_handoff() {
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        exit 1
+    fi
+
+    # Carrega modulos
+    load_module "context-monitor" 2>/dev/null || source "$install_path/lib/context-monitor.sh" 2>/dev/null || true
+    load_module "checkpoint-manager" 2>/dev/null || source "$install_path/lib/checkpoint-manager.sh" 2>/dev/null || true
+
+    local subcmd="${1:-help}"
+    shift 2>/dev/null || true
+
+    case "$subcmd" in
+        create)
+            # Parse argumentos nomeados
+            local cot="" hypothesis="" mental_model="" observations=""
+            while [ $# -gt 0 ]; do
+                case "$1" in
+                    --cot) cot="$2"; shift 2 ;;
+                    --hypothesis) hypothesis="$2"; shift 2 ;;
+                    --mental-model) mental_model="$2"; shift 2 ;;
+                    --observations) observations="$2"; shift 2 ;;
+                    *) shift ;;
+                esac
+            done
+
+            # Cria checkpoint com contexto cognitivo
+            local ckpt_id
+            ckpt_id=$(ckpt_create "$install_path" "handoff" "Handoff cognitivo entre sessoes" \
+                "$cot" "$hypothesis" "$mental_model" "$observations")
+
+            echo ""
+            echo "============================================================"
+            echo "  Handoff criado com sucesso"
+            echo "============================================================"
+            echo ""
+            echo "  Checkpoint: $ckpt_id"
+            [ -n "$cot" ] && echo "  Raciocinio: $cot"
+            [ -n "$hypothesis" ] && echo "  Hipotese: $hypothesis"
+            [ -n "$mental_model" ] && echo "  Modelo Mental: $mental_model"
+            [ -n "$observations" ] && echo "  Observacoes: $observations"
+            echo ""
+            echo "  Para retomar: aidev handoff resume"
+            echo "============================================================"
+            ;;
+
+        resume)
+            local latest_id=""
+            if type ckpt_get_latest &>/dev/null; then
+                latest_id=$(ckpt_get_latest "$install_path")
+            fi
+
+            if [ -z "$latest_id" ]; then
+                print_info "Nenhum handoff encontrado"
+                echo "Use 'aidev handoff create --cot \"seu raciocinio\"' para criar um handoff"
+                return 0
+            fi
+
+            local ckpt_file="$install_path/.aidev/state/sprints/current/checkpoints/${latest_id}.json"
+
+            echo ""
+            echo "============================================================"
+            echo "  RETOMAR HANDOFF - $latest_id"
+            echo "============================================================"
+            echo ""
+
+            if type ckpt_generate_restore_prompt &>/dev/null; then
+                ckpt_generate_restore_prompt "$ckpt_file"
+            else
+                echo "Arquivo: $ckpt_file"
+                echo "INSTRUCAO: Retome o trabalho a partir deste checkpoint."
+            fi
+            ;;
+
+        status)
+            local ckpt_dir="$install_path/.aidev/state/sprints/current/checkpoints"
+
+            if [ ! -d "$ckpt_dir" ]; then
+                print_info "Nenhum handoff disponivel"
+                return 0
+            fi
+
+            local files
+            files=$(ls -t "$ckpt_dir"/ckpt-*.json 2>/dev/null) || true
+
+            if [ -z "$files" ]; then
+                print_info "Nenhum handoff disponivel"
+                return 0
+            fi
+
+            local latest
+            latest=$(echo "$files" | head -1)
+
+            echo ""
+            echo "============================================================"
+            echo "  Handoff Status"
+            echo "============================================================"
+            echo ""
+
+            if [ -f "$latest" ] && command -v jq >/dev/null 2>&1; then
+                local ckpt_id=$(jq -r '.checkpoint_id // "unknown"' "$latest")
+                local trigger=$(jq -r '.trigger // "unknown"' "$latest")
+                local created=$(jq -r '.created_at // "unknown"' "$latest")
+                local desc=$(jq -r '.description // ""' "$latest")
+                local cot=$(jq -r '.cognitive_context.chain_of_thought // ""' "$latest")
+                local total
+                total=$(echo "$files" | wc -l)
+
+                echo "  Ultimo: $ckpt_id"
+                echo "  Criado: $created"
+                echo "  Trigger: $trigger"
+                echo "  Descricao: $desc"
+                [ -n "$cot" ] && echo "  Raciocinio: $cot"
+                echo ""
+                echo "  Total de checkpoints: $total"
+            else
+                echo "  $(basename "$latest" .json)"
+            fi
+            echo ""
+            echo "============================================================"
+            ;;
+
+        help|"")
+            echo ""
+            echo "Uso: aidev handoff <subcomando> [opcoes]"
+            echo ""
+            echo "Subcomandos:"
+            echo "  create     Cria um handoff cognitivo"
+            echo "  resume     Retoma o ultimo handoff"
+            echo "  status     Mostra status dos handoffs"
+            echo ""
+            echo "Opcoes (create):"
+            echo "  --cot <texto>          Chain of thought (raciocinio)"
+            echo "  --hypothesis <texto>   Hipotese ativa"
+            echo "  --mental-model <texto> Modelo mental do fluxo"
+            echo "  --observations <texto> Observacoes livres"
+            echo ""
+            echo "Exemplos:"
+            echo "  aidev handoff create --cot \"Implementando validadores\""
+            echo "  aidev handoff resume"
+            echo "  aidev handoff status"
+            ;;
+
+        *)
+            print_error "Subcomando desconhecido: $subcmd"
+            echo "Use 'aidev handoff help' para ver opcoes"
+            ;;
+    esac
+}
+
+# ============================================================================
+# FALLBACK - Gerar artefatos de fallback para LLMs sem MCP (Sprint 5 - Feature 5.3)
+# ============================================================================
+cmd_fallback() {
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    if ! has_aidev_installed "$install_path"; then
+        print_error "AI Dev nao esta instalado neste diretorio"
+        exit 1
+    fi
+
+    # Carrega modulos
+    load_module "context-monitor" 2>/dev/null || source "$install_path/lib/context-monitor.sh" 2>/dev/null || true
+    load_module "checkpoint-manager" 2>/dev/null || source "$install_path/lib/checkpoint-manager.sh" 2>/dev/null || true
+    load_module "fallback-generator" 2>/dev/null || source "$install_path/lib/fallback-generator.sh" 2>/dev/null || true
+
+    local subcmd="${1:-help}"
+    shift 2>/dev/null || true
+
+    local fallback_dir="$install_path/.aidev/state/fallback"
+
+    case "$subcmd" in
+        generate)
+            # Busca o checkpoint mais recente
+            local latest_id=""
+            if type ckpt_get_latest &>/dev/null; then
+                latest_id=$(ckpt_get_latest "$install_path")
+            fi
+
+            local ckpt_file=""
+            if [ -n "$latest_id" ]; then
+                ckpt_file="$install_path/.aidev/state/sprints/current/checkpoints/${latest_id}.json"
+            fi
+
+            if type fallback_generate_all &>/dev/null; then
+                fallback_generate_all "$install_path" "$ckpt_file"
+            else
+                print_error "Modulo fallback-generator nao disponivel"
+                return 1
+            fi
+            ;;
+
+        show)
+            if [ ! -d "$fallback_dir" ]; then
+                print_info "Nenhum artefato de fallback encontrado"
+                echo "Use 'aidev fallback generate' para gerar"
+                return 0
+            fi
+
+            local files
+            files=$(ls "$fallback_dir"/*.md 2>/dev/null) || true
+
+            if [ -z "$files" ]; then
+                print_info "Nenhum artefato de fallback encontrado"
+                echo "Use 'aidev fallback generate' para gerar"
+                return 0
+            fi
+
+            echo ""
+            echo "============================================================"
+            echo "  Artefatos de Fallback"
+            echo "============================================================"
+            echo ""
+
+            for f in $files; do
+                local fname
+                fname=$(basename "$f")
+                local size
+                size=$(wc -c < "$f" 2>/dev/null || echo 0)
+                local modified
+                modified=$(stat -c %y "$f" 2>/dev/null | cut -d'.' -f1 || echo "unknown")
+                echo "  $fname ($size bytes) - $modified"
+            done
+
+            echo ""
+            echo "  Diretorio: $fallback_dir"
+            echo "============================================================"
+            ;;
+
+        clean)
+            if [ -d "$fallback_dir" ]; then
+                rm -f "$fallback_dir"/*.md 2>/dev/null
+                print_success "Artefatos de fallback removidos"
+            else
+                print_info "Nenhum artefato para limpar"
+            fi
+            ;;
+
+        help|"")
+            echo ""
+            echo "Uso: aidev fallback <subcomando>"
+            echo ""
+            echo "Subcomandos:"
+            echo "  generate   Gera artefatos de fallback em Markdown"
+            echo "  show       Mostra artefatos existentes"
+            echo "  clean      Remove artefatos de fallback"
+            echo ""
+            echo "Artefatos gerados em .aidev/state/fallback/:"
+            echo "  last-checkpoint.md       Checkpoint legivel"
+            echo "  sprint-context.md        Sprint status formatado"
+            echo "  active-files.md          Arquivos em trabalho"
+            echo "  reconstruction-guide.md  Guia de retomada"
+            echo ""
+            echo "Exemplos:"
+            echo "  aidev fallback generate"
+            echo "  aidev fallback show"
+            echo "  aidev fallback clean"
+            ;;
+
+        *)
+            print_error "Subcomando desconhecido: $subcmd"
+            echo "Use 'aidev fallback help' para ver opcoes"
+            ;;
+    esac
+}
+
 cmd_restore() {
     # Nao faz shift aqui - main() ja removeu o comando 'restore'
     # Nao chama parse_args para preservar subcomandos como --latest
@@ -3137,6 +3411,12 @@ main() {
             ;;
         restore)
             cmd_restore "$@"
+            ;;
+        handoff)
+            cmd_handoff "$@"
+            ;;
+        fallback)
+            cmd_fallback "$@"
             ;;
         -h|--help|help)
             show_help

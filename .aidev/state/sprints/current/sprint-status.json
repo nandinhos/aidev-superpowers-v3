@@ -1,90 +1,215 @@
 {
-  "sprint_id": "sprint-3-context-monitor",
-  "sprint_name": "Sprint 3: Context Monitor & Auto-Checkpoint",
-  "description": "Sistema de monitoramento de contexto, checkpoints automáticos, comando restore e integração com Basic Memory",
-  "status": "completed",
-  "start_date": "2026-02-11T23:00:00Z",
-  "target_end_date": "2026-02-18T23:00:00Z",
-  "last_updated": "2026-02-12T03:30:00Z",
-  "current_task": null,
+  "sprint_id": "sprint-5-estado-ubiquo",
+  "sprint_name": "Sprint 5: Orquestracao por Estado Ubiquo",
+  "description": "Transformar o aidev na ancora de verdade para colaboracao entre LLMs atraves de persistencia de estado agnostica e reconstrucao cognitiva",
+  "status": "in_progress",
+  "start_date": "2026-02-12T12:00:00Z",
+  "target_end_date": "2026-02-28T23:59:00Z",
+  "last_updated": "2026-02-12T20:00:00Z",
+  "current_task": "task-5.2.1-context-git",
   "overall_progress": {
-    "total_tasks": 4,
-    "completed": 4,
-    "in_progress": 0,
-    "pending": 0,
+    "total_tasks": 14,
+    "completed": 7,
+    "in_progress": 1,
+    "pending": 6,
     "blocked": 0
   },
   "tasks": [
     {
-      "task_id": "task-3.1-context-monitor",
-      "name": "Criar lib/context-monitor.sh - monitoramento de janela de contexto",
+      "task_id": "task-5.1.1-checkpoint-cognitive-context",
+      "name": "Extender schema do checkpoint com cognitive_context",
       "status": "completed",
       "priority": "high",
-      "estimated_time": "60 min",
+      "estimated_time": "30 min",
       "actual_time": "30 min",
-      "file": "lib/context-monitor.sh",
-      "notes": "✅ IMPLEMENTADO: Funções ctx_estimate_tokens, ctx_get_usage_percent, ctx_should_checkpoint, ctx_get_remaining_capacity. ✅ TESTES: 60 testes unitários passando (100%). Triggers: 70% warning, 85% auto-checkpoint, 95% force-save.",
-      "last_updated": "2026-02-12T00:10:00Z"
+      "file": "lib/checkpoint-manager.sh",
+      "feature": "5.1",
+      "notes": "35 testes unitarios passando. cognitive_context com chain_of_thought, hypothesis, mental_model, observations, confidence, decisions_pending",
+      "last_updated": "2026-02-12T18:00:00Z"
     },
     {
-      "task_id": "task-3.2-checkpoint-manager",
-      "name": "Criar lib/checkpoint-manager.sh - gestão de checkpoints automáticos",
+      "task_id": "task-5.1.2-restore-prompt-enrichment",
+      "name": "Enriquecer prompt de restauracao com contexto cognitivo",
       "status": "completed",
       "priority": "high",
-      "estimated_time": "60 min",
-      "actual_time": "25 min",
+      "estimated_time": "20 min",
+      "actual_time": "20 min",
       "file": "lib/checkpoint-manager.sh",
-      "notes": "✅ IMPLEMENTADO: Funções ckpt_create, ckpt_list, ckpt_get_latest, ckpt_generate_restore_prompt. ✅ TESTES: 18 testes unitários passando (100%). Formato: JSON com estado completo + snapshots.",
-      "last_updated": "2026-02-12T00:15:00Z"
+      "feature": "5.1",
+      "notes": "Secao CONTEXTO COGNITIVO condicional no prompt de restauracao",
+      "last_updated": "2026-02-12T18:00:00Z"
     },
     {
-      "task_id": "task-3.3-aidev-restore",
-      "name": "Implementar comando aidev restore para restaurar checkpoints",
+      "task_id": "task-5.1.3-cli-handoff",
+      "name": "Comando CLI aidev handoff",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "40 min",
+      "actual_time": "40 min",
+      "file": "bin/aidev",
+      "feature": "5.1",
+      "notes": "14 testes de integracao. Subcomandos: create, resume, status",
+      "last_updated": "2026-02-12T18:00:00Z"
+    },
+    {
+      "task_id": "task-5.1.4-basic-memory-cognitive",
+      "name": "Integracao cognitive_context com Basic Memory",
+      "status": "completed",
+      "priority": "medium",
+      "estimated_time": "15 min",
+      "actual_time": "15 min",
+      "file": "lib/checkpoint-manager.sh",
+      "feature": "5.1",
+      "notes": "16 testes de integracao. ckpt_to_basic_memory_note() com Contexto Cognitivo",
+      "last_updated": "2026-02-12T18:00:00Z"
+    },
+    {
+      "task_id": "task-5.3.1-fallback-generator",
+      "name": "Criar modulo fallback-generator.sh",
       "status": "completed",
       "priority": "high",
       "estimated_time": "45 min",
-      "actual_time": "35 min",
-      "file": "bin/aidev",
-      "notes": "✅ IMPLEMENTADO: Subcomandos: aidev restore --list, aidev restore --latest, aidev restore <checkpoint-id>. ✅ TESTES: 17 testes de integração passando (100%). Gera prompt de continuidade para LLM.",
-      "last_updated": "2026-02-12T01:00:00Z"
+      "actual_time": "40 min",
+      "file": "lib/fallback-generator.sh",
+      "feature": "5.3",
+      "notes": "24 testes unitarios. Funcoes: fallback_checkpoint_to_md, fallback_sprint_to_md, fallback_files_to_md, fallback_guide_to_md, fallback_generate_all",
+      "last_updated": "2026-02-12T19:30:00Z"
     },
     {
-      "task_id": "task-3.4-basic-memory-integration",
-      "name": "Integrar checkpoints com Basic Memory (MCP)",
+      "task_id": "task-5.3.2-fallback-integration",
+      "name": "Integrar fallback com checkpoint-manager",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "15 min",
+      "actual_time": "10 min",
+      "file": "lib/checkpoint-manager.sh",
+      "feature": "5.3",
+      "notes": "5 testes novos na suite checkpoint-manager (40 total). CKPT_GENERATE_FALLBACK config",
+      "last_updated": "2026-02-12T19:45:00Z"
+    },
+    {
+      "task_id": "task-5.3.3-cli-fallback",
+      "name": "Comando CLI aidev fallback",
       "status": "completed",
       "priority": "medium",
-      "estimated_time": "2h 30min (3 fases)",
-      "actual_time": "1h 45min",
-      "file": "lib/checkpoint-manager.sh",
-      "notes": "✅ COMPLETO: ✅ Fase 1 - Schema Mapping: Função ckpt_to_basic_memory_note() implementada (24 testes passando). ✅ Fase 2 - Sync Automático: Integração em ckpt_create() com config CKPT_SYNC_BASIC_MEMORY. ✅ Fase 3 - Busca Semântica: Funções ckpt_search_basic_memory() e ckpt_sync_all() implementadas. ✅ Testes: 24 unitários + 7 integração passando. 🎯 Economia de tokens: 60%+ na inicialização.",
-      "last_updated": "2026-02-12T03:30:00Z"
+      "estimated_time": "30 min",
+      "actual_time": "25 min",
+      "file": "bin/aidev",
+      "feature": "5.3",
+      "notes": "14 testes de integracao. Subcomandos: generate, show, clean",
+      "last_updated": "2026-02-12T20:00:00Z"
+    },
+    {
+      "task_id": "task-5.2.1-context-git",
+      "name": "Criar modulo context-git.sh",
+      "status": "in_progress",
+      "priority": "high",
+      "estimated_time": "45 min",
+      "actual_time": null,
+      "file": "lib/context-git.sh",
+      "feature": "5.2",
+      "notes": "",
+      "last_updated": "2026-02-12T20:00:00Z"
+    },
+    {
+      "task_id": "task-5.2.2-context-git-sprint-integration",
+      "name": "Integrar context-git com sprint-manager",
+      "status": "pending",
+      "priority": "medium",
+      "estimated_time": "20 min",
+      "actual_time": null,
+      "file": "lib/sprint-manager.sh",
+      "feature": "5.2",
+      "notes": "",
+      "last_updated": "2026-02-12T12:00:00Z"
+    },
+    {
+      "task_id": "task-5.2.3-context-git-unified",
+      "name": "Integrar context-git com unified.json",
+      "status": "pending",
+      "priority": "medium",
+      "estimated_time": "15 min",
+      "actual_time": null,
+      "file": "lib/sprint-manager.sh",
+      "feature": "5.2",
+      "notes": "",
+      "last_updated": "2026-02-12T12:00:00Z"
+    },
+    {
+      "task_id": "task-5.2.4-cli-log",
+      "name": "Comando CLI aidev log",
+      "status": "pending",
+      "priority": "medium",
+      "estimated_time": "25 min",
+      "actual_time": null,
+      "file": "bin/aidev",
+      "feature": "5.2",
+      "notes": "",
+      "last_updated": "2026-02-12T12:00:00Z"
+    },
+    {
+      "task_id": "task-5.4.1-sprint-guard",
+      "name": "Criar modulo sprint-guard.sh",
+      "status": "pending",
+      "priority": "high",
+      "estimated_time": "40 min",
+      "actual_time": null,
+      "file": "lib/sprint-guard.sh",
+      "feature": "5.4",
+      "notes": "",
+      "last_updated": "2026-02-12T12:00:00Z"
+    },
+    {
+      "task_id": "task-5.4.2-guard-orchestrator",
+      "name": "Integrar sprint-guard com orchestrator agent",
+      "status": "pending",
+      "priority": "medium",
+      "estimated_time": "15 min",
+      "actual_time": null,
+      "file": ".aidev/agents/orchestrator.md",
+      "feature": "5.4",
+      "notes": "",
+      "last_updated": "2026-02-12T12:00:00Z"
+    },
+    {
+      "task_id": "task-5.4.3-cli-guard",
+      "name": "Comando CLI aidev guard",
+      "status": "pending",
+      "priority": "medium",
+      "estimated_time": "25 min",
+      "actual_time": null,
+      "file": "bin/aidev",
+      "feature": "5.4",
+      "notes": "",
+      "last_updated": "2026-02-12T12:00:00Z"
     }
   ],
   "session_context": {
-    "last_llm_session": "2026-02-12T03:30:00Z",
-    "tokens_used_in_sprint": 18500,
+    "last_llm_session": "2026-02-12T20:00:00Z",
+    "tokens_used_in_sprint": 0,
     "rate_limit_hits": 0,
-    "checkpoints_created": 6,
-    "sessions_count": 1
+    "checkpoints_created": 0,
+    "sessions_count": 2
   },
   "next_action": {
-    "task_id": "sprint-completion",
-    "step": "complete",
-    "description": "Sprint 3 concluída com sucesso! Todas as 4 tasks implementadas e testadas. Próximo: Review e merge para main.",
-    "estimated_tokens": 500
+    "task_id": "task-5.2.1-context-git",
+    "step": "write_failing_tests",
+    "description": "Escrever testes que falham para context-git.sh (RED phase TDD)",
+    "estimated_tokens": 2500
   },
   "risks": [
     {
       "id": "risk-1",
-      "description": "Estimativa de tokens pode variar entre modelos LLM",
+      "description": "Compatibilidade retroativa com checkpoints existentes sem cognitive_context",
       "impact": "medium",
-      "mitigation": "Usar heurística conservadora (4 chars = 1 token) com fator de segurança"
+      "mitigation": "RESOLVIDO na 5.1"
     }
   ],
-  "notes": "Sprint 3 iniciada. Dependências: Sprint 2 (Knowledge Management) completa.",
+  "notes": "Features 5.1 e 5.3 completas com 108 testes. Proximo: Feature 5.2 Context Git (ordem: 5.1->5.3->5.2->5.4).",
   "handoffs_pending": 0,
   "blockers_count": 0,
   "dependencies": [
-    "sprint-2-knowledge-management"
+    "sprint-3-context-monitor",
+    "sprint-4-ux-intuitiva"
   ]
 }

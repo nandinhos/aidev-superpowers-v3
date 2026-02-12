@@ -69,20 +69,27 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-## 📅 SPRINT 5: Orquestração por Estado Ubíquo (EM PLANEJAMENTO) 🌐
+## 📅 SPRINT 5: Orquestração por Estado Ubíquo (EM PROGRESSO) 🌐
 **Objetivo:** Transformar o aidev na "Âncora de Verdade" para colaboração entre diferentes LLMs (Claude Code, Gemini CLI, Antigravity) através de persistência de estado agnóstica.
 **Versão:** v4.0.0 (Próxima Major)
+**Progresso:** 7/14 tasks (50%)
 
-### Funcionalidades Planejadas:
-- [ ] **5.1 - Protocolo Universal de Handoff**:
-  - Enriquecimento dos checkpoints com metadados de intenção e "cadeia de pensamento" (CoT) para reconstrução mental em qualquer LLM.
+### Funcionalidades:
+- [x] **5.1 - Protocolo Universal de Handoff** (65 testes):
+  - Checkpoints com `cognitive_context` hibrido (chain_of_thought, hypothesis, mental_model, observations, confidence, decisions_pending)
+  - Prompt de restauracao enriquecido com secao CONTEXTO COGNITIVO condicional
+  - Comando CLI `aidev handoff` (create/resume/status) com flags --cot, --hypothesis, --mental-model, --observations
+  - Integracao com Basic Memory incluindo campos cognitivos
   
+- [x] **5.3 - Handoff Agnostico de Tooling** (43 testes):
+  - Modulo `lib/fallback-generator.sh` com 5 funcoes de geracao de Markdown
+  - Integracao com checkpoint-manager via `CKPT_GENERATE_FALLBACK=true`
+  - Comando CLI `aidev fallback` (generate/show/clean)
+  - Artefatos: last-checkpoint.md, sprint-context.md, active-files.md, reconstruction-guide.md
+
 - [ ] **5.2 - Sync de Roadmap em Tempo Real**:
   - Mecanismo de "Context Git" onde cada ação gera um micro-log que mantém a sprint sincronizada, independente de qual CLI está sendo usada.
-  
-- [ ] **5.3 - Handoff Agnośtico de Tooling**:
-  - Sistema de "Fallback de Artefatos": Se uma LLM não possui uma ferramenta (ex: MCP), o aidev fornece snapshots de dados em Markdown gerados por outra LLM.
-  
+
 - [ ] **5.4 - Autonomia de Alinhamento de Sprint**:
   - O Orquestrador detecta automaticamente se a LLM atual está desviando da tarefa ativa na sprint e força o realinhamento via contrato (.aidev/agents).
 
@@ -91,10 +98,11 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ## 📊 MÉTRICAS DO PROJETO
 
 ### Testes
+- **Sprint 5 (parcial)**: 108 testes (Features 5.1 + 5.3)
 - **Sprint 3**: 119 testes (100% passando)
 - **Sprint 2**: 101 testes
 - **Sprint 1**: 59 testes
-- **Total**: 279+ testes automatizados
+- **Total**: 387+ testes automatizados
 
 ### Versões
 - **Atual**: v3.10.0 (Context Monitor)
@@ -108,7 +116,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ---
 
 **Última atualização:** 2026-02-12  
-**Próximo Passo:** Sprint 5 - Orquestração por Estado Ubíquo
+**Próximo Passo:** Sprint 5 - Feature 5.2 (Sync de Roadmap em Tempo Real)
 
 ---
 

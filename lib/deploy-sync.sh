@@ -178,7 +178,7 @@ deploy_sync_to_global() {
         
         # Se arquivo não existe em local, ignora
         if [ ! -f "$local_file" ]; then
-            ((skipped_count++))
+            ((skipped_count++)) || true
             continue
         fi
         
@@ -188,7 +188,7 @@ deploy_sync_to_global() {
         if [ "$dry_run" = false ]; then
             mkdir -p "$global_dir" 2>/dev/null || {
                 echo "  ❌ Erro ao criar diretório: $global_dir"
-                ((error_count++))
+                ((error_count++)) || true
                 continue
             }
         fi
@@ -213,14 +213,14 @@ deploy_sync_to_global() {
             else
                 if cp "$local_file" "$global_file" 2>/dev/null; then
                     echo "  ✅ $file"
-                    ((synced_count++))
+                    ((synced_count++)) || true
                 else
                     echo "  ❌ $file (erro ao copiar)"
-                    ((error_count++))
+                    ((error_count++)) || true
                 fi
             fi
         else
-            ((skipped_count++))
+            ((skipped_count++)) || true
         fi
     done
     

@@ -1765,7 +1765,7 @@ cmd_system() {
             
             case "$sync_option" in
                 --check|-c)
-                    deploy_sync_check_divergence "."
+                    deploy_sync_check_divergence "." || true
                     ;;
                 --dry-run|-d)
                     deploy_sync_to_global "." "--dry-run"
@@ -2071,8 +2071,8 @@ setup_secrets() {
 # Subcomando: new-feature
 # Inicia fluxo completo de nova feature: brainstorming -> planning -> TDD
 cmd_new_feature() {
-    local description="${2:-}"
-    shift 2 2>/dev/null || true
+    local description="${1:-}"
+    shift 2>/dev/null || true
     parse_args "$@"
 
     local install_path="${CLI_INSTALL_PATH:-.}"
@@ -2173,8 +2173,8 @@ EOF
 # Subcomando: fix-bug
 # Inicia fluxo de correcao de bug: systematic-debugging -> learned-lesson
 cmd_fix_bug() {
-    local description="${2:-}"
-    shift 2 2>/dev/null || true
+    local description="${1:-}"
+    shift 2>/dev/null || true
     parse_args "$@"
 
     local install_path="${CLI_INSTALL_PATH:-.}"
@@ -2423,8 +2423,8 @@ cmd_suggest() {
 # Subcomando: refactor
 # Inicia fluxo de refatoracao
 cmd_refactor() {
-    local description="${2:-}"
-    shift 2 2>/dev/null || true
+    local description="${1:-}"
+    shift 2>/dev/null || true
     parse_args "$@"
 
     local install_path="${CLI_INSTALL_PATH:-.}"
@@ -2511,10 +2511,8 @@ EOF
 # Subcomando: config
 # Gerencia configuracoes do AI Dev
 cmd_config() {
-    local subcommand="${2:-}"
-    
-    # Shift manual para passar argumentos corretamente
-    shift 2 2>/dev/null || true
+    local subcommand="${1:-}"
+    shift 2>/dev/null || true
     
     case "$subcommand" in
         language|lang)
@@ -2668,16 +2666,12 @@ cmd_config_language() {
 # Gerencia ciclo de release e versionamento
 # Agora com bump automatico de versao em todos os arquivos mapeados
 cmd_release() {
-    # O primeiro argumento ($1) e 'release'.
-    # O segundo ($2) pode ser o tipo de bump (major, minor, patch, current).
+    # $1 pode ser o tipo de bump (major, minor, patch, current)
     local bump_type="patch"
 
-    # Verifica se o segundo argumento e um tipo de bump conhecido
-    if [[ "$2" == "major" || "$2" == "minor" || "$2" == "patch" || "$2" == "current" ]]; then
-        bump_type="$2"
-        shift 2 # Consome 'release' e o tipo
-    else
-        shift 1 # Consome apenas 'release'
+    if [[ "$1" == "major" || "$1" == "minor" || "$1" == "patch" || "$1" == "current" ]]; then
+        bump_type="$1"
+        shift
     fi
 
     parse_args "$@"
@@ -2787,7 +2781,6 @@ EOF
 # Subcomando: self-upgrade
 # Atualiza a instalacao global do aidev CLI
 cmd_self_upgrade() {
-    shift || true
     parse_args "$@"
 
     print_header "AI Dev - Self Upgrade"

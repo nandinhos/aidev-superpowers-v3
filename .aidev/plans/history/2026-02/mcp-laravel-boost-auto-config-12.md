@@ -584,21 +584,21 @@ aidev mcp laravel status --full
 ## Próximos Passos
 
 ### Sprint 1: Detecção e Geração
-- [ ] Implementar detecção de container por diretório
-- [ ] Implementar detecção de artisan path
-- [ ] Gerar configuração no formato padrão
-- [ ] Salvar no mcp.json do usuário
+- [x] Implementar detecção de container por diretório
+- [x] Implementar detecção de artisan path
+- [x] Gerar configuração no formato padrão
+- [x] Salvar no mcp.json do usuário
 
 ### Sprint 2: Gestão e Backup
-- [ ] Implementar verificação de config existente
-- [ ] Criar sistema de backup automático
-- [ ] Implementar restore de configurações
-- [ ] Criar comando `history` e `current`
+- [x] Implementar verificação de config existente
+- [x] Criar sistema de backup automático
+- [x] Implementar restore de configurações
+- [x] Criar comando `history` e `current`
 
 ### Sprint 3: Integração
-- [ ] Hook no orquestrador para verificar ao iniciar
-- [ ] Sugestão automática quando detectar mismatch
-- [ ] Documentação e exemplos
+- [x] Hook no orquestrador para verificar ao iniciar
+- [x] Sugestão automática quando detectar mismatch
+- [x] Documentação e exemplos
 
 ---
 

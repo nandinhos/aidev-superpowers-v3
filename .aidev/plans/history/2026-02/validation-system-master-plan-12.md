@@ -1511,26 +1511,26 @@ MAX_WARNINGS_BEFORE_BLOCK=3
 ## Cronograma de Implementação
 
 ### Sprint 1: Foundation (Semanas 1-2)
-- [ ] Task 1.1: validators.sh
-- [ ] Task 1.2: validation-engine.sh
-- [ ] Task 2.1: Schema Context Passport
-- [ ] Task 2.2: context-passport.sh
-- [ ] Task 7.1: Documentação
+- [x] Task 1.1: validators.sh
+- [x] Task 1.2: validation-engine.sh
+- [x] Task 2.1: Schema Context Passport
+- [x] Task 2.2: context-passport.sh
+- [x] Task 7.1: Documentação
 
 ### Sprint 2: Knowledge Management (Semanas 3-4)
-- [ ] Task 3.1: error-detector.sh
-- [ ] Task 3.2: auto-catalog.sh
-- [ ] Task 4.1: kb-search.sh (com MCP)
-- [ ] Task 4.2: Integração KB
+- [x] Task 3.1: error-detector.sh
+- [x] Task 3.2: auto-catalog.sh
+- [x] Task 4.1: kb-search.sh (com MCP)
+- [x] Task 4.2: Integração KB
 
 ### Sprint 3: Backlog & Pipeline (Semanas 5-6)
-- [ ] Task 5.1: backlog.sh
-- [ ] Task 5.2: CLI backlog
-- [ ] Task 6.1: validation-pipeline.sh
-- [ ] Task 6.2: Integração orchestration.sh
+- [x] Task 5.1: backlog.sh
+- [x] Task 5.2: CLI backlog
+- [x] Task 6.1: validation-pipeline.sh
+- [x] Task 6.2: Integração orchestration.sh
 
 ### Sprint 4: Testing & Polish (Semanas 7-8)
-- [ ] Task 7.2: Testes de integração
+- [x] Task 7.2: Testes de integração
 - [ ] Configuração e tuning
 - [ ] Documentação final
 - [ ] Treinamento/adaptação

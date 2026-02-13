@@ -1,7 +1,39 @@
 # 🗺️ ROADMAP AI DEV SUPERPOWERS
 
 > Documento mestre de planejamento do Framework
-> Status: Ativo | Versão Atual: v4.1.1 (Estável)
+> Status: Ativo | Versão Atual: v4.2.0 (Estável)
+
+---
+
+## 🚀 RELEASE v4.2.0 (2026-02-13) - Feature Lifecycle Automation
+
+**Status:** ✅ Concluído  
+**Versão:** v4.2.0  
+**Tag:** v4.2.0  
+
+### Funcionalidades:
+- [x] **Feature Lifecycle Automation** (`lib/feature-lifecycle.sh`):
+  - Comandos CLI: `aidev feature [list|complete|status|show]`
+  - Automação de arquivamento em `.aidev/plans/history/YYYY-MM/`
+  - Atualização automática de `ROADMAP.md`
+  - Registro em `context-log.json` para rastreabilidade
+  - Checklist de conclusão padronizado
+  - Integração com skills (TDD, Writing Plans, etc.)
+  
+- [x] **Version Check System** (`lib/version-check.sh`):
+  - Verificação automática de versão vs GitHub
+  - Alerta na inicialização se desatualizado
+  - Comando: `aidev version [check|info]`
+  - Comparação semântica de versões (X.Y.Z)
+
+### Checklist de Release:
+- [x] Bump de versão 4.1.1 → 4.2.0
+- [x] CHANGELOG.md atualizado
+- [x] README.md atualizado (badge)
+- [x] Sincronização global executada
+- [x] Testes passando
+- [x] Documentação completa
+- [x] Tag v4.2.0 criada
 
 ---
 
@@ -110,9 +142,9 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 - **Total**: 412+ testes automatizados
 
 ### Versões
-- **Atual**: v4.1.1 (Estado Ubíquo)
-- **Anterior**: v4.1.1 (Elegant Cache UX)
-- **Próxima**: v4.1.1 (Smart Upgrade)
+- **Atual**: v4.2.0 (Feature Lifecycle Automation)
+- **Anterior**: v4.1.1 (Estado Ubíquo)
+- **Próxima**: v4.2.1 (Smart Upgrade)
 
 ### Economia de Tokens
 - Sprint 3: 60%+ economia com Basic Memory
@@ -134,9 +166,9 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-**Última atualização:** 2026-02-12  
+**Última atualização:** 2026-02-13  
 **Próximo Passo:** Feature 6.1 (Smart Upgrade Merge)
 
 ---
 
-*Roadmap gerenciado por AI Dev Superpowers v4.1.1*
+*Roadmap gerenciado por AI Dev Superpowers v4.2.0*

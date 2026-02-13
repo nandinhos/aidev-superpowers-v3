@@ -257,7 +257,9 @@ cmd_upgrade() {
     cp -r "$install_path/.aidev/skills" "$backup_dir/" 2>/dev/null || true
 
     reset_counters
-    AIDEV_FORCE=true
+    # NOTA: AIDEV_FORCE não está mais ativo por padrão
+    # Usuários devem usar 'aidev upgrade --force' para sobrescrever customizações
+    # Isso protege arquivos modificados em .aidev/agents/ e .aidev/skills/
 
     # Garante estrutura base (novos diretórios)
     create_base_structure "$install_path"
@@ -268,6 +270,15 @@ cmd_upgrade() {
 
     print_step "Atualizando skills..."
     install_skills "$install_path"
+    
+    # Informa sobre proteção de customizações
+    if [ "$AIDEV_FORCE" != "true" ]; then
+        echo ""
+        echo "🛡️  Arquivos customizados em .aidev/agents/ e .aidev/skills/ foram preservados."
+        echo "   Use 'aidev upgrade --force' se quiser sobrescrever todas as customizações."
+        echo "   Backup salvo em: $backup_dir"
+        echo ""
+    fi
 
     # Atualiza instruções de plataforma
     print_step "Atualizando instruções de plataforma..."

@@ -3,10 +3,10 @@
 # ============================================================================
 # AI Dev Superpowers V3 - Context Compressor Module
 # ============================================================================
-# Gera resumos de contexto de ultra-baixa latência para ativação de LLMs
+# Gera resumos de contexto de ultra-baixa latência e fixação de persona
 # ============================================================================
 
-# Gera um markdown compacto com o estado atual
+# Gera um markdown compacto com o estado atual e identidade
 # Uso: context_compressor_generate [output_file]
 context_compressor_generate() {
     local output_file="${1:-.aidev/.cache/activation_context.md}"
@@ -20,66 +20,64 @@ context_compressor_generate() {
         return 1
     fi
     
-    # Limpa/Cria o arquivo
-    : > "$output_file"
-    
-    # Carrega dados essenciais via jq (resiliente a falhas)
+    # Carrega dados via jq
+    local version=$(jq -r '.version // "4.1.1"' "$unified_file")
     local sprint_name=$(jq -r '.sprint_context.sprint_name // "Nenhuma"' "$unified_file")
+    [[ "$sprint_name" == "null" ]] && sprint_name="Sprint 5 (Concluída)"
+    
     local sprint_pct=$(jq -r '.sprint_context.progress_percentage // 0' "$unified_file")
     local task_id=$(jq -r '.sprint_context.current_task_id // "Nenhuma"' "$unified_file")
-    local version=$(jq -r '.version // "unknown"' "$unified_file")
+    [[ "$task_id" == "null" ]] && task_id="Nenhuma"
     
-    # Tenta obter descrição da task se disponível
-    local task_desc="-"
-    if [ "$task_id" != "Nenhuma" ] && [ "$task_id" != "null" ]; then
-        # Tenta ler do sprint-status se unified não tiver detalhe
-        local sprint_status=".aidev/state/sprints/current/sprint-status.json"
-        if [ -f "$sprint_status" ]; then
-            task_desc=$(jq -r --arg tid "$task_id" '.tasks[] | select(.task_id == $tid) | .name' "$sprint_status" | head -n 1)
-        fi
-    fi
-    
-    # Header
-    echo "# 🚀 AI Dev v$version" >> "$output_file"
+    local intent=$(jq -r '.active_intent // "Aguardando comando"' "$unified_file")
+    local skill=$(jq -r '.active_skill // "Nenhuma"' "$unified_file")
 
+    # Tenta obter o último pensamento (Cognitive Context) do último checkpoint
+    local last_thoughts="Nenhum registro recente."
+    local last_ckpt_file=$(ls -t .aidev/state/sprints/current/checkpoints/ckpt-*.json 2>/dev/null | head -n 1)
+    if [ -f "$last_ckpt_file" ]; then
+        last_thoughts=$(jq -r '.cognitive_context.chain_of_thought // .description // "Retomada de sessão."' "$last_ckpt_file")
+    fi
 
-# Se detectado Antigravity ou MCP, adiciona instrução de leitura de memória
-if [ -n "$ANTIGRAVITY_AGENT" ]; then
-    echo "> 💡 **DICA**: Vejo que você é o Antigravity. Use `read_memory` e `build_context` para ler as memórias do projeto (`project_overview`, `kb_system`) e economizar tokens." >> "$output_file"
-fi
-    
-    # Estado da Sprint
-    echo "## 📊 Sprint Atual" >> "$output_file"
-    echo "- **Nome**: $sprint_name" >> "$output_file"
-    echo "- **Progresso**: ${sprint_pct}%" >> "$output_file"
-    
-    if [ "$task_id" != "Nenhuma" ] && [ "$task_id" != "null" ]; then
-        echo "- **Task Ativa**: \`$task_id\`" >> "$output_file"
-        echo "  - *$task_desc*" >> "$output_file"
-    else
-        echo "- **Task Ativa**: Nenhuma (Aguardando planejamento)" >> "$output_file"
-    fi
-    
-    # Última Ação (Context Git)
-    if command -v ctxgit_get_recent >/dev/null; then
-        local last_log=$(ctxgit_get_recent 1)
-        if [ -n "$last_log" ] && [ "$last_log" != "[]" ] && [ "$last_log" != "null" ]; then
-            local action=$(echo "$last_log" | jq -r '.[0].action // "unknown"')
-            local intent=$(echo "$last_log" | jq -r '.[0].intent // "no intent"')
-            echo "## 🕒 Última Atividade" >> "$output_file"
-            echo "- **$action**: $intent" >> "$output_file"
+    # --- GERAÇÃO DO CONTEÚDO ---
+    {
+        echo "# 🧠 IDENTIDADE DO SISTEMA"
+        echo "Você é o **AI Dev Orquestrador v$version**."
+        echo "Sua missão é coordenar o desenvolvimento seguindo **TDD, YAGNI e DRY**."
+        echo "Comportamento mestre: \`.aidev/agents/orchestrator.md\`"
+        echo ""
+        echo "# 🚀 RESUMO EXECUTIVO"
+        echo "Estamos no projeto \`$(basename "$PWD")\`."
+        echo "- **Intenção Ativa**: $intent"
+        echo "- **Skill em Uso**: $skill"
+        echo "- **Último Pensamento**: $last_thoughts"
+        echo ""
+        echo "## 📊 Estado da Sprint"
+        echo "- **Sprint**: $sprint_name"
+        echo "- **Progresso**: ${sprint_pct}%"
+        echo "- **Tarefa Atual**: \`$task_id\`"
+        echo ""
+        
+        if [ -n "$ANTIGRAVITY_AGENT" ]; then
+            echo "> 💡 **ANTIGRAVITY DETECTADO**: Use \`read_memory\` e \`build_context\` para detalhes técnicos."
+            echo ""
         fi
-    fi
-    
-    # Instruções Críticas (Links)
-    echo "## 🧠 Memória & Regras" >> "$output_file"
-    echo "- **Regras**: Leia \`.aidev/rules/generic.md\` se tiver dúvidas." >> "$output_file"
-    echo "- **Agentes**: Use \`aidev status\` para ver agentes disponíveis." >> "$output_file"
-    
-    
+
+        echo "## 🛠️ Próximos Passos"
+        if [ "$sprint_pct" -eq 100 ]; then
+            echo "1. Arquivar Sprint atual."
+            echo "2. Iniciar Sprint 6 (Smart Upgrade)."
+        else
+            echo "1. Continuar tarefa \`$task_id\`."
+        fi
+        
+        echo ""
+        echo "---"
+        echo "*(Este resumo foi gerado passivamente para economizar tokens. Use as ferramentas para investigar arquivos específicos.)*"
+    } > "$output_file"
+
     # Espelha para o contrato passivo (v4.1.1)
-    if [ -f "$output_file" ]; then
-        cp "$output_file" "$passive_contract"
-    fi
+    cp "$output_file" "$passive_contract"
+    
     return 0
 }

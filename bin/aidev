@@ -758,6 +758,17 @@ cmd_agent() {
 
     print_header "AI Dev Agent Mode"
 
+    # Protocolo Zero-Shot (v4.1.1) - PADRÃO
+    # Só faz o dump completo se o usuário pedir explicitamente --full
+    if [ "$1" != "--full" ]; then
+        cmd_agent_lite "$install_path"
+        return 0
+    fi
+
+    shift # Consome --full
+    print_info "Gerando prompt de ativação COMPLETO (Modo Legado)..."
+
+
     # Protocolo Zero-Shot (v6.3)
     # SE detectado MCP ou modo lite ativo, usa caminho otimizado
     if [ "$AIDEV_LITE" = "true" ] || [ -n "$ANTIGRAVITY_AGENT" ] || [ -n "$CLAUDE_CLI" ]; then

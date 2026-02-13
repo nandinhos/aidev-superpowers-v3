@@ -44,6 +44,7 @@ AIDEV_SYNC_FILES=(
     "lib/yaml-parser.sh"
     "lib/deploy-sync.sh"
     "lib/feature-lifecycle.sh"
+    "lib/version-check.sh"
     "VERSION"
     "CHANGELOG.md"
     "README.md"

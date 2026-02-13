@@ -53,6 +53,14 @@ load_module "lessons"
 load_module "kb"
 load_module "triggers"
 
+# Carrega módulo de verificação de versão (silencioso)
+load_module "version-check" 2>/dev/null || true
+
+# Verifica atualizações em background (não bloqueia)
+if type version_check_alert &>/dev/null; then
+    (version_check_alert > /dev/tty 2>/dev/null &)
+fi
+
 # Tenta carregar ambiente (idioma, segredos)
 load_env 2>/dev/null || true
 
@@ -3596,6 +3604,10 @@ main() {
             ;;
         feature)
             cmd_feature "$@"
+            ;;
+        version)
+            load_module "version-check"
+            version_check_cli "$@"
             ;;
         self-upgrade)
             cmd_self_upgrade "$@"

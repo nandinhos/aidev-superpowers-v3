@@ -106,6 +106,7 @@ show_help() {
     print_cmd "status" "Mostra status da instalação"
     print_cmd "doctor" "Diagnóstico da instalação"
     print_cmd "release" "Gerencia releases e versionamento"
+    print_cmd "version" "Verifica versão e atualizações disponíveis"
     print_cmd "config" "Configurações (idioma, etc)"
     echo ""
 

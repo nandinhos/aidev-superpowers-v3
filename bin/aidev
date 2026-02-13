@@ -3495,6 +3495,22 @@ cmd_restore() {
     esac
 }
 
+# Subcomando: feature
+# Gerencia ciclo de vida de features (list, complete, status)
+cmd_feature() {
+    # Carrega o módulo de lifecycle de features
+    local lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.aidev/lib"
+    if [ -f "$lib_dir/feature-lifecycle.sh" ]; then
+        source "$lib_dir/feature-lifecycle.sh"
+    else
+        print_error "Módulo feature-lifecycle.sh não encontrado"
+        exit 1
+    fi
+    
+    # Passa controle para o handler do módulo
+    feature_cli "$@"
+}
+
 main() {
     local command="${1:-help}"
     shift || true

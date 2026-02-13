@@ -286,6 +286,26 @@ RED -> GREEN -> REFACTOR -> [proxima feature] -> RED -> ...
 2. Cobertura adequada
 3. Codigo refatorado
 4. Commit atomico
+5. **VERIFICAR**: Existe feature ativa para arquivar?
+
+#### Automacao de Conclusao
+
+Quando todos os ciclos TDD de uma feature forem completados:
+
+```bash
+# Verifica features ativas
+aidev feature list
+
+# Conclui a feature (move para historico, atualiza ROADMAP)
+aidev feature complete <feature-id> "Implementacao concluida com TDD"
+```
+
+**Acoes automaticas:**
+- ✅ Status atualizado para "Concluído"
+- ✅ Arquivo movido para `.aidev/plans/history/YYYY-MM/`
+- ✅ ROADMAP.md atualizado
+- ✅ Registro em context-log.json
+- ✅ Checklist de conclusao adicionado
 
 ### Handoff
 ```bash

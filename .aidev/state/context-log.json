@@ -63,6 +63,14 @@
       "intent": "Tarefa concluída com sucesso",
       "sprint_task": "task-5.4.3-cli-guard",
       "llm": "gemini-cli"
+    },
+    {
+      "ts": "2026-02-13T13:00:54Z",
+      "action": "feature_complete",
+      "target": "test-lifecycle-automation",
+      "intent": "Feature concluída e arquivada",
+      "feature_title": "Test: Lifecycle Automation Feature",
+      "history_file": ".aidev/plans/history/2026-02/test-lifecycle-automation-13.md"
     }
   ]
 }

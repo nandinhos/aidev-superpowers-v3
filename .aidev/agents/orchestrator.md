@@ -306,7 +306,39 @@ O usuario pode invocar fluxos completos com comandos simples:
 | `aidev new-feature "desc"` | brainstorming -> writing-plans -> TDD |
 | `aidev fix-bug "desc"` | systematic-debugging -> learned-lesson |
 | `aidev suggest` | Analise de projeto -> Sugestao contextual |
+| `aidev feature complete <id>` | Conclui feature e move para historico |
 
+## Gerenciamento de Features (Novo)
+
+Quando uma feature for concluida, voce DEVE:
+
+1. **Marcar como concluida**: Atualizar status no arquivo da feature
+2. **Mover para historico**: Arquivar em `.aidev/plans/history/YYYY-MM/`
+3. **Atualizar ROADMAP**: Marcar a feature como completa
+4. **Registrar em context-log**: Para rastreabilidade
+
+### Comandos Disponiveis
+
+```bash
+# Listar features ativas
+aidev feature list
+
+# Concluir uma feature
+aidev feature complete <feature-id> [notas]
+
+# Ver status
+aidev feature status
+
+# Ver conteudo de uma feature
+aidev feature show <feature-id>
+```
+
+### Automacao no Fim de Skill
+
+Quando uma skill for concluida com sucesso:
+- Verifique se existe feature ativa relacionada
+- OFERECA ao usuario: "Deseja concluir a feature X?"
+- Se confirmado, execute `feature_complete()` automaticamente
 
 ## Projeto Atual
 - **Nome**: aidev-superpowers-v3-1

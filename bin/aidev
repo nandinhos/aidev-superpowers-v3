@@ -1611,6 +1611,32 @@ install_plans() {
 }
 
 # Instala instruções de plataforma (lembrete de ativação)
+
+
+# Instala workflows do Antigravity (v4.0.1)
+install_antigravity_workflows() {
+    local path="$1"
+    local workflows_src="$AIDEV_ROOT_DIR/templates/platform/antigravity/workflows"
+    local workflows_dest="$path/.agent/workflows"
+
+    if [ -d "$workflows_src" ]; then
+        ensure_dir "$workflows_dest"
+        
+        # Copia todos os arquivos .md do template para o destino
+        for f in "$workflows_src"/*.md; do
+            if [ -f "$f" ]; then
+                local filename=$(basename "$f")
+                if should_write_file "$workflows_dest/$filename"; then
+                    cp "$f" "$workflows_dest/$filename"
+                    increment_files
+                    print_debug "Workflow instalado: $filename"
+                fi
+            fi
+        done
+        print_success "Workflows do Antigravity instalados em .agent/workflows/"
+    fi
+}
+
 install_platform_instructions() {
     local path="$1"
     local platform="$2"
@@ -1673,6 +1699,18 @@ install_platform_instructions() {
             if [ -f "$template" ] && should_write_file "$output"; then
                 process_template "$template" "$output"
                 print_success "Criado: AIDER.md (lembrete de ativação)"
+            fi
+            ;; 
+
+        "antigravity")
+            # Workflows específicos do Antigravity (v4.0.1)
+            install_antigravity_workflows "$path"
+            
+            local template="$templates_dir/ANTIGRAVITY.md.tmpl"
+            local output="$path/ANTIGRAVITY.md"
+            if [ -f "$template" ] && should_write_file "$output"; then
+                process_template "$template" "$output"
+                print_success "Criado: ANTIGRAVITY.md (lembrete de ativação)"
             fi
             ;;
         *)

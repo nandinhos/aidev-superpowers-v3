@@ -44,6 +44,30 @@ e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### 🔧 Melhorias (Sincronização)
 - Adicionado `lib/feature-lifecycle.sh` à lista de arquivos críticos (`AIDEV_SYNC_FILES`)
 
+### 🛡️ Sprint 6.1: Smart Upgrade Merge (Proteção de Customizações)
+- **Proteção de arquivos customizados** durante `aidev upgrade`:
+  - Removido `AIDEV_FORCE=true` que forçava sobrescrita
+  - Backup automático antes do upgrade
+  - Mensagem informativa sobre arquivos preservados
+  - Flag `--force` para sobrescrever quando necessário
+
+### 🔍 Sprint 6.2: Advanced Error Recovery
+- **Sistema de recuperação automática de erros** (`lib/error-recovery.sh`):
+  - KB integrado com 20+ padrões de erro comuns
+  - Funções: `analyze`, `suggest`, `auto-recovery`, `stats`
+  - Integração com `error_handler` existente
+  - Comando CLI: `aidev error-recovery [analyze|stats|clear|test]`
+  - Sugestões contextualizadas com scoring de confiança
+  - Recovery automático para erros conhecidos
+  - Log de erros em `.aidev/state/error-log.json`
+
+### 🔄 Version Check System
+- **Verificação automática de versão** (`lib/version-check.sh`):
+  - Compara versão local vs GitHub
+  - Alerta na inicialização se desatualizado
+  - Comando: `aidev version [check|info]`
+  - Comparação semântica de versões (X.Y.Z)
+
 ## [4.1.0] - 2026-02-13
 
 ## [4.0.1] - 2026-02-12

@@ -3574,6 +3574,65 @@ cmd_error_recovery() {
     error_recovery_cli "$@"
 }
 
+# Subcomando: patch
+# Aplica patches de correção ao sistema
+cmd_patch() {
+    local patch_type="${1:-plans}"
+    
+    case "$patch_type" in
+        plans)
+            print_header "AI Dev - Patch de Estrutura de Planos v4.3.0"
+            print_info "Aplicando correção para estrutura de planos..."
+            
+            local templates_dir="$AIDEV_ROOT_DIR/templates/plans"
+            local dirs=("backlog" "features" "current" "history" "archive")
+            
+            # Cria diretórios se não existirem
+            for dir in "${dirs[@]}"; do
+                if [ ! -d "$templates_dir/$dir" ]; then
+                    ensure_dir "$templates_dir/$dir"
+                    print_success "Criado: templates/plans/$dir/"
+                fi
+            done
+            
+            # Verifica templates README
+            local readme_templates=(
+                "README.md"
+                "backlog/README.md"
+                "features/README.md"
+                "current/README.md"
+                "history/README.md"
+                "archive/README.md"
+            )
+            
+            local missing=0
+            for template in "${readme_templates[@]}"; do
+                if [ ! -f "$templates_dir/$template.tmpl" ]; then
+                    print_warning "Template não encontrado: $template.tmpl"
+                    ((missing++))
+                fi
+            done
+            
+            if [ $missing -eq 0 ]; then
+                print_success "Todos os templates de planos estão presentes!"
+                print_info "A estrutura será aplicada automaticamente em novos projetos."
+                print_info "Para aplicar em projetos existentes, use: aidev upgrade"
+            else
+                print_error "Faltam $missing templates. Execute: aidev system sync"
+                return 1
+            fi
+            ;;
+        *)
+            echo "Uso: aidev patch [plans]"
+            echo ""
+            echo "Patches disponíveis:"
+            echo "  plans    Verifica e aplica estrutura de planos v4.3.0"
+            echo ""
+            return 1
+            ;;
+    esac
+}
+
 # Subcomando: feature
 # Gerencia ciclo de vida de features (list, complete, status)
 cmd_feature() {
@@ -3696,6 +3755,9 @@ main() {
             ;;
         fallback)
             cmd_fallback "$@"
+            ;;
+        patch)
+            cmd_patch "$@"
             ;;
         -h|--help|help)
             show_help

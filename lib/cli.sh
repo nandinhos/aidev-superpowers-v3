@@ -135,6 +135,11 @@ show_help() {
     print_cmd "add-agent" "Adiciona agente customizado"
     echo ""
 
+    echo -e "${C_YELLOW}Manutenção:${C_NC}"
+    print_cmd "patch" "Aplica patches de correção ao sistema"
+    print_cmd "system" "Gerencia instalação global"
+    echo ""
+
     echo -e "${C_YELLOW}Opções Globais:${C_NC}"
     printf "  ${C_CYAN}%-20s${C_NC} %s\n" "--install-in <path>" "Diretório alvo (default: .)"
     printf "  ${C_CYAN}%-20s${C_NC} %s\n" "--force" "Sobrescreve arquivos existentes"

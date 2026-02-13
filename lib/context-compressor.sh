@@ -10,6 +10,7 @@
 # Uso: context_compressor_generate [output_file]
 context_compressor_generate() {
     local output_file="${1:-.aidev/.cache/activation_context.md}"
+    local passive_contract=".aidev/AI_INSTRUCTIONS.md"
     local unified_file=".aidev/state/unified.json"
     
     mkdir -p "$(dirname "$output_file")"
@@ -75,5 +76,10 @@ fi
     echo "- **Regras**: Leia \`.aidev/rules/generic.md\` se tiver dúvidas." >> "$output_file"
     echo "- **Agentes**: Use \`aidev status\` para ver agentes disponíveis." >> "$output_file"
     
+    
+    # Espelha para o contrato passivo (v4.1.1)
+    if [ -f "$output_file" ]; then
+        cp "$output_file" "$passive_contract"
+    fi
     return 0
 }

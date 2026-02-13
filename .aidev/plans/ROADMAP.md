@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP AI DEV SUPERPOWERS
 
 > Documento mestre de planejamento do Framework
-> Status: Ativo | Versão Atual: v4.0.0 (Estável)
+> Status: Ativo | Versão Atual: v4.1.1 (Estável)
 
 ---
 
@@ -13,7 +13,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ## 📅 SPRINT 3: Context Monitor & Auto-Checkpoint (CONCLUÍDA) ✨
 **Objetivo:** Sistema de monitoramento de contexto, checkpoints automáticos e integração com Basic Memory.  
 **Período:** 2026-02-11 → 2026-02-12  
-**Versão:** v3.10.2  
+**Versão:** v4.1.1  
 **Status:** ✅ 100% Completa (4/4 tasks)
 
 ### Funcionalidades:
@@ -72,7 +72,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 ## 📅 SPRINT 5: Orquestração por Estado Ubíquo (CONCLUÍDA) ✨
 **Objetivo:** Transformar o aidev na "Âncora de Verdade" para colaboração entre diferentes LLMs (Claude Code, Gemini CLI, Antigravity) através de persistência de estado agnóstica e reconstrução cognitiva.
 **Período:** 2026-02-12 → 2026-02-12
-**Versão:** v4.0.0 (Major)
+**Versão:** v4.1.1 (Major)
 **Status:** ✅ 100% Completa (14/14 tasks)
 
 ### Funcionalidades:
@@ -110,9 +110,9 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 - **Total**: 412+ testes automatizados
 
 ### Versões
-- **Atual**: v4.0.0 (Estado Ubíquo)
-- **Anterior**: v3.10.2 (Elegant Cache UX)
-- **Próxima**: v4.1.0 (Smart Upgrade)
+- **Atual**: v4.1.1 (Estado Ubíquo)
+- **Anterior**: v4.1.1 (Elegant Cache UX)
+- **Próxima**: v4.1.1 (Smart Upgrade)
 
 ### Economia de Tokens
 - Sprint 3: 60%+ economia com Basic Memory
@@ -122,7 +122,7 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ## 📅 SPRINT 6: Auto-Cura & Smart Upgrade (EM CURSO) 🛠️
 **Objetivo:** Implementar o merge inteligente de atualizações e reforçar a auto-cura do sistema.
-**Versão:** v4.1.0
+**Versão:** v4.1.1
 **Status:** 🏗️ Iniciada
 
 ### Funcionalidades:
@@ -139,4 +139,4 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-*Roadmap gerenciado por AI Dev Superpowers v4.0.0*
+*Roadmap gerenciado por AI Dev Superpowers v4.1.1*

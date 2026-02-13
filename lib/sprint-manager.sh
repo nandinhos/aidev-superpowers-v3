@@ -19,8 +19,10 @@ fi
 
 if [ -f "lib/context-git.sh" ]; then
     source lib/context-git.sh
+fi
 
-if [ -f "lib/context-compressor.sh" ]; then\n    source lib/context-compressor.sh\nfi
+if [ -f "lib/context-compressor.sh" ]; then
+    source lib/context-compressor.sh
 fi
 
 # ============================================================================

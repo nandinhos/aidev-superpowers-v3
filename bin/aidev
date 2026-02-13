@@ -304,6 +304,10 @@ cmd_upgrade() {
     install_memory_sync "$install_path"
     install_triggers "$install_path"
 
+    # Atualiza estrutura de planos para v4.3.0
+    print_step "Atualizando estrutura de planos..."
+    upgrade_plans_structure "$install_path"
+
     # Atualiza MCP (v3.8)
     print_step "Atualizando configurações MCP..."
     configure_mcp "$install_path" "$platform"
@@ -1718,6 +1722,69 @@ install_plans() {
     done
     
     print_info "Estrutura de planos criada (v4.3.0)"
+}
+
+# Atualiza estrutura de planos em projetos legados (v4.3.0)
+# Verifica se a estrutura completa existe e cria se necessário
+upgrade_plans_structure() {
+    local path="$1"
+    local plans_dir="$path/.aidev/plans"
+    
+    # Verifica se diretório de planos existe
+    if [ ! -d "$plans_dir" ]; then
+        print_debug "Diretório de planos não encontrado, pulando upgrade"
+        return 0
+    fi
+    
+    print_info "Verificando estrutura de planos v4.3.0..."
+    
+    # Diretórios necessários na v4.3.0
+    local required_dirs=("backlog" "features" "current" "history" "archive")
+    local created_count=0
+    
+    for dir in "${required_dirs[@]}"; do
+        if [ ! -d "$plans_dir/$dir" ]; then
+            ensure_dir "$plans_dir/$dir"
+            print_success "Criado: .aidev/plans/$dir/"
+            ((created_count++))
+        fi
+    done
+    
+    # Verifica e cria READMEs
+    local readme_templates=(
+        "README.md:."
+        "backlog/README.md:backlog"
+        "features/README.md:features"
+        "current/README.md:current"
+        "history/README.md:history"
+        "archive/README.md:archive"
+    )
+    
+    for item in "${readme_templates[@]}"; do
+        local template_file="${item%%:*}"
+        local output_dir="${item#*:}"
+        local template_path="$AIDEV_ROOT_DIR/templates/plans/$template_file.tmpl"
+        local output_path="$plans_dir/$output_dir/README.md"
+        
+        # Só cria se o template existir e o README não existir
+        if [ -f "$template_path" ] && [ ! -f "$output_path" ]; then
+            process_template "$template_path" "$output_path"
+            print_success "Criado: .aidev/plans/$output_dir/README.md"
+            ((created_count++))
+        fi
+    done
+    
+    # Cria/atualiza VERSION se não existir
+    if [ ! -f "$path/VERSION" ]; then
+        echo "4.3.0" > "$path/VERSION"
+        print_success "Criado: VERSION"
+    fi
+    
+    if [ $created_count -gt 0 ]; then
+        print_info "Estrutura de planos atualizada para v4.3.0 ($created_count itens criados)"
+    else
+        print_debug "Estrutura de planos já está atualizada"
+    fi
 }
 
 # Instala instruções de plataforma (lembrete de ativação)

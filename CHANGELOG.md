@@ -5,6 +5,8 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.1.0] - 2026-02-13
+
 ## [4.0.1] - 2026-02-12
 
 ### ✨ Melhorias (Antigravity UX)

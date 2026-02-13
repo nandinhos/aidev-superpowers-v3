@@ -5,6 +5,27 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.3.0] - 2026-02-13
+
+### 🗂️ Reorganização da Estrutura de Planejamento
+- **Nova estrutura em `.aidev/plans/`**:
+  - 📋 `backlog/` - Ideias futuras não priorizadas
+  - 🚀 `features/` - Planejados com sprint definida
+  - 🏃 `current/` - Em execução AGORA
+  - ✅ `history/` - Concluídos organizados por data (YYYY-MM)
+  - 📚 `archive/` - Documentação e templates
+- **6 READMEs navegáveis** criados para facilitar acesso
+- **Fluxo de trabalho definido**: ideia → planejamento → execução → conclusão
+- **Movimentação de arquivos**:
+  - Sprint 5 concluída → `history/2026-02/`
+  - MCP Universal → `backlog/` (ideia futura)
+  - Sprint Protocol → `archive/templates/` (documentação)
+  - Smart Upgrade permanece em `features/` (planejada)
+
+### 🐛 Correções
+- **Fix no path do `feature-lifecycle`**: usa `$PWD` ao invés de `BASH_SOURCE`
+- **Criação automática de `.aidev/lib/`**: no `create_base_structure()` durante init
+
 ## [4.2.0] - 2026-02-13
 
 ### 🚀 Features (Feature Lifecycle Automation)

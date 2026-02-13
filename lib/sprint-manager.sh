@@ -19,6 +19,8 @@ fi
 
 if [ -f "lib/context-git.sh" ]; then
     source lib/context-git.sh
+
+if [ -f "lib/context-compressor.sh" ]; then\n    source lib/context-compressor.sh\nfi
 fi
 
 # ============================================================================
@@ -174,6 +176,11 @@ sprint_sync_to_unified() {
            "context_log": $context_log,
            "last_sync": $timestamp
        }' "$unified_file" > "$tmp_file" && mv "$tmp_file" "$unified_file"
+
+    # Regenera contexto de ativação otimizado (v6.3)
+    if command -v context_compressor_generate >/dev/null; then
+        context_compressor_generate "$install_path/.aidev/.cache/activation_context.md" >/dev/null 2>&1
+    fi
 }
 
 # Renderiza dashboard resumido da sprint atual

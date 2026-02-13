@@ -706,6 +706,26 @@ cmd_snapshot() {
 
 # Subcomando: agent
 # Gera prompt de ativacao do modo agente para colar na IA
+# Ativacao passiva de ultra-baixo custo (v6.3)
+cmd_agent_lite() {
+    local path="${1:-.}"
+    local lite_file="$path/.aidev/.cache/activation_context.md"
+
+    # Garante que o arquivo existe antes de mostrar
+    load_module "context-compressor"
+    context_compressor_generate "$lite_file" >/dev/null 2>&1
+
+    if [ -f "$lite_file" ]; then
+        cat "$lite_file"
+        echo ""
+        echo "---"
+        echo "INSTRUÇÃO PARA IA: Você foi ativado no modo Zero-Shot."
+        echo "Leia o contexto acima e use as ferramentas para investigar os detalhes se necessário."
+    else
+        print_error "Não foi possível gerar o contexto lite."
+    fi
+}
+
 cmd_agent() {
     parse_args "$@"
 
@@ -737,6 +757,13 @@ cmd_agent() {
     fi
 
     print_header "AI Dev Agent Mode"
+
+    # Protocolo Zero-Shot (v6.3)
+    # SE detectado MCP ou modo lite ativo, usa caminho otimizado
+    if [ "$AIDEV_LITE" = "true" ] || [ -n "$ANTIGRAVITY_AGENT" ] || [ -n "$CLAUDE_CLI" ]; then
+        cmd_agent_lite "$install_path"
+        return 0
+    fi
     print_info "Gerando prompt de ativacao..."
     echo ""
 

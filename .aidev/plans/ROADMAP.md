@@ -5,6 +5,27 @@
 
 ---
 
+## 📁 Estrutura de Planejamento
+
+Este projeto usa estrutura organizada em `.aidev/plans/`:
+
+| Pasta | Conteúdo | Status |
+|-------|----------|--------|
+| [📋 Backlog](backlog/) | Ideias futuras | Não priorizadas |
+| [🚀 Features](features/) | Planejados com sprint | Prontos para execução |
+| [🏃 Current](current/) | Em execução AGORA | Sprint ativa |
+| [✅ History](history/) | Concluídos | Arquivado por data |
+| [📚 Archive](archive/) | Documentação | Referências |
+
+**Fluxo de trabalho:**
+```
+backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/ (concluída)
+```
+
+Veja [README](README.md) para navegação completa.
+
+---
+
 ## 🚀 RELEASE v4.2.0 (2026-02-13) - Feature Lifecycle Automation
 
 **Status:** ✅ Concluído  

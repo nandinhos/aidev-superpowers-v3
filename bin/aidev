@@ -1674,20 +1674,50 @@ configure_mcp() {
     setup_mcp_engine "$path" "$platform"
 }
 
-# Instala estrutura de planos e roadmaps (v3.7)
+# Instala estrutura de planos e roadmaps (v4.3.0)
+# Cria estrutura completa: backlog/, features/, current/, history/, archive/
 install_plans() {
     local path="$1"
     local plans_dir="$path/.aidev/plans"
     
+    # Cria todas as pastas da estrutura organizada
     ensure_dir "$plans_dir"
+    ensure_dir "$plans_dir/backlog"
     ensure_dir "$plans_dir/features"
+    ensure_dir "$plans_dir/current"
     ensure_dir "$plans_dir/history"
-
+    ensure_dir "$plans_dir/archive"
+    
+    # Processa ROADMAP.md
     local roadmap_template="$AIDEV_ROOT_DIR/templates/plans/ROADMAP.md.tmpl"
     if [ -f "$roadmap_template" ]; then
         process_template "$roadmap_template" "$plans_dir/ROADMAP.md"
         print_debug "Instalado ROADMAP.md inicial"
     fi
+    
+    # Processa READMEs de cada pasta
+    local readme_templates=(
+        "README.md:"
+        "backlog/README.md:backlog/"
+        "features/README.md:features/"
+        "current/README.md:current/"
+        "history/README.md:history/"
+        "archive/README.md:archive/"
+    )
+    
+    for item in "${readme_templates[@]}"; do
+        local template_file="${item%%:*}"
+        local output_subdir="${item#*:}"
+        local template_path="$AIDEV_ROOT_DIR/templates/plans/$template_file.tmpl"
+        local output_path="$plans_dir/$output_subdir/README.md"
+        
+        if [ -f "$template_path" ]; then
+            process_template "$template_path" "$output_path"
+            print_debug "Instalado $output_subdir/README.md"
+        fi
+    done
+    
+    print_info "Estrutura de planos criada (v4.3.0)"
 }
 
 # Instala instruções de plataforma (lembrete de ativação)

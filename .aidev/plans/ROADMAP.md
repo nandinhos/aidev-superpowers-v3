@@ -152,10 +152,10 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 
 ---
 
-## 📅 SPRINT 6: Auto-Cura & Smart Upgrade (EM CURSO) 🛠️
+## 📅 SPRINT 6: Auto-Cura & Smart Upgrade (CONCLUÍDA) ✅
 **Objetivo:** Implementar o merge inteligente de atualizações e reforçar a auto-cura do sistema.
-**Versão:** v4.1.1
-**Status:** 🏗️ Iniciada
+**Versão:** v4.2.0
+**Status:** ✅ 100% Completa (2/2 tasks)
 
 ### Funcionalidades:
 - [x] **6.1 - Smart Upgrade Merge** (Concluído 2026-02-13):
@@ -164,13 +164,20 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
   - ✅ Backup automático criado antes do upgrade.
   - ✅ Mensagem informativa sobre arquivos preservados.
   - ✅ Flag `--force` disponível para sobrescrever quando necessário.
-- [ ] **6.2 - Advanced Error Recovery**:
-  - Melhorias no `error_handler` para sugerir correções automáticas baseadas na KB.
+- [x] **6.2 - Advanced Error Recovery** (Concluído 2026-02-13):
+  - ✅ Módulo `lib/error-recovery.sh` com 300+ linhas.
+  - ✅ KB integrado com 20+ padrões de erro comuns.
+  - ✅ Funções: `analyze`, `suggest`, `auto-recovery`, `stats`.
+  - ✅ Integração com `error_handler` existente.
+  - ✅ Comando CLI: `aidev error-recovery [analyze|stats|clear|test]`.
+  - ✅ Sugestões contextualizadas com scoring de confiança (high/medium/low).
+  - ✅ Recovery automático para erros conhecidos (permissões, diretórios, etc).
+  - ✅ Log de erros em `.aidev/state/error-log.json` para análise futura.
 
 ---
 
 **Última atualização:** 2026-02-13  
-**Próximo Passo:** Feature 6.2 (Advanced Error Recovery)
+**Próximo Passo:** Release v4.2.0 - Preparar para deploy
 
 ---
 

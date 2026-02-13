@@ -5,6 +5,24 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.2.0] - 2026-02-13
+
+### 🚀 Features (Feature Lifecycle Automation)
+- **Gerenciamento de Ciclo de Vida de Features** (`lib/feature-lifecycle.sh`):
+  - Comandos CLI: `aidev feature [list|complete|status|show]`
+  - Automação de arquivamento em `.aidev/plans/history/YYYY-MM/`
+  - Atualização automática de `ROADMAP.md`
+  - Registro em `context-log.json` para rastreabilidade
+  - Checklist de conclusão padronizado
+- **Integração com Skills**:
+  - Atualização da skill `test-driven-development` com seção "Ao Completar Feature"
+  - Documentação do orquestrador com novos comandos
+- **Documentação Completa**:
+  - Guia completo em `.aidev/docs/feature-lifecycle.md`
+
+### 🔧 Melhorias (Sincronização)
+- Adicionado `lib/feature-lifecycle.sh` à lista de arquivos críticos (`AIDEV_SYNC_FILES`)
+
 ## [4.1.0] - 2026-02-13
 
 ## [4.0.1] - 2026-02-12

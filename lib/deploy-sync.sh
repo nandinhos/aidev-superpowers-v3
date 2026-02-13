@@ -45,6 +45,7 @@ AIDEV_SYNC_FILES=(
     "lib/deploy-sync.sh"
     "lib/feature-lifecycle.sh"
     "lib/version-check.sh"
+    "lib/error-recovery.sh"
     "VERSION"
     "CHANGELOG.md"
     "README.md"

@@ -28,6 +28,20 @@ error_handler() {
     if type triggers__watch_errors &>/dev/null; then
         triggers__watch_errors "${BASH_COMMAND:-}"
     fi
+    
+    # Sprint 6.2: Advanced Error Recovery
+    # Analisa erro e sugere correções automáticas
+    if type error_recovery_handler &>/dev/null; then
+        local last_error=$(tail -n 5 /tmp/aidev_last_error 2>/dev/null || echo "Erro não capturado")
+        error_recovery_handler "$exit_code" "$line_no" "${BASH_COMMAND:-}" "$last_error" > /tmp/aidev_error_analysis.json
+        
+        # Mostra sugestões ao usuário
+        local analysis=$(cat /tmp/aidev_error_analysis.json)
+        if [ -n "$analysis" ]; then
+            error_recovery_suggest "$analysis"
+        fi
+    fi
+    
     echo ""
 }
 
@@ -52,6 +66,7 @@ load_module "mcp"
 load_module "lessons"
 load_module "kb"
 load_module "triggers"
+load_module "error-recovery" 2>/dev/null || true
 
 # Carrega módulo de verificação de versão (silencioso)
 load_module "version-check" 2>/dev/null || true
@@ -3514,6 +3529,13 @@ cmd_restore() {
     esac
 }
 
+# Subcomando: error-recovery
+# Gerencia recuperação automática de erros (Sprint 6.2)
+cmd_error_recovery() {
+    load_module "error-recovery"
+    error_recovery_cli "$@"
+}
+
 # Subcomando: feature
 # Gerencia ciclo de vida de features (list, complete, status)
 cmd_feature() {
@@ -3615,6 +3637,9 @@ main() {
             ;;
         feature)
             cmd_feature "$@"
+            ;;
+        error-recovery)
+            cmd_error_recovery "$@"
             ;;
         version)
             load_module "version-check"

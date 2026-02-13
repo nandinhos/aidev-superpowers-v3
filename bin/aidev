@@ -1524,6 +1524,14 @@ create_base_structure() {
     ensure_dir "$path/.aidev/state"
     ensure_dir "$path/.aidev/memory/kb"
     ensure_dir "$path/.aidev/analysis"
+    ensure_dir "$path/.aidev/lib"
+    
+    # Copia bibliotecas auxiliares do projeto (v4.2.0)
+    # Sprint 6.2: Feature Lifecycle precisa estar disponível no projeto
+    if [ -f "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" ]; then
+        cp "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" "$path/.aidev/lib/"
+        chmod +x "$path/.aidev/lib/feature-lifecycle.sh"
+    fi
 }
 
 # Instala agentes a partir dos templates com suporte a overrides por plataforma
@@ -3540,11 +3548,13 @@ cmd_error_recovery() {
 # Gerencia ciclo de vida de features (list, complete, status)
 cmd_feature() {
     # Carrega o módulo de lifecycle de features
-    local lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.aidev/lib"
+    # Procura no diretório atual do projeto (não no diretório do script)
+    local lib_dir="${PWD}/.aidev/lib"
     if [ -f "$lib_dir/feature-lifecycle.sh" ]; then
         source "$lib_dir/feature-lifecycle.sh"
     else
-        print_error "Módulo feature-lifecycle.sh não encontrado"
+        print_error "Módulo feature-lifecycle.sh não encontrado em $lib_dir"
+        print_info "Certifique-se de estar no diretório raiz do projeto"
         exit 1
     fi
     

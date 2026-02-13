@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP AI DEV SUPERPOWERS
 
 > Documento mestre de planejamento do Framework
-> Status: Ativo | Versão Atual: v4.2.0 (Estável)
+> Status: Ativo | Versão Atual: v4.3.0 (Estável)
 
 ---
 
@@ -23,6 +23,31 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 ```
 
 Veja [README](README.md) para navegação completa.
+
+---
+
+## 🚀 RELEASE v4.3.0 (2026-02-13) - Reorganização da Estrutura de Planejamento
+
+**Status:** ✅ Concluído  
+**Versão:** v4.3.0  
+**Tag:** v4.3.0  
+
+### Funcionalidades:
+- [x] **Reorganização da estrutura de planejamento** (`.aidev/plans/`):
+  - Nova estrutura: `backlog/`, `features/`, `current/`, `history/`, `archive/`
+  - 6 READMEs navegáveis para facilitar acesso
+  - Fluxo claro: ideia → planejamento → execução → conclusão
+- [x] **Correções no Feature Lifecycle**:
+  - Path corrigido para usar `$PWD` ao invés de `BASH_SOURCE`
+  - Criação automática de `.aidev/lib/` durante init
+
+### Checklist de Release:
+- [x] Bump de versão 4.2.0 → 4.3.0
+- [x] CHANGELOG.md atualizado
+- [x] README.md atualizado (badge)
+- [x] Sincronização global executada
+- [x] Documentação completa
+- [x] Tag v4.3.0 criada
 
 ---
 
@@ -163,9 +188,9 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 - **Total**: 412+ testes automatizados
 
 ### Versões
-- **Atual**: v4.2.0 (Feature Lifecycle Automation)
-- **Anterior**: v4.1.1 (Estado Ubíquo)
-- **Próxima**: v4.2.1 (Smart Upgrade)
+- **Atual**: v4.3.0 (Reorganização da Estrutura de Planejamento)
+- **Anterior**: v4.2.0 (Feature Lifecycle Automation)
+- **Próxima**: v4.3.1 (Smart Upgrade)
 
 ### Economia de Tokens
 - Sprint 3: 60%+ economia com Basic Memory

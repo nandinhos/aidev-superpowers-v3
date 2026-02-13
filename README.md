@@ -2,8 +2,8 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-3.10.2-blue.svg)]()
-[![Tests](https://img.shields.io/badge/tests-122%20passing-green.svg)]()
+[![Version](https://img.shields.io/badge/version-4.0.1-blue.svg)]()
+[![Tests](https://img.shields.io/badge/tests-412%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
 ## O que e?
@@ -40,6 +40,32 @@ aidev init
 ---
 
 ---
+
+ ## 🌐 Novidades da V4.0 `(Orquestração por Estado Ubíquo)`
+
+ ### Estado Ubíquo & Handoff
+ Transição sem atrito entre diferentes LLMs (Claude Code, Gemini CLI, Antigravity) através de persistência de estado agnóstica e **Contexto Cognitivo**.
+ ```bash
+ aidev handoff create  # Prepara o terreno para outra IA
+ aidev restore --latest # Retoma o raciocínio onde parou
+ ```
+
+ ### Context Git & Real-time Sync
+ Micro-logs de cada ação realizada, mantendo a sprint sincronizada independente de qual CLI está sendo usada.
+ ```bash
+ aidev log show        # Visualiza a timeline da sessão
+ ```
+
+ ### Sprint Guard
+ Scoring semântico automático para detectar se a IA está desviando da tarefa ativa na sprint.
+ ```bash
+ aidev guard status    # Verifica alinhamento da sprint
+ ```
+
+ ### Antigravity UX
+ 12 novos workflows Slash Commands integrados para execução rápida de comandos complexos com interatividade direta no chat.
+
+ ---
 
  ## 🛰️ Novidades da V3.8 `(Portabilidade & System Management)`
  

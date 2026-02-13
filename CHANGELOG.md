@@ -5,6 +5,17 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.0.1] - 2026-02-12
+
+### ✨ Melhorias (Antigravity UX)
+- **Workflows Avançados**: Implementação de 12 novos workflows Slash Commands para o Antigravity.
+- **Interatividade**: Adição de placeholders para parâmetros dinâmicos em comandos como `log`, `handoff`, `lessons` e `feature`.
+- **Categorização**: Organização dos workflows em Visibilidade, Continuidade, Conhecimento e Gestão de Sprint.
+
+### 🛠️ Correções (Roadmap Dashboard)
+- **Deteção de Sprint**: Correção no `grep` do comando `roadmap status` para reconhecer sprints marcadas como "(EM PROGRESSO)", garantindo o cálculo correto da barra de progresso.
+- **Extração de Nomes**: Melhoria na extração de nomes de funcionalidades em arquivos Markdown, priorizando o título `# Feature:` ou o primeiro H1.
+
 ## [4.0.0] - 2026-02-12
 
 ### 🚀 Features (Sprint 5: Orquestração por Estado Ubíquo)

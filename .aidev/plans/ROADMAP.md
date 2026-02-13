@@ -158,16 +158,19 @@ Tornar o AI Dev Superpowers o framework de orquestração de IA mais robusto, mu
 **Status:** 🏗️ Iniciada
 
 ### Funcionalidades:
-- [ ] **6.1 - Smart Upgrade Merge**:
-  - Proteção de customizações do usuário durante o `aidev upgrade`.
-  - Sistema de fingerprints de templates.
+- [x] **6.1 - Smart Upgrade Merge** (Concluído 2026-02-13):
+  - ✅ Proteção de customizações do usuário durante o `aidev upgrade`.
+  - ✅ Removido `AIDEV_FORCE=true` que forçava sobrescrita.
+  - ✅ Backup automático criado antes do upgrade.
+  - ✅ Mensagem informativa sobre arquivos preservados.
+  - ✅ Flag `--force` disponível para sobrescrever quando necessário.
 - [ ] **6.2 - Advanced Error Recovery**:
   - Melhorias no `error_handler` para sugerir correções automáticas baseadas na KB.
 
 ---
 
 **Última atualização:** 2026-02-13  
-**Próximo Passo:** Feature 6.1 (Smart Upgrade Merge)
+**Próximo Passo:** Feature 6.2 (Advanced Error Recovery)
 
 ---
 

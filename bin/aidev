@@ -306,7 +306,13 @@ cmd_upgrade() {
 
     print_step "Atualizando skills..."
     install_skills "$install_path"
-    
+
+    print_step "Atualizando rules..."
+    install_rules "$install_path" "$CLI_STACK"
+
+    # Instala LLM limits (guardrails)
+    install_llm_limits "$install_path" 2>/dev/null || true
+
     # Informa sobre proteção de customizações
     if [ "$AIDEV_FORCE" != "true" ]; then
         echo ""
@@ -3773,22 +3779,6 @@ cmd_patch() {
 
 # Subcomando: feature
 # Gerencia ciclo de vida de features (list, complete, status)
-cmd_feature() {
-    # Carrega o módulo de lifecycle de features
-    # Procura no diretório atual do projeto (não no diretório do script)
-    local lib_dir="${PWD}/.aidev/lib"
-    if [ -f "$lib_dir/feature-lifecycle.sh" ]; then
-        source "$lib_dir/feature-lifecycle.sh"
-    else
-        print_error "Módulo feature-lifecycle.sh não encontrado em $lib_dir"
-        print_info "Certifique-se de estar no diretório raiz do projeto"
-        exit 1
-    fi
-    
-    # Passa controle para o handler do módulo
-    feature_cli "$@"
-}
-
 main() {
     local command="${1:-help}"
     shift || true

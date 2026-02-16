@@ -234,6 +234,35 @@ Uma tarefa = um commit completo e funcional.
 
 ---
 
+## Variante: Session Checkpoint
+
+Quando ativado por rate limit, fim de sessao, ou milestone concluido:
+
+1. Listar todas as tarefas do TodoWrite com status atual
+2. Salvar em `.aidev/state/checkpoint.md` com formato:
+   ```markdown
+   # Checkpoint - YYYY-MM-DD HH:MM
+   ## Concluido
+   - [tarefas finalizadas]
+   ## Em Progresso
+   - [tarefa atual com descricao do estado]
+   ## Proximo Passo
+   - [instrucao exata para retomar na proxima sessao]
+   ## Contexto Necessario
+   - [lista de arquivos-chave ja lidos, para nao re-explorar]
+   ## Decisoes Tomadas
+   - [decisoes arquiteturais ou de implementacao ja definidas]
+   ```
+3. Commit: `chore(session): salva checkpoint de continuidade`
+
+**Quando retomar com checkpoint existente:**
+- Ler `.aidev/state/checkpoint.md` PRIMEIRO
+- NAO re-ler arquivos listados em "Contexto Necessario"
+- Ir direto para "Proximo Passo"
+- Respeitar "Decisoes Tomadas" sem re-avaliar
+
+---
+
 ## Transicoes
 
 ### Ao Completar com Sucesso

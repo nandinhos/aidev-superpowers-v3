@@ -83,6 +83,24 @@ feat(auth): adiciona auth
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+## 7. Session Continuity
+
+- A cada milestone concluido, atualizar `.aidev/state/checkpoint.md`
+- Formato do checkpoint:
+  ```
+  # Checkpoint - [data]
+  ## Concluido
+  - [item 1]
+  ## Em Progresso
+  - [item com % de conclusao]
+  ## Proximo Passo
+  - [instrucao exata para retomar]
+  ## Contexto Necessario
+  - [arquivos-chave ja lidos]
+  ```
+- Ao retomar sessao com checkpoint, NAO re-ler arquivos listados em "Contexto Necessario"
+- Ao atingir rate/context limits, criar checkpoint ANTES de encerrar
+
 ## File Organization
 - Group by feature, not type
 - Clear naming conventions

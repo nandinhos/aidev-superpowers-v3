@@ -183,6 +183,19 @@ Para garantir que o desenvolvimento não desvie do Roadmap, o Orchestrator deve 
    - Justificar por que a ação é necessária ou pedir confirmação para mudar de foco.
    - SE o usuário confirmar, atualizar a task ativa ou pausar a atual.
 
+### 11. Debugging Lock Protocol
+
+Quando intent = `bug_fix`:
+- BLOQUEAR qualquer acao que nao seja das 4 fases do systematic-debugging
+- PROIBIDO: refatorar, planejar upgrades, ou explorar codigo nao relacionado
+- Confidence para pular fases = 0.0 (NUNCA pular)
+- Se apos 3 tentativas de fix o bug persistir:
+  1. PARAR todas as tentativas
+  2. Documentar o que foi tentado e por que falhou
+  3. Apresentar hipoteses restantes ao usuario
+  4. Aguardar direcionamento explicito
+- NUNCA ciclar pelo mesmo fix mais de 2x. Na segunda falha, mudar abordagem completamente.
+
 ## Fluxos de Trabalho Detalhados
 
 ### Novo Projeto/Feature

@@ -24,7 +24,12 @@ guard_check() {
         echo "${YELLOW}Ação proposta: $proposed_action${NC}" >&2
         return 1
     fi
-    
+
+    # Hook: LLM Guard pre-check se modulo disponivel
+    if type llm_guard_pre_check &>/dev/null 2>&1; then
+        llm_guard_pre_check "$proposed_action" '[]' 2>/dev/null || true
+    fi
+
     return 0
 }
 

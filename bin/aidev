@@ -189,7 +189,10 @@ EOF
     # Instala rules
     print_step "$(_ "step_rules")"
     install_rules "$install_path" "$CLI_STACK"
-    
+
+    # Instala LLM limits (guardrails)
+    install_llm_limits "$install_path" 2>/dev/null || true
+
     # Configura segredos PRIMEIRO (antes do MCP para ter API Keys disponíveis)
     if [ "$CLI_NO_MCP" != "true" ]; then
         print_step "$(_ "step_secrets")"
@@ -1687,6 +1690,23 @@ install_rules() {
     
     if [ -f "$stack_template" ]; then
         process_template "$stack_template" "$rules_dir/${stack}.md"
+    fi
+}
+
+# Instala LLM limits (guardrails de execucao)
+install_llm_limits() {
+    local path="$1"
+    local rules_dir="$path/.aidev/rules"
+    local lang_suffix=$(get_lang_suffix 2>/dev/null || echo "pt")
+
+    local llm_template="$AIDEV_ROOT_DIR/templates/rules/$lang_suffix/llm-limits.md.tmpl"
+    if [ ! -f "$llm_template" ]; then
+        llm_template="$AIDEV_ROOT_DIR/templates/rules/llm-limits.md.tmpl"
+    fi
+
+    if [ -f "$llm_template" ]; then
+        ensure_dir "$rules_dir"
+        process_template "$llm_template" "$rules_dir/llm-limits.md"
     fi
 }
 

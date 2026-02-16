@@ -2,30 +2,33 @@
 
 ## Concluido
 - Refinamento v1: CLAUDE.md, generic.md, orchestrator.md, AI_INSTRUCTIONS.md, writing-plans (commit c8d3e46)
-- Sprint 1 do plano v4.4: Sistema de Manifesto
-  - MANIFEST.json criado (6 categorias, 20 entradas de arquivos)
-  - lib/manifest.sh criado (4 funcoes publicas + 2 internas)
-  - tests/unit/test-manifest.sh criado (26 assertions, todas passando)
-  - lib/loader.sh integrado (manifest no mapa de deps)
-  - bin/aidev integrado (manifest carregado no cmd_upgrade)
+- Sprint 1 do plano v4.4: Sistema de Manifesto (commit b9b565e)
+- Sprint 2 do plano v4.4: Motor de Upgrade seguro com checksum e dry-run (commit a49145c)
+- Sprint 3 do plano v4.4: Guardrails de Execucao LLM
+  - lib/llm-guard.sh criado (5 funcoes publicas: validate_scope, enforce_limits, log_decision, audit, pre_check)
+  - templates/rules/llm-limits.md.tmpl criado (template de limites imutaveis)
+  - tests/unit/test-llm-guard.sh criado (27 assertions, todas passando)
+  - lib/loader.sh integrado (llm-guard no mapa de deps com core, file-ops, manifest, state)
+  - lib/sprint-guard.sh integrado (hook para llm_guard_pre_check no final de guard_check)
+  - bin/aidev cmd_init() integrado (install_llm_limits chamado apos install_rules)
 
 ## Em Progresso
-- Plano de refinamento v4.4: Sprint 1 concluido, Sprint 2 pendente
+- Plano de refinamento v4.4: Sprint 3 concluido, Sprint 4 pendente
 
 ## Proximo Passo
-- Commit do Sprint 1
-- Iniciar Sprint 2: lib/upgrade.sh (checksum, dry-run, backup expandido)
+- Commit do Sprint 3
+- Iniciar Sprint 4: Cobertura de Testes + Bugfixes Criticos
 
 ## Contexto Necessario
 - .aidev/plans/backlog/refinamento-framework-v4.4.md (plano completo)
-- bin/aidev linha 244 (cmd_upgrade), linha 3091 (cmd_self_upgrade)
-- lib/file-ops.sh linha ~149 (should_write_file - gate a aprimorar no Sprint 2)
-- lib/cache.sh linha ~24 (get_aidev_hash - padrao SHA256 a reusar)
-- lib/state.sh (padrao jq atomico a seguir)
+- bin/aidev linha ~2243 e ~3705 (cmd_feature duplicado - bug a corrigir no Sprint 4)
+- bin/aidev linha ~283 (cmd_upgrade nao reinstala rules - bug a corrigir no Sprint 4)
 
 ## Decisoes Tomadas
-- MANIFEST.json usa glob patterns com matching via bash extglob
-- Categorias: core, template, config, state, generated, user
-- manifest_is_protected retorna true para core/state/user
-- Integracao no cmd_upgrade eh graceful (2>/dev/null || true)
-- Testes seguem padrao existente de test-runner.sh
+- llm_guard_validate_scope bloqueia apenas core (never_modify_in_project) e state (never_overwrite)
+- user (never_touch) NAO eh bloqueado pela LLM - a LLM cria planos e escreve em plans/
+- enforce_limits le MAX_FILES_PER_CYCLE e MAX_LINES_PER_FILE de llm-limits.md
+- Defaults: MAX_FILES=10, MAX_LINES=200 (quando arquivo nao existe)
+- audit.log usa formato texto (append), nao JSON, para simplicidade e performance
+- Hook no sprint-guard eh graceful (|| true) - nao bloqueia se llm-guard falhar
+- test-runner.sh tem bug pre-existente: basic-memory test interrompe execucao dos demais

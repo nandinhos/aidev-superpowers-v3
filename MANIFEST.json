@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "aidev_version": "4.3.0",
+  "aidev_version": "4.4.0",
   "categories": {
     "core": {
       "policy": "never_modify_in_project",

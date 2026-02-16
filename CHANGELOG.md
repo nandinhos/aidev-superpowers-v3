@@ -5,6 +5,36 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.4.0] - 2026-02-16
+
+### Guardrails de Execucao LLM (Sprint 3)
+- **LLM Guard** (`lib/llm-guard.sh`): motor de validacao pre-execucao
+  - `validate_scope`: bloqueia escrita em arquivos core/state via MANIFEST
+  - `enforce_limits`: le MAX_FILES e MAX_LINES de `rules/llm-limits.md`
+  - `pre_check`: gate unificado (scope + limits) integrado ao sprint-guard
+  - `audit`: log de auditoria em `.aidev/state/audit.log`
+  - `log_decision`: registra decisoes no confidence_log via state.sh
+- **Template** `rules/llm-limits.md`: MAX_FILES_PER_CYCLE=10, MAX_LINES_PER_FILE=200
+- Instalacao automatica no `init` e `upgrade`
+
+### Cobertura de Testes e Bugfixes (Sprint 4)
+- **Fix**: removida funcao `cmd_feature` duplicada em `bin/aidev`
+- **Fix**: `cmd_upgrade` agora reinstala rules e llm-limits
+- **Testes unitarios**: test-version-check.sh (10), test-release.sh (11)
+- **Testes integracao**: test-upgrade.sh (5), test-self-upgrade.sh (9)
+- Total: 35 novos testes
+
+### Sistema de Migracao Incremental (Sprint 5)
+- **Migration engine** (`lib/migration.sh`): 5 funcoes publicas
+  - `migration_stamp`: cria/atualiza MANIFEST.local.json por projeto
+  - `migration_get_project_version`: le versao do projeto
+  - `migration_needed`: detecta necessidade de migracao
+  - `migration_list_steps`: lista scripts entre versoes
+  - `migration_execute`: executa migracoes incrementais
+- **MANIFEST.local.json**: rastreia versao por projeto (nao versionado)
+- Pipeline de migracao integrado ao `cmd_upgrade`
+- Diretorio `migrations/` para scripts de migracao futuros
+
 ## [4.3.0] - 2026-02-13
 
 ### 🗂️ Reorganização da Estrutura de Planejamento

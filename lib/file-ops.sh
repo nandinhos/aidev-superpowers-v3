@@ -146,6 +146,8 @@ is_writable() {
 
 # Determina se deve escrever arquivo (lógica de conflito)
 # Uso: should_write_file "/path" && write_file "$path" "content"
+# Com upgrade module: delega para upgrade_should_overwrite (checksum + manifesto)
+# Sem upgrade module: fallback para logica original (existencia + force)
 should_write_file() {
     local file="$1"
 
@@ -155,6 +157,14 @@ should_write_file() {
         return 1  # Não escreve em dry-run
     fi
 
+    # Se upgrade module esta disponivel, delegar decisao
+    if type upgrade_should_overwrite &>/dev/null 2>&1; then
+        local project_root="${AIDEV_PROJECT_ROOT:-$(pwd)}"
+        upgrade_should_overwrite "$file" "$project_root"
+        return $?
+    fi
+
+    # Fallback: logica original
     if [ ! -f "$file" ]; then
         return 0  # Não existe, pode escrever
     fi

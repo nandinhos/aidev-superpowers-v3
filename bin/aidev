@@ -264,18 +264,30 @@ cmd_upgrade() {
     fi
     print_info "Stack: $CLI_STACK | Plataforma: $platform"
 
-    # Carregar manifesto se disponivel
+    # Carregar manifesto e upgrade se disponiveis
     load_module "manifest" 2>/dev/null || true
+    load_module "upgrade" 2>/dev/null || true
     if type manifest_load &>/dev/null; then
         manifest_load 2>/dev/null || true
     fi
 
-    # Backup antes de atualizar
+    # Dry-run: apenas mostra preview
+    if [ "$AIDEV_DRY_RUN" = "true" ] && type upgrade_dry_run &>/dev/null; then
+        upgrade_dry_run "$install_path"
+        return 0
+    fi
+
+    # Backup antes de atualizar (expandido: agents, skills, rules, mcp)
     print_step "Criando backup..."
-    local backup_dir="$install_path/.aidev/backups/$(date +%Y%m%d%H%M%S)"
-    ensure_dir "$backup_dir"
-    cp -r "$install_path/.aidev/agents" "$backup_dir/" 2>/dev/null || true
-    cp -r "$install_path/.aidev/skills" "$backup_dir/" 2>/dev/null || true
+    local backup_dir=""
+    if type upgrade_backup_full &>/dev/null; then
+        backup_dir=$(upgrade_backup_full "$install_path")
+    else
+        backup_dir="$install_path/.aidev/backups/$(date +%Y%m%d%H%M%S)"
+        ensure_dir "$backup_dir"
+        cp -r "$install_path/.aidev/agents" "$backup_dir/" 2>/dev/null || true
+        cp -r "$install_path/.aidev/skills" "$backup_dir/" 2>/dev/null || true
+    fi
 
     reset_counters
     # NOTA: AIDEV_FORCE não está mais ativo por padrão
@@ -317,6 +329,12 @@ cmd_upgrade() {
     # Atualiza MCP (v3.8)
     print_step "Atualizando configurações MCP..."
     configure_mcp "$install_path" "$platform"
+
+    # Registrar checksums pos-upgrade
+    if type upgrade_record_checksums &>/dev/null; then
+        print_step "Registrando checksums..."
+        upgrade_record_checksums "$install_path"
+    fi
 
     print_summary "upgrade" "$CLI_STACK"
     print_success "Atualização concluída!"
@@ -3179,25 +3197,47 @@ cmd_self_upgrade() {
         echo "  - bin/aidev"
         echo "  - lib/*.sh"
         echo "  - templates/"
+        echo "  - tests/ (se existir)"
+        echo "  - VERSION, CHANGELOG.md, README.md, install.sh"
         exit 0
     fi
 
+    # Backup da instalacao global antes do sync
+    local backup_global="${global_install}.bak.$(date +%s)"
+    print_step "Criando backup da instalacao global..."
+    cp -r "$global_install" "$backup_global" 2>/dev/null || {
+        print_warning "Nao foi possivel criar backup em: $backup_global"
+    }
+
     # Executa sync
+    # Funcao de rollback em caso de falha
+    _self_upgrade_rollback() {
+        if [ -d "$backup_global" ]; then
+            print_warning "Executando rollback..."
+            rm -rf "$global_install"
+            mv "$backup_global" "$global_install"
+            print_info "Rollback concluido. Versao restaurada: $current_version"
+        fi
+    }
+
     print_step "Sincronizando bin/..."
     rsync -a --delete "$source_dir/bin/" "$global_install/bin/" 2>/dev/null || {
         print_error "Falha ao sincronizar bin/"
+        _self_upgrade_rollback
         exit 1
     }
 
     print_step "Sincronizando lib/..."
     rsync -a --delete "$source_dir/lib/" "$global_install/lib/" 2>/dev/null || {
         print_error "Falha ao sincronizar lib/"
+        _self_upgrade_rollback
         exit 1
     }
 
     print_step "Sincronizando templates/..."
     rsync -a --delete "$source_dir/templates/" "$global_install/templates/" 2>/dev/null || {
         print_error "Falha ao sincronizar templates/"
+        _self_upgrade_rollback
         exit 1
     }
 
@@ -3209,7 +3249,7 @@ cmd_self_upgrade() {
 
     # Sincroniza arquivos raiz essenciais
     print_step "Sincronizando arquivos raiz..."
-    for root_file in VERSION CHANGELOG.md README.md install.sh; do
+    for root_file in VERSION CHANGELOG.md README.md install.sh MANIFEST.json; do
         if [ -f "$source_dir/$root_file" ]; then
             cp -f "$source_dir/$root_file" "$global_install/$root_file" 2>/dev/null || true
         fi
@@ -3223,6 +3263,11 @@ cmd_self_upgrade() {
     new_version=$("$global_install/bin/aidev" --version 2>/dev/null | sed -E 's/aidev v//' || echo "")
     if [ -n "$new_version" ]; then
         print_info "Verificado: aidev v$new_version"
+    fi
+
+    # Limpar backup apos sucesso (manter apenas ultimo)
+    if [ -d "$backup_global" ]; then
+        print_info "Backup da versao anterior salvo em: $backup_global"
     fi
 }
 

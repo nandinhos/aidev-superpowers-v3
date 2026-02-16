@@ -16,39 +16,49 @@ AIDEV_GLOBAL_DIR="${AIDEV_GLOBAL_DIR:-$HOME/.aidev-superpowers}"
 # Arquivos críticos que devem estar sincronizados
 AIDEV_SYNC_FILES=(
     "bin/aidev"
-    "lib/core.sh"
-    "lib/context-monitor.sh"
+    "lib/cache.sh"
     "lib/checkpoint-manager.sh"
-    "lib/sprint-manager.sh"
-    "lib/loader.sh"
     "lib/cli.sh"
-    "lib/state.sh"
-    "lib/templates.sh"
+    "lib/config-merger.sh"
+    "lib/context-compressor.sh"
+    "lib/context-git.sh"
+    "lib/context-monitor.sh"
+    "lib/core.sh"
+    "lib/deploy-sync.sh"
     "lib/detection.sh"
+    "lib/error-recovery.sh"
+    "lib/fallback-generator.sh"
+    "lib/feature-lifecycle.sh"
     "lib/file-ops.sh"
-    "lib/memory.sh"
+    "lib/i18n.sh"
     "lib/kb.sh"
     "lib/lessons.sh"
-    "lib/metrics.sh"
+    "lib/llm-guard.sh"
+    "lib/loader.sh"
+    "lib/manifest.sh"
     "lib/mcp.sh"
     "lib/mcp-bridge.sh"
-    "lib/release.sh"
-    "lib/i18n.sh"
-    "lib/triggers.sh"
-    "lib/cache.sh"
-    "lib/config-merger.sh"
+    "lib/memory.sh"
+    "lib/metrics.sh"
+    "lib/migration.sh"
     "lib/orchestration.sh"
     "lib/plans.sh"
+    "lib/release.sh"
+    "lib/sprint-guard.sh"
+    "lib/sprint-manager.sh"
+    "lib/state.sh"
     "lib/system.sh"
+    "lib/templates.sh"
+    "lib/triggers.sh"
+    "lib/upgrade.sh"
     "lib/validation.sh"
-    "lib/yaml-parser.sh"
-    "lib/deploy-sync.sh"
-    "lib/feature-lifecycle.sh"
     "lib/version-check.sh"
-    "lib/error-recovery.sh"
+    "lib/yaml-parser.sh"
     "VERSION"
     "CHANGELOG.md"
     "README.md"
+    "MANIFEST.json"
+    "install.sh"
 )
 
 # ============================================================================
@@ -233,8 +243,27 @@ deploy_sync_to_global() {
         fi
     done
     
+    # Sincroniza diretórios inteiros (templates, migrations)
+    for sync_dir in "templates" "migrations"; do
+        if [ -d "$local_path/$sync_dir" ]; then
+            if [ "$dry_run" = true ]; then
+                echo "  [SIMULAR] $sync_dir/ (diretório)"
+            else
+                if command -v rsync &>/dev/null; then
+                    rsync -a "$local_path/$sync_dir/" "$AIDEV_GLOBAL_DIR/$sync_dir/" 2>/dev/null && \
+                        echo "  ✅ $sync_dir/ (rsync)" || \
+                        echo "  ❌ $sync_dir/ (erro rsync)"
+                else
+                    cp -r "$local_path/$sync_dir/"* "$AIDEV_GLOBAL_DIR/$sync_dir/" 2>/dev/null && \
+                        echo "  ✅ $sync_dir/ (cp -r)" || \
+                        echo "  ❌ $sync_dir/ (erro cp)"
+                fi
+            fi
+        fi
+    done
+
     echo ""
-    
+
     if [ "$dry_run" = true ]; then
         echo "📊 Simulação concluída"
         echo "   Arquivos a sincronizar: $synced_count"

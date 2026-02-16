@@ -1,0 +1,22 @@
+# LLM Execution Limits
+
+> Limites imutaveis para controle de escopo e auditoria de acoes da LLM.
+> Gerado por AI Dev Superpowers 4.4.0.
+
+## Limits
+- MAX_FILES_PER_CYCLE=10
+- MAX_LINES_PER_FILE=200
+
+## Protected Paths
+Arquivos classificados como `core`, `state` ou `user` no MANIFEST.json
+sao automaticamente protegidos pelo LLM Guard e nao podem ser modificados
+diretamente pela LLM.
+
+## Audit
+Todas as decisoes do LLM Guard sao registradas em:
+- `.aidev/state/audit.log` (log de auditoria)
+- `.aidev/state/unified.json` → `confidence_log` (decisoes com score)
+
+## Customizacao
+Para ajustar limites, edite os valores acima. O LLM Guard le este arquivo
+em tempo de execucao via `llm_guard_enforce_limits()`.

@@ -129,6 +129,9 @@ load_module_with_deps() {
         "sprint-manager")
             load_module "core"
             ;;
+        "manifest")
+            load_module "core"
+            ;;
         *)
             # Módulo desconhecido, tenta carregar core como dependência base
             load_module "core" 2>/dev/null || true

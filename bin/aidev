@@ -264,6 +264,12 @@ cmd_upgrade() {
     fi
     print_info "Stack: $CLI_STACK | Plataforma: $platform"
 
+    # Carregar manifesto se disponivel
+    load_module "manifest" 2>/dev/null || true
+    if type manifest_load &>/dev/null; then
+        manifest_load 2>/dev/null || true
+    fi
+
     # Backup antes de atualizar
     print_step "Criando backup..."
     local backup_dir="$install_path/.aidev/backups/$(date +%Y%m%d%H%M%S)"

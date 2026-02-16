@@ -1,0 +1,52 @@
+{
+  "manifest_version": "1.0.0",
+  "aidev_version": "4.3.0",
+  "categories": {
+    "core": {
+      "policy": "never_modify_in_project",
+      "description": "CLI internals - bin, lib, templates. Gerenciado por self-upgrade."
+    },
+    "template": {
+      "policy": "overwrite_unless_customized",
+      "description": "Gerado a partir de templates/. Protegido se customizado pelo usuario."
+    },
+    "config": {
+      "policy": "merge_on_upgrade",
+      "description": "Configuracoes do projeto. Merge inteligente em upgrades."
+    },
+    "state": {
+      "policy": "never_overwrite",
+      "description": "Estado de runtime. Gitignored. Nunca sobrescrito."
+    },
+    "generated": {
+      "policy": "regenerate_on_demand",
+      "description": "Cache e artefatos compilados. Regenerados automaticamente."
+    },
+    "user": {
+      "policy": "never_touch",
+      "description": "Conteudo criado pelo usuario. Nunca modificado pelo framework."
+    }
+  },
+  "files": {
+    "bin/aidev": "core",
+    "lib/*.sh": "core",
+    "templates/**/*.tmpl": "core",
+    "VERSION": "core",
+    "MANIFEST.json": "core",
+    "install.sh": "core",
+    ".aidev/agents/*.md": "template",
+    ".aidev/skills/*/SKILL.md": "template",
+    ".aidev/rules/*.md": "template",
+    ".aidev/triggers/*.yaml": "template",
+    ".aidev/AI_INSTRUCTIONS.md": "template",
+    ".aidev/QUICKSTART.md": "template",
+    "CLAUDE.md": "config",
+    ".aidev/mcp/*.json": "config",
+    ".aidev/state/*": "state",
+    ".aidev/.cache/*": "generated",
+    ".aidev/plans/**": "user",
+    ".aidev/memory/kb/*.md": "user",
+    ".aidev/backups/**": "user",
+    ".aidev/docs/**": "user"
+  }
+}

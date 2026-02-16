@@ -236,9 +236,15 @@ EOF
     set_state_value "style" "$style"
     set_state_value "initialized_at" "$(date -Iseconds)"
 
+    # Grava versao do projeto (MANIFEST.local.json)
+    load_module "migration" 2>/dev/null || true
+    if type migration_stamp &>/dev/null; then
+        migration_stamp "$install_path" 2>/dev/null || true
+    fi
+
     # Sumário final
     print_summary "$CLI_MODE" "$CLI_STACK"
-    
+
     print_success "$(_ "init_success")"
 }
 
@@ -343,6 +349,18 @@ cmd_upgrade() {
     if type upgrade_record_checksums &>/dev/null; then
         print_step "Registrando checksums..."
         upgrade_record_checksums "$install_path"
+    fi
+
+    # Executa migracoes se necessario
+    load_module "migration" 2>/dev/null || true
+    if type migration_needed &>/dev/null; then
+        if migration_needed "$install_path" 2>/dev/null; then
+            local proj_version
+            proj_version=$(migration_get_project_version "$install_path")
+            print_step "Executando migracoes ($proj_version -> $AIDEV_VERSION)..."
+            migration_execute "$install_path" "$proj_version" "$AIDEV_VERSION" 2>/dev/null || true
+        fi
+        migration_stamp "$install_path" 2>/dev/null || true
     fi
 
     print_summary "upgrade" "$CLI_STACK"

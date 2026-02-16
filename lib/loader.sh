@@ -142,6 +142,10 @@ load_module_with_deps() {
             load_module "manifest"
             load_module "state"
             ;;
+        "migration")
+            load_module "core"
+            load_module "state"
+            ;;
         *)
             # Módulo desconhecido, tenta carregar core como dependência base
             load_module "core" 2>/dev/null || true

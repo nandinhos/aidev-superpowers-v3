@@ -552,25 +552,33 @@ cmd_status() {
     
     # Progresso da Sessão (Lê do estado unificado)
     local unified_state_file="$install_path/.aidev/state/unified.json"
-    local active_intent="N/A"
-    local intent_desc="N/A"
-    local active_skill="N/A"
-    local last_checkpoint="N/A"
+    local active_intent=""
+    local intent_desc=""
+    local active_skill=""
+    local last_checkpoint=""
+    local current_fase=""
+    local current_sprint=""
 
     if [ -f "$unified_state_file" ] && command -v jq >/dev/null 2>&1; then
-        active_intent=$(jq -r '.active_intent // "N/A"' "$unified_state_file")
-        intent_desc=$(jq -r '.intent_description // "N/A"' "$unified_state_file")
-        active_skill=$(jq -r '.active_skill // "N/A"' "$unified_state_file")
-        last_checkpoint=$(jq -r '.rollback_stack[0].description // "N/A"' "$unified_state_file")
+        active_intent=$(jq -r '.active_intent // empty' "$unified_state_file")
+        intent_desc=$(jq -r '.intent_description // empty' "$unified_state_file")
+        active_skill=$(jq -r '.active_skill // empty' "$unified_state_file")
+        last_checkpoint=$(jq -r '.rollback_stack[-1].description // empty' "$unified_state_file")
+        current_fase=$(jq -r '.current_fase // empty' "$unified_state_file")
+        current_sprint=$(jq -r '.current_sprint // empty' "$unified_state_file")
     fi
 
-    # Exibe dashboard dinâmico
-    print_section "Progresso (Em Tempo Real)"
-    echo "  Intent:     $active_intent"
-    echo "  Descrição:  $intent_desc"
-    echo "  Skill:      $active_skill"
-    echo "  Checkout:   $last_checkpoint"
-    echo "  Fase/Sprint: ${current_fase:-3} / ${current_sprint:-4}"
+    # Exibe progresso apenas se ha dados ativos
+    if [ -n "$active_intent" ] || [ -n "$active_skill" ]; then
+        print_section "Progresso (Em Tempo Real)"
+        [ -n "$active_intent" ] && echo "  Intent:     $active_intent"
+        [ -n "$intent_desc" ] && echo "  Descrição:  $intent_desc"
+        [ -n "$active_skill" ] && echo "  Skill:      $active_skill"
+        [ -n "$last_checkpoint" ] && echo "  Checkpoint: $last_checkpoint"
+        if [ -n "$current_fase" ] || [ -n "$current_sprint" ]; then
+            echo "  Fase/Sprint: ${current_fase:-0} / ${current_sprint:-0}"
+        fi
+    fi
     
     # Histórico Git Recente
     if [ -d "$install_path/.git" ]; then

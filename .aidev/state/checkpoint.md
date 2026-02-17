@@ -1,25 +1,37 @@
 # Checkpoint - 2026-02-16
 
-## Concluido
-- Refinamento v1: CLAUDE.md, generic.md, orchestrator.md, AI_INSTRUCTIONS.md, writing-plans (commit c8d3e46)
-- Sprint 1 do plano v4.4: Sistema de Manifesto (commit b9b565e)
-- Sprint 2 do plano v4.4: Motor de Upgrade seguro com checksum e dry-run (commit a49145c)
-- Sprint 3 do plano v4.4: Guardrails de Execucao LLM (commit fa05c3c)
-- Sprint 4 do plano v4.4: Cobertura de Testes + Bugfixes Criticos (commit 93283ad)
-- Sprint 5 do plano v4.4: Versionamento de Templates + Sistema de Migracao
-  - lib/migration.sh criado (5 funcoes publicas + 1 helper interno)
-  - migrations/ diretorio criado com .gitkeep
-  - tests/unit/test-migration.sh criado (20 assertions, todas passando)
-  - lib/loader.sh integrado (migration no mapa de deps com core, state)
-  - bin/aidev cmd_init() integrado (migration_stamp cria MANIFEST.local.json)
-  - bin/aidev cmd_upgrade() integrado (migration_needed + migration_execute + migration_stamp)
-
-## Status
+## Status Geral
 - Plano de refinamento v4.4: TODOS OS 5 SPRINTS CONCLUIDOS
+- Branch: main (pushed to origin)
+- Working tree: limpo
 
-## Decisoes Tomadas
-- MANIFEST.local.json armazena project_version, cli_version_at_init, last_upgrade, files
-- migration_needed retorna 0 (precisa) se MANIFEST.local.json nao existe ou versao difere
-- Scripts de migracao seguem naming: VERSION-descricao.sh (ex: 4.2.0-add-feature.sh)
-- migration_execute exporta MIGRATION_INSTALL_PATH para uso dentro dos scripts
-- Integracoes sao graceful (2>/dev/null || true) para nao bloquear se modulo falhar
+## Concluido
+
+### Sprints 1-5 (Plano v4.4 completo)
+
+| Sprint | Commit | Descricao | Testes |
+|--------|--------|-----------|--------|
+| 1 | b9b565e | Sistema de Manifesto (MANIFEST.json, lib/manifest.sh) | 26 |
+| 2 | a49145c | Motor de Upgrade seguro (checksum, dry-run, backup) | ~20 |
+| 3 | fa05c3c | Guardrails LLM (lib/llm-guard.sh, audit.log) | 27 |
+| 4 | 93283ad | Bugfixes (cmd_feature dup, rules no upgrade) + cobertura | 35 |
+| 5 | b06546a | Migracao incremental (lib/migration.sh, MANIFEST.local.json) | 20 |
+
+### Passo 1: Push para origin - CONCLUIDO
+- 6 commits pushados com sucesso (e8919a3..b06546a)
+
+## Em Progresso
+- Passo 2: Verificacao end-to-end (roteiro do plano v4.4)
+
+## Roteiro E2E (do plano)
+1. Rodar suite completa de testes
+2. Testar init em projeto limpo
+3. Verificar manifesto (MANIFEST.json + MANIFEST.local.json)
+4. Customizar agent e testar upgrade (preserva customizacao)
+5. Verificar checksums
+6. Verificar llm-guard (llm-limits.md instalado)
+7. Testar self-upgrade com dry-run
+
+## Contexto para retomar
+- Plano completo: .aidev/plans/backlog/refinamento-framework-v4.4.md
+- Secao "Verificacao End-to-End" no final do plano

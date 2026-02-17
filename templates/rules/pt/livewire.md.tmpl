@@ -1,0 +1,105 @@
+# Livewire Stack Rules
+
+## Project Structure
+```
+app/
+├── Http/Controllers/
+├── Livewire/
+│   ├── Components/
+│   └── Forms/
+├── Models/
+├── Services/
+resources/views/
+├── livewire/
+├── components/
+├── layouts/
+tests/Feature/
+tests/Unit/
+```
+
+## Naming Conventions
+- **Components**: `UserProfile`, `OrderList`
+- **Forms**: `CreateUserForm`, `EditPostForm`
+- **Models**: `User`, `Post` (singular)
+- **Services**: `UserService`, `PaymentService`
+- **Views**: `livewire/user-profile.blade.php` (kebab-case)
+
+## Livewire Patterns
+
+### Components
+- Um componente por feature
+- `wire:model` para data binding
+- Events para comunicação entre componentes
+- AlpineJS para interatividade client-side
+
+```php
+class UserProfile extends Component
+{
+    public User $user;
+
+    public function mount(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function render(): View
+    {
+        return view('livewire.user-profile');
+    }
+}
+```
+
+### Forms
+- Validação via `$rules`
+- `wire:model.live` para validação em tempo real
+- Flash messages para feedback
+
+### Events
+- `$this->dispatch()` para emitir eventos
+- `#[On('event-name')]` para ouvir eventos
+- Evitar cascatas de eventos
+
+## Laravel Base Patterns
+
+### Controllers (API)
+- Single responsibility
+- Form Requests para validação
+- Resources para respostas API
+
+### Models
+- Relationships bem definidos
+- Scopes para queries comuns
+- Soft deletes quando apropriado
+
+### Testing
+- Feature tests para endpoints HTTP
+- Livewire testing com `Livewire::test()`
+- Factories para dados de teste
+
+```php
+public function test_user_profile_displays_name(): void
+{
+    $user = User::factory()->create(['name' => 'Test']);
+
+    Livewire::test(UserProfile::class, ['user' => $user])
+        ->assertSee('Test');
+}
+```
+
+## Artisan Commands
+```bash
+# Testing
+php artisan test --filter=UserTest
+
+# Livewire
+php artisan make:livewire UserProfile
+php artisan livewire:stubs
+
+# Migrations
+php artisan migrate
+php artisan migrate:fresh --seed
+
+# Cache
+php artisan config:clear
+php artisan cache:clear
+```

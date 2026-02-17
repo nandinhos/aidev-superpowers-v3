@@ -1707,17 +1707,23 @@ install_rules() {
     fi
 
     if [ -f "$generic_template" ]; then
-        process_template "$generic_template" "$rules_dir/generic.md"
+        local output="$rules_dir/generic.md"
+        if should_write_file "$output"; then
+            process_template "$generic_template" "$output"
+        fi
     fi
-    
+
     # Instala rule específica da stack
     local stack_template="$AIDEV_ROOT_DIR/templates/rules/$lang_suffix/${stack}.md.tmpl"
     if [ ! -f "$stack_template" ]; then
         stack_template="$AIDEV_ROOT_DIR/templates/rules/${stack}.md.tmpl"
     fi
-    
+
     if [ -f "$stack_template" ]; then
-        process_template "$stack_template" "$rules_dir/${stack}.md"
+        local output="$rules_dir/${stack}.md"
+        if should_write_file "$output"; then
+            process_template "$stack_template" "$output"
+        fi
     fi
 }
 
@@ -1734,7 +1740,10 @@ install_llm_limits() {
 
     if [ -f "$llm_template" ]; then
         ensure_dir "$rules_dir"
-        process_template "$llm_template" "$rules_dir/llm-limits.md"
+        local output="$rules_dir/llm-limits.md"
+        if should_write_file "$output"; then
+            process_template "$llm_template" "$output"
+        fi
     fi
 }
 
@@ -1793,7 +1802,7 @@ install_plans() {
         fi
     done
     
-    print_info "Estrutura de planos criada (v4.3.0)"
+    print_info "Estrutura de planos criada"
 }
 
 # Atualiza estrutura de planos em projetos legados (v4.3.0)
@@ -1808,9 +1817,9 @@ upgrade_plans_structure() {
         return 0
     fi
     
-    print_info "Verificando estrutura de planos v4.3.0..."
-    
-    # Diretórios necessários na v4.3.0
+    print_info "Verificando estrutura de planos..."
+
+    # Diretórios necessários para estrutura de planos
     local required_dirs=("backlog" "features" "current" "history" "archive")
     local created_count=0
     
@@ -1848,12 +1857,12 @@ upgrade_plans_structure() {
     
     # Cria/atualiza VERSION se não existir
     if [ ! -f "$path/VERSION" ]; then
-        echo "4.3.0" > "$path/VERSION"
+        echo "${AIDEV_VERSION:-4.4.1}" > "$path/VERSION"
         print_success "Criado: VERSION"
     fi
     
     if [ $created_count -gt 0 ]; then
-        print_info "Estrutura de planos atualizada para v4.3.0 ($created_count itens criados)"
+        print_info "Estrutura de planos atualizada ($created_count itens criados)"
     else
         print_debug "Estrutura de planos já está atualizada"
     fi
@@ -3747,7 +3756,7 @@ cmd_patch() {
     
     case "$patch_type" in
         plans)
-            print_header "AI Dev - Patch de Estrutura de Planos v4.3.0"
+            print_header "AI Dev - Patch de Estrutura de Planos"
             print_info "Aplicando correção para estrutura de planos..."
             
             local templates_dir="$AIDEV_ROOT_DIR/templates/plans"
@@ -3792,7 +3801,7 @@ cmd_patch() {
             echo "Uso: aidev patch [plans]"
             echo ""
             echo "Patches disponíveis:"
-            echo "  plans    Verifica e aplica estrutura de planos v4.3.0"
+            echo "  plans    Verifica e aplica estrutura de planos"
             echo ""
             return 1
             ;;

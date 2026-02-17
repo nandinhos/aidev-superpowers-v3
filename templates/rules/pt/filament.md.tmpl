@@ -1,0 +1,120 @@
+# Filament Stack Rules
+
+## Project Structure
+```
+app/
+├── Filament/
+│   ├── Resources/
+│   ├── Pages/
+│   ├── Widgets/
+│   └── Actions/
+├── Http/Controllers/
+├── Models/
+├── Services/
+├── Livewire/
+resources/views/
+tests/Feature/
+tests/Unit/
+```
+
+## Naming Conventions
+- **Resources**: `UserResource`, `PostResource`
+- **Pages**: `Dashboard`, `Settings`
+- **Widgets**: `StatsOverview`, `LatestOrders`
+- **Actions**: `CreateUser`, `ApproveOrder`
+- **Models**: `User`, `Post` (singular)
+- **Services**: `UserService`, `PaymentService`
+- **Requests**: `StoreUserRequest`, `UpdatePostRequest`
+
+## Filament Patterns
+
+### Resources (CRUD)
+- Um Resource por Model
+- Definir form() e table() no Resource
+- Usar RelationManagers para relacionamentos
+- Actions customizadas para operações especiais
+
+```php
+public static function form(Form $form): Form
+{
+    return $form->schema([
+        TextInput::make('name')->required(),
+        Select::make('status')->options([...]),
+    ]);
+}
+```
+
+### Pages
+- Pages customizadas para views fora do CRUD
+- Usar HasActions para operações
+- Widgets para métricas e gráficos
+
+### Widgets
+- StatsOverviewWidget para KPIs
+- ChartWidget para gráficos
+- TableWidget para listagens rápidas
+
+### Livewire Components
+- Component per feature
+- Wire:model para binding
+- Events para comunicação entre componentes
+- AlpineJS para interatividade client-side
+
+## Laravel Base Patterns
+
+### Controllers (API)
+- Single responsibility
+- Form Requests para validação
+- Resources para respostas API
+- Controllers finos, Services grossos
+
+### Models
+- Relationships bem definidos
+- Accessors/Mutators
+- Scopes para queries comuns
+- Soft deletes quando apropriado
+
+### Services
+- Camada de lógica de negócio
+- Single responsibility
+- Dependency injection
+- Retornar DTOs ou Models
+
+### Testing
+- Feature tests para endpoints HTTP
+- Unit tests para services/actions
+- Factories para dados de teste
+- Database transactions para isolamento
+
+```php
+public function test_user_can_be_created(): void
+{
+    $response = $this->postJson('/api/users', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+    ]);
+
+    $response->assertCreated()
+        ->assertJsonStructure(['data' => ['id', 'name', 'email']]);
+}
+```
+
+## Artisan Commands
+```bash
+# Testing
+php artisan test --filter=UserTest
+
+# Filament
+php artisan make:filament-resource User --generate
+php artisan make:filament-page Settings
+php artisan make:filament-widget StatsOverview
+
+# Migrations
+php artisan migrate
+php artisan migrate:fresh --seed
+
+# Cache
+php artisan config:clear
+php artisan cache:clear
+php artisan filament:clear-cached-components
+```

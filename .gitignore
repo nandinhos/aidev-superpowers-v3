@@ -44,6 +44,7 @@ node_modules/
 .aidev/state/confidence.json
 .aidev/state/unified.json
 .aidev/state/kb_failures.log
+.aidev/state/error-log.json
 .aidev/backups/
 .aidev/analysis/
 .aidev/state/sprints/

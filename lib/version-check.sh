@@ -70,7 +70,7 @@ version_check_compare() {
 # Verifica se há atualização disponível
 # Retorna: 0 (atualizado), 1 (desatualizado), 2 (erro)
 version_check_is_outdated() {
-    local local_version="${1:-$(cat VERSION 2>/dev/null || echo "0.0.0")}"
+    local local_version="${1:-$(cat "$AIDEV_ROOT_DIR/VERSION" 2>/dev/null || echo "0.0.0")}"
     local remote_version
     
     remote_version=$(version_check_get_remote)
@@ -95,7 +95,7 @@ version_check_is_outdated() {
 
 # Mostra alerta se versão estiver desatualizada
 version_check_alert() {
-    local local_version="${1:-$(cat VERSION 2>/dev/null || echo "0.0.0")}"
+    local local_version="${1:-$(cat "$AIDEV_ROOT_DIR/VERSION" 2>/dev/null || echo "0.0.0")}"
     local remote_version
     
     remote_version=$(version_check_get_remote)
@@ -128,7 +128,7 @@ version_check_alert() {
 
 # Mostra informações detalhadas de versão
 version_check_info() {
-    local local_version="${1:-$(cat VERSION 2>/dev/null || echo "0.0.0")}"
+    local local_version="${1:-$(cat "$AIDEV_ROOT_DIR/VERSION" 2>/dev/null || echo "0.0.0")}"
     local remote_version
     
     remote_version=$(version_check_get_remote)

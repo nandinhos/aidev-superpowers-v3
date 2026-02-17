@@ -33,13 +33,9 @@ error_handler() {
     # Analisa erro e sugere correções automáticas
     if type error_recovery_handler &>/dev/null; then
         local last_error=$(tail -n 5 /tmp/aidev_last_error 2>/dev/null || echo "Erro não capturado")
+        # error_recovery_handler exibe sugestões via stderr (visivel no terminal)
+        # e retorna JSON de análise via stdout (salvo no arquivo)
         error_recovery_handler "$exit_code" "$line_no" "${BASH_COMMAND:-}" "$last_error" > /tmp/aidev_error_analysis.json
-        
-        # Mostra sugestões ao usuário
-        local analysis=$(cat /tmp/aidev_error_analysis.json)
-        if [ -n "$analysis" ]; then
-            error_recovery_suggest "$analysis"
-        fi
     fi
     
     echo ""
@@ -1822,7 +1818,7 @@ upgrade_plans_structure() {
         if [ ! -d "$plans_dir/$dir" ]; then
             ensure_dir "$plans_dir/$dir"
             print_success "Criado: .aidev/plans/$dir/"
-            ((created_count++))
+            created_count=$((created_count + 1))
         fi
     done
     
@@ -1846,7 +1842,7 @@ upgrade_plans_structure() {
         if [ -f "$template_path" ] && [ ! -f "$output_path" ]; then
             process_template "$template_path" "$output_path"
             print_success "Criado: .aidev/plans/$output_dir/README.md"
-            ((created_count++))
+            created_count=$((created_count + 1))
         fi
     done
     
@@ -3779,7 +3775,7 @@ cmd_patch() {
             for template in "${readme_templates[@]}"; do
                 if [ ! -f "$templates_dir/$template.tmpl" ]; then
                     print_warning "Template não encontrado: $template.tmpl"
-                    ((missing++))
+                    missing=$((missing + 1))
                 fi
             done
             

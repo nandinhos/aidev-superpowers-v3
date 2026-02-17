@@ -475,7 +475,7 @@ try_with_recovery() {
             bash -c "$recovery_command"
         fi
         
-        ((attempt++))
+        ((attempt++)) || true
     done
     
     print_error "Falha apos $max_attempts tentativas: $command"

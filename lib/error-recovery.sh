@@ -264,10 +264,10 @@ error_recovery_handler() {
     # Registra para análise futura
     error_recovery_log "$analysis"
     
-    # Mostra sugestões
-    error_recovery_suggest "$analysis"
-    
-    # Retorna análise para uso posterior
+    # Mostra sugestões (para stderr, para não poluir stdout com texto)
+    error_recovery_suggest "$analysis" >&2
+
+    # Retorna análise JSON em stdout para uso posterior
     echo "$analysis"
 }
 

@@ -285,7 +285,7 @@ validate_mcp_config() {
                 print_success ".mcp.json válido"
             else
                 print_error ".mcp.json JSON inválido"
-                ((errors++))
+                ((errors++)) || true
             fi
         else
             print_info ".mcp.json existe (jq não disponível para validação)"

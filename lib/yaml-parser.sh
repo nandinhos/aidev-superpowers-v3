@@ -201,7 +201,7 @@ validate_yaml() {
         # Verifica tabs (YAML usa espaços)
         if [[ "$line" =~ ^$'\t' ]]; then
             print_warning "Linha $line_num: Tab detectado (use espaços)"
-            ((errors++))
+            ((errors++)) || true
         fi
         
         # Verifica indentação inconsistente

@@ -154,7 +154,7 @@ validate_config() {
     mode=$(config_get "mode" "full")
     if [[ ! "$mode" =~ ^(new|refactor|minimal|full)$ ]]; then
         print_error "Mode inválido na config: $mode"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Valida language
@@ -162,7 +162,7 @@ validate_config() {
     lang=$(config_get "language" "pt-BR")
     if [[ ! "$lang" =~ ^(pt-BR|en)$ ]]; then
         print_error "Language inválido na config: $lang"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     return $errors

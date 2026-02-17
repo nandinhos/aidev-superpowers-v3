@@ -459,7 +459,7 @@ ckpt_sync_all() {
             mcp__basic-memory__write_note \
                 title="Checkpoint: $ckpt_id" \
                 content="$note_content" \
-                directory="checkpoints" 2>/dev/null && ((count++))
+                directory="checkpoints" 2>/dev/null && { ((count++)) || true; }
         fi
     done
     

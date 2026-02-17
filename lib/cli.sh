@@ -281,19 +281,19 @@ validate_args() {
     if [[ ! "$CLI_MODE" =~ ^(new|refactor|minimal|full)$ ]]; then
         print_error "Modo inválido: $CLI_MODE"
         echo "Modos válidos: new, refactor, minimal, full"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Validar PRD para modo new
     if [ "$CLI_MODE" = "new" ] && [ -z "$CLI_PRD_PATH" ]; then
         print_error "--mode new requer --prd <path>"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Validar PRD existe
     if [ -n "$CLI_PRD_PATH" ] && [ ! -f "$CLI_PRD_PATH" ]; then
         print_error "PRD não encontrado: $CLI_PRD_PATH"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Validar stack
@@ -301,21 +301,21 @@ validate_args() {
     if [[ ! "$CLI_STACK" =~ ^($valid_stacks)$ ]]; then
         print_error "Stack inválida: $CLI_STACK"
         echo "Stacks válidas: laravel, filament, livewire, node, react, nextjs, python, generic, etc."
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Validar plataforma
     local valid_platforms="auto|antigravity|claude-code|gemini|opencode|codex|rovo|aider|cursor|continue|generic"
     if [[ ! "$CLI_PLATFORM" =~ ^($valid_platforms)$ ]]; then
         print_error "Plataforma inválida: $CLI_PLATFORM"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Validar idioma
     if [[ ! "$CLI_LANGUAGE" =~ ^(pt-BR|en)$ ]]; then
         print_error "Idioma inválido: $CLI_LANGUAGE"
         echo "Idiomas válidos: pt-BR, en"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     if [ $errors -gt 0 ]; then

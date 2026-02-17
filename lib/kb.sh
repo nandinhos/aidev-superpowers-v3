@@ -53,7 +53,7 @@ build_lessons_index() {
         local context=$(sed -n '2,4p' "$lesson_file" | tr '\n' ' ' | cut -c1-200)
         
         lessons+=("{\"file\":\"$filename\",\"title\":\"$title\",\"tags\":\"$tags\",\"keywords\":\"$keywords\",\"context\":\"$context\",\"created\":$created}")
-        ((count++))
+        ((count++)) || true
     done
     
     # Gera JSON
@@ -218,7 +218,7 @@ sync_lessons_cross_project() {
         
         if [ "$should_sync" = true ]; then
             cp "$lesson_file" "$SHARED_KB_DIR/"
-            ((synced++))
+            ((synced++)) || true
         fi
     done
     
@@ -266,7 +266,7 @@ import_shared_lessons() {
         
         if [ "$should_import" = true ] && [ ! -f "$kb_path/$filename" ]; then
             cp "$lesson_file" "$kb_path/"
-            ((imported++))
+            ((imported++)) || true
         fi
     done
     

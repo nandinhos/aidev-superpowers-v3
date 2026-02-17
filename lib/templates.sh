@@ -169,13 +169,13 @@ validate_template() {
     
     if [ "$open_ifs" -ne "$close_ifs" ]; then
         print_error "Condicionais não balanceadas: $open_ifs aberturas, $close_ifs fechamentos"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     # Verifica variáveis malformadas
     if echo "$content" | grep -qE '\{\{[^}]*$'; then
         print_error "Variável não fechada encontrada"
-        ((errors++))
+        ((errors++)) || true
     fi
     
     if [ $errors -eq 0 ]; then

@@ -172,7 +172,7 @@ EOF
         esac
 
         echo "- $status_icon **$task_id** ($task_status) - $task_name [Feature $task_feature]"
-        ((i++))
+        ((i++)) || true
     done
 
     cat << EOF
@@ -246,10 +246,10 @@ EOF
                     echo "- **Arquivo**: nao encontrado no filesystem"
                 fi
                 echo ""
-                ((files_found++))
+                ((files_found++)) || true
             fi
         fi
-        ((i++))
+        ((i++)) || true
     done
 
     if [ "$files_found" -eq 0 ]; then

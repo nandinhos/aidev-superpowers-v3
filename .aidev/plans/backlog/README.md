@@ -6,6 +6,16 @@
 
 ## 🎯 Ideias em Backlog
 
+### Sistema de Atualização Interativa Universal
+**Arquivo:** [sistema-atualizacao-interativa-universal.md](sistema-atualizacao-interativa-universal.md)  
+**Status:** Em Implementação  
+**Prioridade:** Alta  
+**Criado:** 2026-02-18
+
+**Descrição:** Sistema interativo de atualização que verifica versão em qualquer comando, pergunta ao usuário se deseja atualizar, e executa atualização em duas frentes (global + projeto) preservando customizações
+
+---
+
 ### MCP Universal Install
 **Arquivo:** [mcp-universal-install.md](mcp-universal-install.md)  
 **Status:** Ideia  
@@ -31,10 +41,11 @@ Quando uma ideia for priorizada:
 
 ## 📊 Estatísticas
 
-- **Total de ideias:** 1
+- **Total de ideias:** 2
 - **Prontas para priorização:** 0
+- **Em implementação:** 1
 - **Em análise:** 1
 
 ---
 
-*Última atualização: 2026-02-13*
+*Última atualização: 2026-02-18*

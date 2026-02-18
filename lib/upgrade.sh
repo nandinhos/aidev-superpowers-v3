@@ -280,3 +280,94 @@ upgrade_record_checksums() {
 
     return 0
 }
+
+# ============================================================================
+# upgrade_project_if_needed - Atualiza projeto sem sobrescrever customizações
+# ============================================================================
+# Uso: upgrade_project_if_needed
+# Atualiza arquivos de sistema do projeto (preserva customizações)
+upgrade_project_if_needed() {
+    local install_path="${CLI_INSTALL_PATH:-.}"
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+    
+    local aidev_dir="$install_path/.aidev"
+    
+    if [ ! -d "$aidev_dir" ]; then
+        return 0
+    fi
+    
+    local aidev_source="$AIDEV_ROOT_DIR"
+    
+    if [ -z "$aidev_source" ] || [ ! -d "$aidev_source" ]; then
+        echo "   ⚠️  Fonte de upgrade não encontrada"
+        return 1
+    fi
+    
+    echo "   ▶ Verificando atualizações do projeto..."
+    echo ""
+    
+    local updated_count=0
+    local skipped_count=0
+    
+    local files_to_update=(
+        "triggers"
+        "AI_INSTRUCTIONS.md"
+        "QUICKSTART.md"
+    )
+    
+    for item in "${files_to_update[@]}"; do
+        if [ -d "$aidev_source/templates/$item" ]; then
+            local target_dir="$aidev_dir/$item"
+            mkdir -p "$target_dir"
+            
+            if rsync -a --checksum "$aidev_source/templates/$item/" "$target_dir/" 2>/dev/null; then
+                echo "   ✓ $item/ atualizado"
+                ((updated_count++)) || true
+            else
+                echo "   ✗ Falha ao atualizar $item/"
+            fi
+        elif [ -f "$aidev_source/templates/$item.tmpl" ]; then
+            local target_file="$aidev_dir/$item"
+            if [ -f "$target_file" ]; then
+                local target_hash
+                target_hash=$(upgrade_compute_checksum "$target_file")
+                local source_hash
+                source_hash=$(upgrade_compute_checksum "$aidev_source/templates/$item.tmpl")
+                
+                if [ "$target_hash" != "$source_hash" ]; then
+                    if upgrade_should_overwrite "$target_file" "$install_path" 2>/dev/null; then
+                        cp "$aidev_source/templates/$item.tmpl" "$target_file"
+                        echo "   ✓ $item atualizado"
+                        ((updated_count++)) || true
+                    else
+                        echo "   ⊘ $item preservado (customizado)"
+                        ((skipped_count++)) || true
+                    fi
+                fi
+            else
+                cp "$aidev_source/templates/$item.tmpl" "$target_file"
+                echo "   ✓ $item criado"
+                ((updated_count++)) || true
+            fi
+        fi
+    done
+    
+    echo ""
+    
+    if [ $updated_count -gt 0 ]; then
+        echo "   ✓ Projeto atualizado: $updated_count arquivo(s)"
+    fi
+    
+    if [ $skipped_count -gt 0 ]; then
+        echo "   ⊘ Preservados: $skipped_count arquivo(s) customizado(s)"
+    fi
+    
+    if [ $updated_count -eq 0 ] && [ $skipped_count -eq 0 ]; then
+        echo "   ✓ Projeto já está atualizado"
+    fi
+    
+    return 0
+}
+
+# Exporta funções para uso externo
+export -f upgrade_project_if_needed

@@ -67,9 +67,9 @@ load_module "error-recovery" 2>/dev/null || true
 # Carrega módulo de verificação de versão (silencioso)
 load_module "version-check" 2>/dev/null || true
 
-# Verifica atualizações em background (não bloqueia)
-if type version_check_alert &>/dev/null; then
-    (version_check_alert > /dev/tty 2>/dev/null &)
+# Verifica atualizações e pergunta ao usuário (síncrono)
+if type version_check_prompt &>/dev/null; then
+    version_check_prompt
 fi
 
 # Tenta carregar ambiente (idioma, segredos)

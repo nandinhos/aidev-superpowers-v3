@@ -162,6 +162,76 @@ version_check_info() {
     echo "   Repositório: $GITHUB_RELEASES_URL"
 }
 
+# Prompt interativo para atualização
+# Verifica versão e pergunta ao usuário se deseja atualizar
+version_check_prompt() {
+    local local_version="${1:-$(cat "$AIDEV_ROOT_DIR/VERSION" 2>/dev/null || echo "0.0.0")}"
+    local remote_version
+    
+    remote_version=$(version_check_get_remote)
+    
+    if [ "$remote_version" = "unknown" ]; then
+        return 0
+    fi
+    
+    local cmp
+    cmp=$(version_check_compare "$local_version" "$remote_version")
+    
+    if [ "$cmp" -eq "-1" ]; then
+        echo ""
+        echo "╔════════════════════════════════════════════════════════════════╗"
+        echo "║  ⚠️  NOVA VERSÃO DISPONÍVEL                                     ║"
+        echo "╚════════════════════════════════════════════════════════════════╝"
+        echo ""
+        echo "   Versão local:  $local_version"
+        echo "   Versão remota: $remote_version"
+        echo ""
+        
+        local response
+        read -r -p "   Deseja atualizar agora? [y/N] " response
+        
+        case "$response" in
+            [yY][eE][sS]|[yY]|[sS][iI][mM]|[sS])
+                echo ""
+                echo "   ▶ Iniciando atualização..."
+                echo ""
+                
+                if type cmd_self_upgrade &>/dev/null; then
+                    cmd_self_upgrade
+                    local upgrade_status=$?
+                    
+                    if [ $upgrade_status -eq 0 ]; then
+                        echo ""
+                        echo "   ✓ Instalação global atualizada!"
+                        echo ""
+                        
+                        if type upgrade_project_if_needed &>/dev/null; then
+                            upgrade_project_if_needed
+                        fi
+                    else
+                        echo ""
+                        echo "   ✗ Falha na atualização da instalação global"
+                        echo "   Atualização de projeto cancelada"
+                    fi
+                else
+                    echo "   ✗ Comando self-upgrade não disponível"
+                    echo "   Execute manualmente: aidev self-upgrade"
+                fi
+                ;;
+            *)
+                echo ""
+                echo "   Use 'aidev self-upgrade' quando desejar atualizar"
+                echo "   Ou visite: $GITHUB_RELEASES_URL"
+                echo ""
+                ;;
+        esac
+        
+        return 1
+    fi
+    
+    return 0
+}
+
 # ============================================================================
 # CLI HANDLER
 # ============================================================================
@@ -203,4 +273,5 @@ export -f version_check_compare
 export -f version_check_is_outdated
 export -f version_check_alert
 export -f version_check_info
+export -f version_check_prompt
 export -f version_check_cli

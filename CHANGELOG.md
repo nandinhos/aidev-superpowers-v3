@@ -5,6 +5,8 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.5.1] - 2026-02-18
+
 ## [4.4.0] - 2026-02-16
 
 ### Guardrails de Execucao LLM (Sprint 3)

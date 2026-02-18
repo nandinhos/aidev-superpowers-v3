@@ -1,32 +1,30 @@
 # Checkpoint - 2026-02-18
 
 ## Status Geral
-- Projeto: CONCLUIDO
+- Projeto: EM ANDAMENTO
 - Versao: v4.5.0
 - Branch: main (up to date with origin)
 
 ## Concluido
 
-### v4.5.0 - Otimizacao de Bootstrap + Workflows
+### Sistema de Atualizacao Interativa Universal
 
 | Sprint | Descricao | Status |
 |--------|-----------|--------|
-| 1 | Activation Snapshot | ✅ |
-| 2 | Workflow Sync | ✅ |
-| 3 | Workflow Commit | ✅ |
-| 4 | Workflow Release | ✅ |
-| 5 | Integracao LLM | ✅ |
+| 1 | Criar funcao version_check_prompt() | ✅ |
+| 2 | Modificar hook global em bin/aidev | ✅ |
+| 3 | Implementar upgrade_project_if_needed() | ✅ |
+| 4 | Testar fluxo completo (dry-run) | ✅ |
 
-### Workflows Testados
+### Testes Realizados
 
-| Workflow | Status |
-|----------|--------|
-| `aidev commit "msg"` | ✅ Testado |
-| `aidev cp "msg"` (commit + push) | ✅ Testado |
-| `aidev sync` | ✅ |
-| `aidev validate` | ✅ |
-| `aidev release` | ✅ |
+| Teste | Status |
+|-------|--------|
+| `version_check_prompt` (versao desatualizada) | ✅ |
+| `aidev self-upgrade --dry-run` | ✅ |
+| `aidev upgrade --dry-run` | ✅ |
+| Verificacao interativa | ✅ |
 
-## Proximo Projeto
-- Pronto para iniciar novo projeto
-- Instalacao global atualizada (v4.5.0)
+## Proximo Passo
+- Commit e push das alteracoes
+- Testar em ambiente de producao

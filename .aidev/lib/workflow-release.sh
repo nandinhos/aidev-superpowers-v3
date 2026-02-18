@@ -3,6 +3,14 @@
 # Uso: aidev release [patch|minor|major]
 
 AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
+# Detectar se AIDEV_ROOT aponta para .aidev ou para root
+if [[ "$AIDEV_ROOT" == *".aidev" ]]; then
+    PROJECT_ROOT="$(dirname "$AIDEV_ROOT")"
+else
+    PROJECT_ROOT="$AIDEV_ROOT"
+fi
+
 source "$AIDEV_ROOT/lib/activation-snapshot.sh"
 source "$AIDEV_ROOT/lib/workflow-sync.sh"
 source "$AIDEV_ROOT/lib/workflow-commit.sh"
@@ -12,12 +20,12 @@ source "$AIDEV_ROOT/lib/workflow-commit.sh"
 # ============================================================================
 get_current_version() {
     # Tentar ler de VERSION ou package.json
-    if [ -f "$AIDEV_ROOT/VERSION" ]; then
-        cat "$AIDEV_ROOT/VERSION"
-    elif [ -f "package.json" ]; then
-        jq -r '.version' package.json 2>/dev/null || echo "0.0.0"
-    elif [ -f "pyproject.toml" ]; then
-        grep "^version" pyproject.toml | sed 's/version = "//' | sed 's/"//' | tr -d ' '
+    if [ -f "$PROJECT_ROOT/VERSION" ]; then
+        cat "$PROJECT_ROOT/VERSION"
+    elif [ -f "$PROJECT_ROOT/package.json" ]; then
+        jq -r '.version' "$PROJECT_ROOT/package.json" 2>/dev/null || echo "0.0.0"
+    elif [ -f "$PROJECT_ROOT/pyproject.toml" ]; then
+        grep "^version" "$PROJECT_ROOT/pyproject.toml" | sed 's/version = "//' | sed 's/"//' | tr -d ' '
     else
         echo "0.0.0"
     fi
@@ -175,9 +183,9 @@ cmd_release() {
     
     # 5. Atualizar versão em arquivos
     echo "5. Atualizando versão..."
-    if [ -f "$AIDEV_ROOT/VERSION" ]; then
-        echo "$new_version" > "$AIDEV_ROOT/VERSION"
-        git add "$AIDEV_ROOT/VERSION"
+    if [ -f "$PROJECT_ROOT/VERSION" ]; then
+        echo "$new_version" > "$PROJECT_ROOT/VERSION"
+        git add "$PROJECT_ROOT/VERSION"
     fi
     
     # 6. Commit de release

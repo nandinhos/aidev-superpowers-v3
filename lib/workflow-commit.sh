@@ -83,21 +83,14 @@ cmd_commit() {
     fi
     
     echo "=== Workflow Commit ==="
-    echo "PWD: $(pwd)"
     
-    # Debug
-    echo "Debug: checking for changes..."
-    git status --porcelain
-    echo "---"
-    
-    # Verificar se há alterações - usando subshell para testar
-    local has_changes
+    # Verificar se há alterações
+    local has_changes=0
     if git diff-index --quiet HEAD -- 2>/dev/null; then
         has_changes=0
     else
         has_changes=1
     fi
-    echo "Has changes: $has_changes"
     
     if [ $has_changes -eq 0 ]; then
         echo "Nenhuma alteração para commit"

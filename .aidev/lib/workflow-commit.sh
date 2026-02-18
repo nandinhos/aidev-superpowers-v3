@@ -4,6 +4,15 @@
 # Uso: aidev cp "mensagem"  (commit + push)
 
 AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
+# Detectar diretório do projeto
+if [[ "$AIDEV_ROOT" == *".aidev" ]]; then
+    PROJECT_ROOT="$(dirname "$AIDEV_ROOT")"
+    cd "$PROJECT_ROOT"
+else
+    PROJECT_ROOT="$AIDEV_ROOT"
+fi
+
 source "$AIDEV_ROOT/lib/activation-snapshot.sh"
 source "$AIDEV_ROOT/lib/workflow-sync.sh"
 
@@ -76,7 +85,14 @@ cmd_commit() {
     echo "=== Workflow Commit ==="
     
     # Verificar se há alterações
-    if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+    local has_changes=0
+    if git diff-index --quiet HEAD -- 2>/dev/null; then
+        has_changes=0
+    else
+        has_changes=1
+    fi
+    
+    if [ $has_changes -eq 0 ]; then
         echo "Nenhuma alteração para commit"
         return 1
     fi

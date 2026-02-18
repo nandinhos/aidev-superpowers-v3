@@ -84,12 +84,12 @@ cmd_commit() {
     
     echo "=== Workflow Commit ==="
     
-    # Verificar se há alterações
+    # Verificar se há alterações (incluindo arquivos não rastreados)
     local has_changes=0
-    if git diff-index --quiet HEAD -- 2>/dev/null; then
-        has_changes=0
-    else
+    if [ -n "$(git status --porcelain)" ]; then
         has_changes=1
+    else
+        has_changes=0
     fi
     
     if [ $has_changes -eq 0 ]; then

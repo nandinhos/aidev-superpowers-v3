@@ -1,37 +1,46 @@
-# Checkpoint - 2026-02-16
+# Checkpoint - 2026-02-18
 
 ## Status Geral
-- Plano de refinamento v4.4: TODOS OS 5 SPRINTS CONCLUIDOS
-- Branch: main (pushed to origin)
-- Working tree: limpo
+- Plano v4.5 (Otimização de Bootstrap): CONCLUIDO
+- Branch: main (alterações pendentes)
+- Framework: v4.5.0 (snapshot + workflows)
 
 ## Concluido
 
-### Sprints 1-5 (Plano v4.4 completo)
+### Sprint v4.5: Otimização de Bootstrap + Workflows
 
-| Sprint | Commit | Descricao | Testes |
-|--------|--------|-----------|--------|
-| 1 | b9b565e | Sistema de Manifesto (MANIFEST.json, lib/manifest.sh) | 26 |
-| 2 | a49145c | Motor de Upgrade seguro (checksum, dry-run, backup) | ~20 |
-| 3 | fa05c3c | Guardrails LLM (lib/llm-guard.sh, audit.log) | 27 |
-| 4 | 93283ad | Bugfixes (cmd_feature dup, rules no upgrade) + cobertura | 35 |
-| 5 | b06546a | Migracao incremental (lib/migration.sh, MANIFEST.local.json) | 20 |
+| Sprint | Descricao | Arquivos |
+|--------|-----------|----------|
+| 1 | Activation Snapshot | `lib/activation-snapshot.sh`, `state/activation_snapshot.json` |
+| 2 | Workflow Sync | `lib/workflow-sync.sh` (hook de sincronização automática) |
+| 3 | Workflow Commit | `lib/workflow-commit.sh` (commit + commit+push) |
+| 4 | Workflow Release | `lib/workflow-release.sh` (release completo) |
+| 5 | Integração LLM | `.activation-triggers.json`, `SKILL.md` atualizado |
 
-### Passo 1: Push para origin - CONCLUIDO
-- 6 commits pushados com sucesso (e8919a3..b06546a)
+### Novos Comandos CLI
+
+| Comando | Descricao |
+|---------|-----------|
+| `aidev commit "msg"` | Commit com detecção automática de tipo |
+| `aidev cp "msg"` | Commit + Push |
+| `aidev sync` | Sincroniza snapshot |
+| `aidev validate` | Valida conformidade do sistema |
+
+### Metricas v4.5
+
+- Tempo de ativação: ~10s (antes: ~45s)
+- Tokens na ativação: ~400 (antes: ~1000)
+- Passos até dashboard: 2-3 (antes: 6)
 
 ## Em Progresso
-- Passo 2: Verificacao end-to-end (roteiro do plano v4.4)
+- Nenhum - todos os sprints concluidos
 
-## Roteiro E2E (do plano)
-1. Rodar suite completa de testes
-2. Testar init em projeto limpo
-3. Verificar manifesto (MANIFEST.json + MANIFEST.local.json)
-4. Customizar agent e testar upgrade (preserva customizacao)
-5. Verificar checksums
-6. Verificar llm-guard (llm-limits.md instalado)
-7. Testar self-upgrade com dry-run
+## Proximas Acoes Sugeridas
+1. Executar testes completos da suite
+2. Commit das mudancas v4.5
+3. Testar ativação em diferentes LLMs (Claude Code, Gemini CLI)
 
-## Contexto para retomar
-- Plano completo: .aidev/plans/backlog/refinamento-framework-v4.4.md
-- Secao "Verificacao End-to-End" no final do plano
+## Contexto para Retomar
+- Arquivos de workflow: `.aidev/lib/workflow-*.sh`
+- Snapshot: `.aidev/state/activation_snapshot.json`
+- Triggers: `.aidev/.activation-triggers.json`

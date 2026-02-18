@@ -3848,6 +3848,22 @@ main() {
         agent)
             cmd_agent "$@"
             ;;
+        commit|c)
+            source "$AIDEV_LIB_DIR/workflow-commit.sh"
+            cmd_commit "$@"
+            ;;
+        cp)
+            source "$AIDEV_LIB_DIR/workflow-commit.sh"
+            cmd_commit_push "$@"
+            ;;
+        sync)
+            source "$AIDEV_LIB_DIR/workflow-sync.sh"
+            sync_workflow "$@"
+            ;;
+        validate)
+            source "$AIDEV_LIB_DIR/workflow-sync.sh"
+            validate_conformity
+            ;;
         cache)
             cmd_cache "$@"
             ;;

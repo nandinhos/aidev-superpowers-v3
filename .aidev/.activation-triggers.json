@@ -1,0 +1,75 @@
+{
+  "version": "4.5.0",
+  "description": "Comandos de ativação reconhecidos por cada LLM",
+  
+  "triggers": {
+    "opencode": [
+      "aidev agent",
+      "superpowers",
+      "aidev"
+    ],
+    "claude_code": [
+      "aidev agent",
+      "superpowers",
+      "aidev"
+    ],
+    "claude_desktop": [
+      "aidev agent",
+      "superpowers"
+    ],
+    "gemini": [
+      "aidev agent"
+    ],
+    "antigravity": [
+      "aidev agent"
+    ]
+  },
+  
+  "snapshots": {
+    "location": ".aidev/state/activation_snapshot.json",
+    "auto_generate": true,
+    "max_age_hours": 1
+  },
+  
+  "workflows": {
+    "commit": {
+      "command": "aidev commit",
+      "aliases": ["c", "commit"],
+      "auto_sync": true
+    },
+    "commit_push": {
+      "command": "aidev cp",
+      "aliases": ["cp", "push"],
+      "auto_sync": true
+    },
+    "release": {
+      "command": "aidev release",
+      "aliases": ["release"],
+      "types": ["patch", "minor", "major"],
+      "auto_sync": true
+    },
+    "sync": {
+      "command": "aidev sync",
+      "aliases": ["sync", "sincronizar"],
+      "auto_sync": false
+    },
+    "validate": {
+      "command": "aidev validate",
+      "aliases": ["validate", "check", "doctor"],
+      "auto_sync": false
+    }
+  },
+  
+  "default_response": {
+    "project": "aidev-superpowers-v3-1",
+    "stack": "generic",
+    "quick_status_source": "snapshot",
+    "dashboard": "minimal"
+  },
+  
+  "optimization": {
+    "use_snapshot_cache": true,
+    "skip_full_orchestrator": true,
+    "max_tokens_activation": 500
+  }
+}

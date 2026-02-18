@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-4.5.1-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-412%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -39,7 +39,28 @@ aidev init
 
 ---
 
----
+ ## 🚀 Novidades da V4.5 `(Sistema de Atualização Interativa)`
+
+ ### Atualização Interativa Universal
+ Agora o sistema verifica automaticamente se há uma nova versão disponível ao executar qualquer comando. O usuário é perguntado se deseja atualizar e o sistema faz tudo automaticamente:
+ ```bash
+ # Ao executar qualquer comando aidev, se houver nova versão:
+ # - Exibe alerta de nova versão disponível
+ # - Pergunta: "Deseja atualizar agora? [y/N]"
+ # - Se sim: atualiza instalação global + projeto (preservando customizações)
+ ```
+
+ ### Self-Upgrade com Preservação
+ O sistema de upgrade agora preserva agentes, skills e rules customizados:
+ ```bash
+ aidev self-upgrade        # Atualiza instalação global
+ aidev upgrade --dry-run  # Preview do que seria atualizado
+ ```
+
+### Versão Dinâmica
+Correção de versões hardcoded em arquivos de estado, agora usando a variável `$AIDEV_VERSION` corretamente em todos os pontos do sistema.
+
+ ---
 
  ## 🌐 Novidades da V4.0 `(Orquestração por Estado Ubíquo)`
 

@@ -225,7 +225,7 @@ generate_activation_snapshot() {
     # Montar JSON final
     local snapshot=$(cat <<EOF
 {
-  "version": "4.5.0",
+  "version": "$AIDEV_VERSION",
   "generated_at": "$timestamp",
   "framework_version": "$framework_version",
   "runtime": "$runtime",

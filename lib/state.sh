@@ -65,7 +65,7 @@ state_init() {
         
         cat > "$STATE_FILE" << EOF
 {
-  "version": "3.2.0",
+  "version": "${AIDEV_VERSION:-unknown}",
   "session": {
     "id": "$session_id",
     "started_at": "$timestamp",

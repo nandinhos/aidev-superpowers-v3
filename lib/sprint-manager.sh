@@ -103,7 +103,7 @@ sprint_sync_to_unified() {
     # Se unified.json nao existe, cria estrutura basica
     if [ ! -f "$unified_file" ]; then
         mkdir -p "$(dirname "$unified_file")"
-        echo '{"version": "3.8.0", "session": {}}' > "$unified_file"
+        echo "{\"version\": \"${AIDEV_VERSION:-unknown}\", \"session\": {}}" > "$unified_file"
     fi
 
     # Verifica se jq esta disponivel

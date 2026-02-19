@@ -138,15 +138,72 @@ release_bump_version() {
         fi
     fi
 
-    # 3. README.md (Badges)
+    # 3. README.md (Badges e Novidades)
     local readme_file="$project_path/README.md"
     if [ -f "$readme_file" ]; then
+        # Atualiza badge de versão
         if sed -i "s/version-${escaped_old}-blue/version-${new_version}-blue/g" "$readme_file"; then
             print_success "README.md (badges)"
             ((files_updated++)) || true
         else
-            print_error "README.md"
+            print_error "README.md (badges)"
             ((files_failed++)) || true
+        fi
+        
+        # Adiciona seção de novidades para nova versão major.minor
+        local major_minor_version="${new_version%.*}"
+        local escaped_major="${major_minor_version//./\\.}"
+        
+        # Verifica se já existe seção para esta versão
+        if ! grep -q "## .*V${escaped_major}" "$readme_file" 2>/dev/null; then
+            # Extrai major para emoji (usa 🚀 como padrão)
+            local major_num=$(echo "$major_minor_version" | cut -d. -f1)
+            local emoji="🚀"
+            case "$major_num" in
+                4) emoji="🚀" ;;
+                5) emoji="✨" ;;
+                6) emoji="🔮" ;;
+                *) emoji="🚀" ;;
+            esac
+            
+            # Cria a nova seção de novidades
+            local new_features_section="---
+
+ ## ${emoji} Novidades da V${major_minor_version} \`(Sua Feature Aqui)\`
+
+ ### Subtítulo Principal
+ Descrição da principal novidade desta versão.
+
+ \`\`\`bash
+ # Exemplo de comando
+ aidev novo-comando  # Descrição
+ \`\`\`
+
+ ### Outra Feature
+ Breve descrição de outra funcionalidade importante.
+
+"
+            
+            # Insere após o segundo --- e antes da primeira seção de novidades
+            # Procura pelo padrão: ---
+---
+
+ ## 🌐 Novidades
+            if sed -i "0,/^---$/{n; /^---$/{n; /^$/a\\
+${new_features_section}
+}}" "$readme_file" 2>/dev/null; then
+                print_success "README.md (novidades v${major_minor_version})"
+                ((files_updated++)) || true
+            else
+                # Fallback: tenta inserir antes da primeira seção de novidades
+                if sed -i "/^## .*Novidades da V[0-9]/i\\
+${new_features_section}" "$readme_file" 2>/dev/null; then
+                    print_success "README.md (novidades v${major_minor_version})"
+                    ((files_updated++)) || true
+                else
+                    print_warning "README.md (novidades não inseridas)"
+                fi
+            fi
         fi
     fi
 

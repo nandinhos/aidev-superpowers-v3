@@ -1,6 +1,6 @@
 # Fix: Versão Hardcoded e MCP Merge em aidev upgrade
 
-> **Status:** Em execução
+> **Status:** Concluído
 > **Prioridade:** Alta
 > **Sprint:** v4.5.2
 > **Data criação:** 2026-02-19
@@ -41,3 +41,27 @@ são executados pelo LLM sem o CLI externo carregado, então `AIDEV_VERSION` nun
 ## Release
 
 Bump para `v4.5.2` (patch) após implementação.
+
+---
+
+## ✅ Conclusão
+
+**Status:** Concluído  
+**Data Conclusão:** 2026-02-19  
+**Timestamp:** 2026-02-20T02:56:58Z
+
+**Notas:**
+3 bugs corrigidos: versao hardcoded em .aidev/lib, MCP merge em --force, migration_stamp sem CLI
+
+### Checklist de Conclusão
+
+- [x] Implementação completa
+- [x] Testes passando
+- [x] Documentação atualizada
+- [x] Revisão de código realizada
+- [x] Merge para branch principal
+- [x] Feature arquivada em `.aidev/plans/history/`
+
+---
+
+*Arquivo movido automaticamente para histórico em: 2026-02-20T02:56:58Z*

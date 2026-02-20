@@ -71,6 +71,14 @@
       "intent": "Feature concluída e arquivada",
       "feature_title": "Test: Lifecycle Automation Feature",
       "history_file": ".aidev/plans/history/2026-02/test-lifecycle-automation-13.md"
+    },
+    {
+      "ts": "2026-02-20T02:56:58Z",
+      "action": "feature_complete",
+      "target": "fix-version-hardcoded-mcp-merge",
+      "intent": "Feature concluída e arquivada",
+      "feature_title": "Fix: Versão Hardcoded e MCP Merge em aidev upgrade",
+      "history_file": ".aidev/plans/history/2026-02/fix-version-hardcoded-mcp-merge-19.md"
     }
   ]
 }

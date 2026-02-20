@@ -19,17 +19,9 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-### Monitor de Janela de Contexto
+*Nenhuma feature em execucao no momento.*
 
-**Arquivo:** [context-window-monitor.md](context-window-monitor.md)
-**Iniciada:** 2026-02-20
-
-| Sprint | Objetivo | Status |
-|---|---|---|
-| Sprint 1 | Indicador de pressão de contexto em aidev status | Pendente |
-| Sprint 2 | Comando aidev checkpoint | Pendente |
-
-**Proximo passo:** Iniciar Sprint 1
+Use `aidev start <feature-id>` para iniciar uma feature de features/.
 
 ---
 

@@ -46,178 +46,354 @@ checkpoint e snapshot a cada transição e conclusão de task/sprint/milestone.
 ---
 
 ## Ideias Concluídas / Removidas
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Item | Destino | Data |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 |---|---|---|
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Sistema de Atualização Interativa | Concluído em `history/2026-02/` | 2026-02-18 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | MCP Universal Install | Removido (fora de escopo) | 2026-02-18 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Basic Memory Graceful Integration | Movido para `features/` → `current/` | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 ---
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 *Última atualização: 2026-02-20*
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |
 | Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | Concluido em history/ | 2026-02-20 |
+| Feature: Monitor de Janela de Contexto | Concluido em history/ | 2026-02-20 |

@@ -1,7 +1,7 @@
 # ROADMAP AI DEV SUPERPOWERS
 
 > Indice de planejamento — conteudo detalhado em history/
-> Versao atual: **v4.5.5** | Atualizado: 2026-02-20
+> Versao atual: **v4.5.6** | Atualizado: 2026-02-20
 
 ---
 
@@ -29,8 +29,7 @@
 
 | Feature | Prioridade |
 |---------|------------|
-| Feature: Monitor de Janela de Contexto | > Prioridade: Média |
-| Automação do Ciclo de Vida de Features | ## Prioridade |
+
 
 ---
 
@@ -38,7 +37,7 @@
 
 | Periodo | Features | Detalhes |
 |---------|----------|---------|
-| 2026-02 | 15 feature(s) | [ver](history/2026-02/) |
+| 2026-02 | 20 feature(s) | [ver](history/2026-02/) |
 
 ---
 

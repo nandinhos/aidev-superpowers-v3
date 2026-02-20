@@ -1,6 +1,6 @@
 # Feature: Monitor de Janela de Contexto
 
-> **Status:** Backlog
+> **Status:** Concluido
 > **Prioridade:** Média
 > **Criado:** 2026-02-20
 

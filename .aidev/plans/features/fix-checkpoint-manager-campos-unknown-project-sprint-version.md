@@ -1,6 +1,6 @@
 # Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version
 
-**Status:** Em andamento
+**Status:** Concluido
 **Prioridade:** Baixa
 **Criado:** 2026-02-20
 

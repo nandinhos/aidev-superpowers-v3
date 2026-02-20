@@ -18,7 +18,7 @@
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | 2026-02 | [ver](2026-02/fix-self-upgrade-guard-versao-mesma-versao-20.md) |
 | Fix: Sincronizar feature-lifecycle-cli.sh para instalação global | 2026-02 | [ver](2026-02/fix-sync-feature-lifecycle-cli-global-20.md) |
 | Fix: Versão Hardcoded e MCP Merge em aidev upgrade | 2026-02 | [ver](2026-02/fix-version-hardcoded-mcp-merge-19.md) |
-| Feature: lifecycle 100 0x0p+0utomatizado - backlog para current sem fricção | 2026-02 | [ver](2026-02/lifecycle-100-automatizado-backlog-para-current-sem-friccao-20.md) |
+| Feature: Lifecycle 100% Automatizado - backlog para current sem fricção | 2026-02 | [ver](2026-02/lifecycle-100-automatizado-backlog-para-current-sem-friccao-20.md) |
 | Feature: MCP Laravel Boost Auto-Configuration | 2026-02 | [ver](2026-02/mcp-laravel-boost-auto-config-12.md) |
 | Feature: Configuração Dinâmica do MCP Laravel Boost em Docker | 2026-02 | [ver](2026-02/mcp-laravel-docker-auto-config-12.md) |
 | Feature: Otimizar READMEs de backlog/ e features/ | 2026-02 | [ver](2026-02/otimizar-readmes-de-backlog-e-features-manter-apenas-5-mais-recentes-e-indice-consolidado-em-history-20.md) |

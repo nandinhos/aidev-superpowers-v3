@@ -200,6 +200,15 @@ generate_activation_snapshot() {
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     local framework_version="${AIDEV_VERSION:-$(cat "$AIDEV_ROOT/../VERSION" 2>/dev/null | tr -d '[:space:]')}"
     framework_version="${framework_version:-4.5.1}"
+
+    # Detecta disponibilidade do Basic Memory (Sprint 1)
+    local bm_available="false"
+    if [ -f "$_SCRIPT_DIR/mcp-detect.sh" ]; then
+        source "$_SCRIPT_DIR/mcp-detect.sh" 2>/dev/null || true
+        unset _AIDEV_BM_DETECTED
+        mcp_detect_basic_memory 2>/dev/null && bm_available="true" || true
+        unset _AIDEV_BM_DETECTED
+    fi
     
     # Obter informações do git
     local current_branch=$(git branch --show-current 2>/dev/null || echo "unknown")
@@ -231,6 +240,7 @@ generate_activation_snapshot() {
   "generated_at": "$timestamp",
   "framework_version": "$framework_version",
   "runtime": "$runtime",
+  "basic_memory_available": $bm_available,
   "git_context": {
     "current_branch": "$current_branch",
     "upstream_tracking": "$upstream",

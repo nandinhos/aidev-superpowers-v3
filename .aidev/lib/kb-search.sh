@@ -5,23 +5,27 @@
 KB_DIR="${KB_DIR:-.aidev/memory/kb}"
 KB_INDEX="${KB_INDEX:-.aidev/state/kb-index.json}"
 
+# Carrega detecção unificada de MCPs (Sprint 1: basic-memory-graceful-integration)
+_KB_SEARCH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$_KB_SEARCH_DIR/mcp-detect.sh" 2>/dev/null || true
+
 # ============================================================================
 # VERIFICAÇÃO DE MCPs
 # ============================================================================
 
 _kb_check_mcp_availability() {
     local available_mcp=()
-    
-    # Verifica Basic Memory (variável de ambiente ou comando)
-    if [ -n "$MCP_BASIC_MEMORY_AVAILABLE" ] || command -v basic-memory &> /dev/null; then
+
+    # Verifica Basic Memory via detecção unificada multi-runtime
+    if mcp_detect_basic_memory 2>/dev/null; then
         available_mcp+=("basic-memory")
     fi
-    
+
     # Verifica Serena
-    if [ -n "$MCP_SERENA_AVAILABLE" ] || command -v serena &> /dev/null; then
+    if [ -n "$MCP_SERENA_AVAILABLE" ] || command -v serena &>/dev/null; then
         available_mcp+=("serena")
     fi
-    
+
     echo "${available_mcp[@]}"
 }
 

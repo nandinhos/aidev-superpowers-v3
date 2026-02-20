@@ -20,19 +20,25 @@ mcp_bridge_init() {
 }
 
 # Verifica se um servidor MCP está disponível e funcional no ambiente
-# Uso: if mcp_bridge_check "laravel-boost"; then ...
+# Uso: if mcp_bridge_check "basic-memory"; then ...
+# Delega para mcp_detect_available (Sprint 1: basic-memory-graceful-integration)
 mcp_bridge_check() {
     local server_name="$1"
-    
-    # Simulação inicial: No ambiente Antigravity/Gemini Code Assist,
-    # verificamos a existência de ferramentas ou variáveis de ambiente.
-    # TODO: Implementar verificação real via mcp_list_servers se disponível
-    
-    if [ -n "$ANTIGRAVITY_AGENT" ]; then
-        # No Antigravity, assumimos que os MCPs listados na configuração estão lá
-        return 0
+
+    # Tenta carregar detecção unificada se disponível
+    local aidev_lib
+    aidev_lib="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.aidev/lib" 2>/dev/null && pwd)"
+    if [ -f "$aidev_lib/mcp-detect.sh" ] && ! type mcp_detect_available &>/dev/null; then
+        source "$aidev_lib/mcp-detect.sh" 2>/dev/null || true
     fi
-    
+
+    if type mcp_detect_available &>/dev/null; then
+        mcp_detect_available "$server_name"
+        return $?
+    fi
+
+    # Fallback legado: Antigravity assume MCPs disponíveis
+    [ -n "$ANTIGRAVITY_AGENT" ] && return 0
     return 1
 }
 

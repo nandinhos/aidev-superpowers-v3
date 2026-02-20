@@ -32,12 +32,20 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 ---
 
 ## Features Concluídas
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature | History | Data |
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 |---|---|---|
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Refinamento Framework v4.4 | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Sistema Atualização Interativa | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 ---
+| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 
 *Última atualização: 2026-02-20*

@@ -1131,67 +1131,90 @@ cmd_cache() {
 }
 
 # Subcomando: start
-# Inicia sessao interativa do modo agente (exibe instrucoes de ativacao)
+# Move feature de features/ para current/ e inicia execucao
+# Uso: aidev start <feature-id>
 cmd_start() {
-    parse_args "$@"
+    local feature_id="${1:-}"
 
-    local install_path="${CLI_INSTALL_PATH:-.}"
-    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
-
-    if ! has_aidev_installed "$install_path"; then
-        print_error "AI Dev nao esta instalado neste diretorio"
-        print_info "Execute 'aidev init' primeiro"
+    if [ -z "$feature_id" ]; then
+        print_error "Uso: aidev start <feature-id>"
+        print_info "Ex: aidev start feature-lifecycle-automation"
+        print_info "Para ativar o modo agente: aidev agent"
         exit 1
     fi
 
-    local project_name=$(detect_project_name "$install_path")
-    local stack=$(detect_stack "$install_path")
-    local platform=$(detect_platform)
+    load_module "feature-lifecycle-cli" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle-cli nao encontrado"
+        exit 1
+    }
 
-    print_header "AI Dev Superpowers - Modo Agente"
-    echo ""
-    print_success "Projeto: $project_name"
-    print_info "Stack: $stack | Plataforma: $platform"
-    echo ""
+    flc_feature_start "$feature_id"
+}
 
-    print_section "Como Ativar o Modo Agente"
-    echo ""
-    echo "  Opcao 1: Diga para sua IA:"
-    printf "    ${CYAN}\"modo agente\"${NC} ou ${CYAN}\"aidev\"${NC} ou ${CYAN}\"superpowers\"${NC}\n"
-    echo ""
-    echo "  Opcao 2: Gere um prompt completo:"
-    printf "    ${CYAN}aidev agent${NC}\n"
-    echo ""
-    echo "  Opcao 3: Cole o prompt diretamente:"
-    printf "    ${CYAN}aidev agent | pbcopy${NC}  (macOS)\n"
-    printf "    ${CYAN}aidev agent | xclip -selection clipboard${NC}  (Linux)\n"
-    echo ""
+# Subcomando: done
+# Marca sprint/task como concluida, atualiza current/README, gera checkpoint
+# Uso: aidev done <sprint-id> [descricao]
+cmd_done() {
+    local sprint_id="${1:-}"
+    shift || true
+    local description="${*:-}"
 
-    print_section "Agentes Disponiveis"
-    if [ -d "$install_path/.aidev/agents" ]; then
-        for agent in "$install_path/.aidev/agents"/*.md; do
-            if [ -f "$agent" ]; then
-                echo "  - $(basename "$agent" .md)"
-            fi
-        done
+    if [ -z "$sprint_id" ]; then
+        print_error "Uso: aidev done <sprint-id> [descricao]"
+        print_info "Ex: aidev done sprint-1 \"Implementacao concluida\""
+        exit 1
     fi
-    echo ""
 
-    print_section "Skills Disponiveis"
-    if [ -d "$install_path/.aidev/skills" ]; then
-        for skill_dir in "$install_path/.aidev/skills"/*/; do
-            if [ -d "$skill_dir" ]; then
-                echo "  - $(basename "$skill_dir")"
-            fi
-        done
+    load_module "feature-lifecycle-cli" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle-cli nao encontrado"
+        exit 1
+    }
+
+    flc_sprint_done "$sprint_id" "$description"
+}
+
+# Subcomando: complete
+# Finaliza feature: move current/ -> history/, atualiza todos os READMEs e ROADMAP
+# Uso: aidev complete <feature-id>
+cmd_complete() {
+    local feature_id="${1:-}"
+
+    if [ -z "$feature_id" ]; then
+        print_error "Uso: aidev complete <feature-id>"
+        print_info "Ex: aidev complete feature-lifecycle-automation"
+        exit 1
     fi
-    echo ""
 
-    print_section "Proximos Passos"
-    echo "  1. Abra sua IA (Claude Code, Cursor, etc.)"
-    echo "  2. Diga 'modo agente' ou use 'aidev agent'"
-    echo "  3. O orquestrador assumira o controle"
-    echo ""
+    load_module "feature-lifecycle-cli" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle-cli nao encontrado"
+        exit 1
+    }
+
+    flc_feature_complete "$feature_id"
+}
+
+# Subcomando: plan
+# Cria novo item no backlog com template padronizado
+# Uso: aidev plan "Titulo da Feature"
+cmd_plan() {
+    local title="${1:-}"
+
+    if [ -z "$title" ]; then
+        print_error "Uso: aidev plan \"Titulo da Feature\""
+        print_info "Ex: aidev plan \"Autenticacao OAuth\""
+        exit 1
+    fi
+
+    load_module "feature-lifecycle-cli" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle-cli nao encontrado"
+        exit 1
+    }
+
+    flc_plan_create "$title"
 }
 
 # Subcomando: lessons
@@ -3997,6 +4020,15 @@ main() {
             ;;
         feature)
             cmd_feature "$@"
+            ;;
+        done)
+            cmd_done "$@"
+            ;;
+        complete)
+            cmd_complete "$@"
+            ;;
+        plan)
+            cmd_plan "$@"
             ;;
         error-recovery)
             cmd_error_recovery "$@"

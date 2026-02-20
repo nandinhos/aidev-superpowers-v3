@@ -321,29 +321,47 @@ O usuario pode invocar fluxos completos com comandos simples:
 | `aidev suggest` | Analise de projeto -> Sugestao contextual |
 | `aidev feature complete <id>` | Conclui feature e move para historico |
 
-## Gerenciamento de Features (Novo)
+## Gerenciamento de Features (Lifecycle Automatizado)
 
-Quando uma feature for concluida, voce DEVE:
+O fluxo de lifecycle e **totalmente automatizado** via comandos CLI.
+Use SEMPRE esses comandos — nunca mova arquivos manualmente.
 
-1. **Marcar como concluida**: Atualizar status no arquivo da feature
-2. **Mover para historico**: Arquivar em `.aidev/plans/history/YYYY-MM/`
-3. **Atualizar ROADMAP**: Marcar a feature como completa
-4. **Registrar em context-log**: Para rastreabilidade
+### Fluxo Completo
 
-### Comandos Disponiveis
+```
+backlog/ → features/ → current/ → history/YYYY-MM/
+```
+
+### Comandos de Lifecycle
 
 ```bash
-# Listar features ativas
-aidev feature list
+# 1. Criar ideia no backlog
+aidev plan "Titulo da Feature"
 
-# Concluir uma feature
-aidev feature complete <feature-id> [notas]
+# 2. Iniciar execucao (move features/ → current/)
+aidev start <feature-id>
 
-# Ver status
-aidev feature status
+# 3. Marcar sprint como concluida (atualiza current/README)
+aidev done <sprint-id> "Descricao do que foi feito"
 
-# Ver conteudo de uma feature
-aidev feature show <feature-id>
+# 4. Finalizar feature (move current/ → history/, reconstroi ROADMAP)
+aidev complete <feature-id>
+```
+
+### Comportamento Automatico
+
+A cada transicao (`aidev start`, `aidev done`, `aidev complete`):
+- READMEs afetados sao atualizados automaticamente
+- Checkpoint e gerado automaticamente
+- `git add` dos arquivos afetados e executado
+- Diff staged e exibido para revisao antes do commit
+
+### Comandos Legados (ainda funcionam)
+
+```bash
+aidev feature list           # lista features
+aidev feature status <id>    # ver status
+aidev feature complete <id>  # alternativa para aidev complete
 ```
 
 ### Automacao no Fim de Skill

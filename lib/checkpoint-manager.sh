@@ -89,20 +89,9 @@ ckpt_create() {
         fi
     fi
 
-    # Sync para Basic Memory (Fase 2)
-    # Verifica se sync está habilitado (padrão: false até configuração manual)
-    if [ "${CKPT_SYNC_BASIC_MEMORY:-false}" = "true" ] && [ -f "$ckpt_file" ]; then
-        if type ckpt_to_basic_memory_note &>/dev/null; then
-            # Converte para nota e salva (silenciosamente, não bloqueia se falhar)
-            local note_content
-            note_content=$(ckpt_to_basic_memory_note "$ckpt_file" 2>/dev/null) || true
-            if [ -n "$note_content" ] && type mcp__basic-memory__write_note &>/dev/null; then
-                mcp__basic-memory__write_note \
-                    title="Checkpoint: $ckpt_id" \
-                    content="$note_content" \
-                    directory="checkpoints" 2>/dev/null || true
-            fi
-        fi
+    # Sync para Basic Memory (Sprint 3: graceful via ckpt_sync_to_basic_memory)
+    if [ -f "$ckpt_file" ]; then
+        ckpt_sync_to_basic_memory "$ckpt_file" 2>/dev/null || true
     fi
 
     echo "$ckpt_id"
@@ -381,6 +370,69 @@ EOF
 ---
 *Gerado automaticamente por AI Dev Superpowers v$version*
 EOF
+}
+
+# ============================================================================
+# SYNC GRACEFUL COM BASIC MEMORY (Sprint 3: basic-memory-graceful-integration)
+# ============================================================================
+
+# Sincroniza um checkpoint para o Basic Memory de forma graceful.
+# Se BM disponível: usa mcp__basic-memory__write_note.
+# Se indisponível: fallback para arquivo local em .aidev/memory/kb/checkpoints/.
+# Nunca bloqueia o fluxo principal — sempre retorna 0.
+#
+# Uso: ckpt_sync_to_basic_memory <checkpoint_file>
+ckpt_sync_to_basic_memory() {
+    local ckpt_file="$1"
+
+    # Arquivo inexistente: encerra silenciosamente
+    [ -f "$ckpt_file" ] || return 0
+
+    # Carrega detecção unificada se disponível
+    local _lib_dir
+    _lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.aidev/lib" 2>/dev/null && pwd)" || true
+    if [ -f "$_lib_dir/mcp-detect.sh" ] && ! type mcp_detect_basic_memory &>/dev/null; then
+        source "$_lib_dir/mcp-detect.sh" 2>/dev/null || true
+    fi
+
+    # Gera conteúdo da nota
+    local note_content ckpt_id
+    ckpt_id=$(basename "$ckpt_file" .json)
+    if type ckpt_to_basic_memory_note &>/dev/null; then
+        note_content=$(ckpt_to_basic_memory_note "$ckpt_file" 2>/dev/null) || true
+    fi
+    [ -z "$note_content" ] && note_content=$(cat "$ckpt_file" 2>/dev/null) || true
+
+    # Caminho do fallback local
+    local fallback_dir=".aidev/memory/kb/checkpoints"
+
+    # Tenta via MCP se disponível
+    if type mcp_detect_basic_memory &>/dev/null && mcp_detect_basic_memory 2>/dev/null; then
+        if type mcp__basic-memory__write_note &>/dev/null; then
+            mcp__basic-memory__write_note \
+                title="Checkpoint: $ckpt_id" \
+                content="$note_content" \
+                directory="checkpoints" 2>/dev/null || {
+                # Falha no MCP: fallback local sem propagar erro
+                _ckpt_sync_local_fallback "$ckpt_id" "$note_content" "$fallback_dir"
+            }
+            return 0
+        fi
+    fi
+
+    # Fallback local
+    _ckpt_sync_local_fallback "$ckpt_id" "$note_content" "$fallback_dir"
+    return 0
+}
+
+# Salva nota de checkpoint localmente em .aidev/memory/kb/checkpoints/
+_ckpt_sync_local_fallback() {
+    local ckpt_id="$1"
+    local content="$2"
+    local dest_dir="${3:-.aidev/memory/kb/checkpoints}"
+
+    mkdir -p "$dest_dir" 2>/dev/null || return 0
+    printf '%s\n' "$content" > "$dest_dir/${ckpt_id}.md" 2>/dev/null || true
 }
 
 # ============================================================================

@@ -2,6 +2,7 @@
 
 > Arquivo consolidado para ativacao rapida do modo agente.
 > Leia APENAS este arquivo ao receber "modo agente", "aidev" ou "superpowers".
+> **[CRÍTICO] Caso não consiga confirmar a sua inicialização com o arquivo `.aidev/.cache/activation_context.md`, gere uma mensagem pedindo as informações diretamente para o projeto ou usando o comando `aidev agent`.**
 
 ---
 

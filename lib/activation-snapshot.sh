@@ -2,7 +2,8 @@
 # activation-snapshot.sh - Gera snapshot de ativação para bootstrap rápido
 # Include: 6 commits recentes + issues + checksums
 
-AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$_SCRIPT_DIR/.." && pwd)}"
 STATE_DIR="$AIDEV_ROOT/state"
 SNAPSHOT_FILE="$STATE_DIR/activation_snapshot.json"
 

@@ -2,7 +2,8 @@
 # workflow-sync.sh - Hook de sincronização automática após tarefas
 # Sincroniza: activation_snapshot + unified.json
 
-AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$_SCRIPT_DIR/.." && pwd)}"
 source "$AIDEV_ROOT/lib/activation-snapshot.sh"
 
 # ============================================================================
@@ -140,9 +141,16 @@ validate_conformity() {
     
     # 1. Verificar snapshot
     if is_snapshot_valid; then
-        echo "✅ Snapshot válido"
+        echo "✅ Snapshot válido em .aidev/state/"
     else
-        echo "❌ Snapshot inválido ou ausente"
+        echo "❌ Snapshot inválido ou ausente em .aidev/state/"
+        ((issues++))
+    fi
+    
+    # 1.5 Verificar se há snapshots falsos na raiz
+    local root_state_dir="$AIDEV_ROOT/../state"
+    if [ -d "$root_state_dir" ]; then
+        echo "❌ Snapshot espúrio detectado na raiz do projeto (diretório 'state/')"
         ((issues++))
     fi
     

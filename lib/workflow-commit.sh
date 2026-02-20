@@ -3,7 +3,8 @@
 # Uso: aidev commit "mensagem" [tipo]
 # Uso: aidev cp "mensagem"  (commit + push)
 
-AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AIDEV_ROOT="${AIDEV_ROOT:-$(cd "$_SCRIPT_DIR/.." && pwd)}"
 
 # Detectar diretório do projeto
 if [[ "$AIDEV_ROOT" == *".aidev" ]]; then

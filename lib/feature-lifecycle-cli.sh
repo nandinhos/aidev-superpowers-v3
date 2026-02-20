@@ -191,7 +191,7 @@ flc_feature_start() {
     # Checkpoint automático
     _flc_load_checkpoint
     if type ckpt_create &>/dev/null; then
-        ckpt_create "." "task_started" "Feature iniciada: $feature_title" 2>/dev/null || true
+        ckpt_create "." "task_started" "Feature iniciada: $feature_id - $feature_title" 2>/dev/null || true
     fi
 
     _flc_stage_and_show "$dest_file" "$_FLC_CURRENT_DIR/README.md" "$_FLC_FEATURES_DIR/README.md"
@@ -312,7 +312,7 @@ flc_sprint_done() {
     # Checkpoint automático
     _flc_load_checkpoint
     if type ckpt_create &>/dev/null; then
-        ckpt_create "." "task_completed" "$description — Sprint $sprint_id concluida" 2>/dev/null || true
+        ckpt_create "." "task_completed" "Sprint $sprint_id concluida: $description" 2>/dev/null || true
     fi
 
     _flc_stage_and_show "$readme"
@@ -381,7 +381,7 @@ flc_feature_complete() {
     # Checkpoint automático
     _flc_load_checkpoint
     if type ckpt_create &>/dev/null; then
-        ckpt_create "." "task_completed" "Feature concluida: $feature_title" 2>/dev/null || true
+        ckpt_create "." "task_completed" "Feature concluida: $feature_id - $feature_title" 2>/dev/null || true
     fi
 
     local files_to_stage=(

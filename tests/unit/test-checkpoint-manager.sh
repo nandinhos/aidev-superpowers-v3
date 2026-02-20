@@ -500,6 +500,85 @@ EOF
     rm -rf "$isolated_dir"
 }
 
+# ============================================================================
+# TESTES: fix-checkpoint-manager-campos-unknown (RED phase)
+# ============================================================================
+
+# project nunca deve ser "unknown" — usa basename $PWD como fallback
+test_ckpt_create_project_never_unknown() {
+    local isolated_dir="$(mktemp -d)"
+    ensure_dir "$isolated_dir/.aidev/state/sprints/current/checkpoints"
+    ensure_dir "$isolated_dir/.aidev/state"
+    # unified.json sem project_name para forcar fallback
+    cat > "$isolated_dir/.aidev/state/unified.json" << 'EOF'
+{"version": "3.9.0", "session": {}}
+EOF
+    cat > "$isolated_dir/.aidev/state/sprints/current/sprint-status.json" << 'EOF'
+{"sprint_id": "none", "status": "idle", "overall_progress": {"total_tasks": 0, "completed": 0}}
+EOF
+    local ckpt_id=$(ckpt_create "$isolated_dir" "manual" "Sem project_name")
+    local ckpt_file="$isolated_dir/.aidev/state/sprints/current/checkpoints/${ckpt_id}.json"
+    if command -v jq >/dev/null 2>&1; then
+        local project=$(jq -r '.state_snapshot.session.project_name // "unknown"' "$ckpt_file")
+        assert_not_equals "unknown" "$project" "project nunca deve ser 'unknown' — deve usar fallback"
+    else
+        echo "⚠️  SKIP: jq nao disponivel"
+        ((TESTS_PASSED++))
+    fi
+    rm -rf "$isolated_dir"
+}
+
+# sprint nunca deve ser "unknown" — usa fallback "lifecycle-transition"
+test_ckpt_create_sprint_fallback_lifecycle_transition() {
+    local isolated_dir="$(mktemp -d)"
+    ensure_dir "$isolated_dir/.aidev/state/sprints/current/checkpoints"
+    ensure_dir "$isolated_dir/.aidev/state"
+    cat > "$isolated_dir/.aidev/state/unified.json" << 'EOF'
+{"version": "3.9.0", "session": {"project_name": "myproject"}}
+EOF
+    # sprint-status.json sem sprint_name para forcar fallback
+    cat > "$isolated_dir/.aidev/state/sprints/current/sprint-status.json" << 'EOF'
+{"sprint_id": null, "status": "idle", "overall_progress": {"total_tasks": 0, "completed": 0}}
+EOF
+    local ckpt_id=$(ckpt_create "$isolated_dir" "task_completed" "Feature concluida")
+    local ckpt_file="$isolated_dir/.aidev/state/sprints/current/checkpoints/${ckpt_id}.json"
+    if command -v jq >/dev/null 2>&1; then
+        local sprint_name=$(jq -r '.sprint_snapshot.sprint_name // "unknown"' "$ckpt_file")
+        assert_not_equals "unknown" "$sprint_name" "sprint_name nunca deve ser 'unknown'"
+        assert_not_equals "" "$sprint_name" "sprint_name nao deve ser vazio"
+    else
+        echo "⚠️  SKIP: jq nao disponivel"
+        ((TESTS_PASSED++))
+    fi
+    rm -rf "$isolated_dir"
+}
+
+# version deve vir do VERSION file, nao do unified.json
+test_ckpt_create_version_from_VERSION_file() {
+    local isolated_dir="$(mktemp -d)"
+    ensure_dir "$isolated_dir/.aidev/state/sprints/current/checkpoints"
+    ensure_dir "$isolated_dir/.aidev/state"
+    # unified.json com versao antiga
+    cat > "$isolated_dir/.aidev/state/unified.json" << 'EOF'
+{"version": "1.0.0", "session": {"project_name": "myproject"}}
+EOF
+    cat > "$isolated_dir/.aidev/state/sprints/current/sprint-status.json" << 'EOF'
+{"sprint_id": "none", "status": "idle", "overall_progress": {"total_tasks": 0, "completed": 0}}
+EOF
+    # VERSION file com versao atual
+    echo "9.9.9" > "$isolated_dir/VERSION"
+    local ckpt_id=$(ckpt_create "$isolated_dir" "manual" "Versao do VERSION file")
+    local ckpt_file="$isolated_dir/.aidev/state/sprints/current/checkpoints/${ckpt_id}.json"
+    if command -v jq >/dev/null 2>&1; then
+        local version=$(jq -r '.state_snapshot.version // "unknown"' "$ckpt_file")
+        assert_equals "9.9.9" "$version" "version deve vir do VERSION file, nao do unified.json"
+    else
+        echo "⚠️  SKIP: jq nao disponivel"
+        ((TESTS_PASSED++))
+    fi
+    rm -rf "$isolated_dir"
+}
+
 # MAIN
 echo ""
 echo "╔════════════════════════════════════════════════════════════════╗"
@@ -539,7 +618,10 @@ run_test_suite "Checkpoint Manager Tests" \
     test_ckpt_create_generates_sprint_md_when_enabled \
     test_ckpt_create_generates_guide_when_enabled \
     test_ckpt_create_no_fallback_when_disabled \
-    test_ckpt_create_no_fallback_by_default
+    test_ckpt_create_no_fallback_by_default \
+    test_ckpt_create_project_never_unknown \
+    test_ckpt_create_sprint_fallback_lifecycle_transition \
+    test_ckpt_create_version_from_VERSION_file
 
 rm -rf "$TEST_DIR"
 exit $TESTS_FAILED

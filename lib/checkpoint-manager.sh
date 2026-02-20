@@ -51,6 +51,46 @@ ckpt_create() {
         sprint_snapshot=$(jq '.' "$sprint_file" 2>/dev/null || echo "{}")
     fi
 
+    # Resolve version: prioriza VERSION file sobre unified.json
+    local version_file="$install_path/VERSION"
+    local resolved_version
+    if [ -f "$version_file" ]; then
+        resolved_version=$(tr -d '[:space:]' < "$version_file")
+    fi
+    if [ -z "$resolved_version" ] && command -v jq >/dev/null 2>&1; then
+        resolved_version=$(echo "$state_snapshot" | jq -r '.version // ""' 2>/dev/null || echo "")
+    fi
+    resolved_version="${resolved_version:-unknown}"
+
+    # Resolve project_name: prioriza unified.json, fallback basename do install_path
+    local resolved_project=""
+    if command -v jq >/dev/null 2>&1; then
+        resolved_project=$(echo "$state_snapshot" | jq -r '.session.project_name // ""' 2>/dev/null || echo "")
+    fi
+    if [ -z "$resolved_project" ] || [ "$resolved_project" = "null" ]; then
+        resolved_project=$(basename "$install_path")
+    fi
+
+    # Resolve sprint_name: fallback "lifecycle-transition" quando vazio/null
+    local resolved_sprint_name=""
+    if command -v jq >/dev/null 2>&1; then
+        resolved_sprint_name=$(echo "$sprint_snapshot" | jq -r '.sprint_name // ""' 2>/dev/null || echo "")
+    fi
+    if [ -z "$resolved_sprint_name" ] || [ "$resolved_sprint_name" = "null" ]; then
+        resolved_sprint_name="lifecycle-transition"
+    fi
+
+    # Injeta valores resolvidos nos snapshots
+    if command -v jq >/dev/null 2>&1; then
+        state_snapshot=$(echo "$state_snapshot" | jq \
+            --arg v "$resolved_version" \
+            --arg p "$resolved_project" \
+            '.version = $v | .session.project_name = $p' 2>/dev/null || echo "$state_snapshot")
+        sprint_snapshot=$(echo "$sprint_snapshot" | jq \
+            --arg sn "$resolved_sprint_name" \
+            'if (.sprint_name == null or .sprint_name == "") then .sprint_name = $sn else . end' 2>/dev/null || echo "$sprint_snapshot")
+    fi
+
     # Monta checkpoint JSON com cognitive_context
     if command -v jq >/dev/null 2>&1; then
         jq -n \
@@ -175,13 +215,15 @@ ckpt_generate_restore_prompt() {
     local created=$(jq -r '.created_at // "unknown"' "$ckpt_file")
 
     # Estado
-    local project=$(jq -r '.state_snapshot.session.project_name // "unknown"' "$ckpt_file")
+    local project=$(jq -r '.state_snapshot.session.project_name // ""' "$ckpt_file")
+    [ -z "$project" ] || [ "$project" = "null" ] && project=$(basename "$PWD")
     local intent=$(jq -r '.state_snapshot.active_intent // "none"' "$ckpt_file")
     local intent_desc=$(jq -r '.state_snapshot.intent_description // ""' "$ckpt_file")
 
     # Sprint
     local sprint_id=$(jq -r '.sprint_snapshot.sprint_id // "none"' "$ckpt_file")
-    local sprint_name=$(jq -r '.sprint_snapshot.sprint_name // "N/A"' "$ckpt_file")
+    local sprint_name=$(jq -r '.sprint_snapshot.sprint_name // ""' "$ckpt_file")
+    [ -z "$sprint_name" ] || [ "$sprint_name" = "null" ] && sprint_name="lifecycle-transition"
     local sprint_status=$(jq -r '.sprint_snapshot.status // "unknown"' "$ckpt_file")
     local current_task=$(jq -r '.sprint_snapshot.current_task // "none"' "$ckpt_file")
     local completed=$(jq -r '.sprint_snapshot.overall_progress.completed // 0' "$ckpt_file")
@@ -256,11 +298,14 @@ ckpt_to_basic_memory_note() {
         trigger=$(jq -r '.trigger // "unknown"' "$ckpt_file")
         desc=$(jq -r '.description // ""' "$ckpt_file")
         created=$(jq -r '.created_at // "unknown"' "$ckpt_file")
-        project=$(jq -r '.state_snapshot.session.project_name // "unknown"' "$ckpt_file")
-        version=$(jq -r '.state_snapshot.version // "unknown"' "$ckpt_file")
+        project=$(jq -r '.state_snapshot.session.project_name // ""' "$ckpt_file")
+        [ -z "$project" ] || [ "$project" = "null" ] && project=$(basename "$PWD")
+        version=$(jq -r '.state_snapshot.version // ""' "$ckpt_file")
+        [ -z "$version" ] || [ "$version" = "null" ] && version=$([ -f "VERSION" ] && tr -d '[:space:]' < VERSION || echo "unknown")
         stack=$(jq -r '.state_snapshot.session.stack // "generic"' "$ckpt_file")
         sprint_id=$(jq -r '.sprint_snapshot.sprint_id // "unknown"' "$ckpt_file")
-        sprint_name=$(jq -r '.sprint_snapshot.sprint_name // "Sprint"' "$ckpt_file")
+        sprint_name=$(jq -r '.sprint_snapshot.sprint_name // ""' "$ckpt_file")
+        [ -z "$sprint_name" ] || [ "$sprint_name" = "null" ] && sprint_name="lifecycle-transition"
         task=$(jq -r '.sprint_snapshot.current_task // "none"' "$ckpt_file")
         status=$(jq -r '.sprint_snapshot.status // "unknown"' "$ckpt_file")
         completed=$(jq -r '.sprint_snapshot.overall_progress.completed // 0' "$ckpt_file")

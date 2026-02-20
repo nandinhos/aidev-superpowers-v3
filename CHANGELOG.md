@@ -5,6 +5,20 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.5.6] - 2026-02-20
+
+### Adicionado: Feature Lifecycle Automation
+
+- **`aidev plan "titulo"`**: Cria item de backlog com template padronizado (título, status, prioridade, data, campos estruturados).
+- **`aidev start <id>`**: Move feature de `features/` → `current/`, valida unicidade, atualiza `current/README.md` com tabela de sprints, gera checkpoint automático.
+- **`aidev done <sprint-id>`**: Marca sprint como concluída na tabela do `current/README.md`, detecta quando todas as sprints estão concluídas e sugere `aidev complete`. Gera checkpoint automático.
+- **`aidev complete <id>`**: Finaliza feature: move `current/` → `history/YYYY-MM/`, reseta `current/README.md`, atualiza `features/README.md` e `backlog/README.md`, reconstrói `ROADMAP.md` como índice.
+- **`lib/feature-lifecycle-cli.sh`**: Novo módulo core com `flc_plan_create`, `flc_feature_start`, `flc_sprint_done`, `flc_feature_complete`, `_flc_roadmap_rebuild`.
+- **ROADMAP como índice**: `_flc_roadmap_rebuild` reconstrói ROADMAP com ≤ 60 linhas (era 248). Conteúdo detalhado fica em `history/`.
+- **`cmd_start` substituído**: Guia de ativação removido (coberto por `aidev agent`); `start` agora inicia execução de features.
+- **Automação completa**: A cada transição, `git add` + exibição de diff para revisão antes do commit.
+- **34 novos testes unitários** (test-lifecycle-plan.sh, test-lifecycle-start.sh, test-lifecycle-done.sh, test-lifecycle-complete.sh, test-lifecycle-roadmap.sh).
+
 ## [4.5.5] - 2026-02-20
 
 ### Adicionado: Basic Memory Graceful Integration

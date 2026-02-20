@@ -54,7 +54,9 @@ migration_needed() {
         return 0
     fi
 
-    local cli_version="${AIDEV_VERSION:-0.0.0}"
+    local _lib_root="${AIDEV_ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/..}"
+    local cli_version="${AIDEV_VERSION:-$(cat "$_lib_root/VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    cli_version="${cli_version:-0.0.0}"
 
     # Se versoes sao iguais, nao precisa migrar
     if [ "$project_version" = "$cli_version" ]; then
@@ -143,7 +145,9 @@ migration_execute() {
 migration_stamp() {
     local install_path="${1:-.}"
     local manifest_local="$install_path/.aidev/MANIFEST.local.json"
-    local cli_version="${AIDEV_VERSION:-0.0.0}"
+    local _lib_root="${AIDEV_ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/..}"
+    local cli_version="${AIDEV_VERSION:-$(cat "$_lib_root/VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    cli_version="${cli_version:-0.0.0}"
     local timestamp
     timestamp=$(date -Iseconds 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S")
 

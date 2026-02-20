@@ -93,7 +93,8 @@ sync_workflow() {
 # ============================================================================
 sync_unified_json() {
     local unified_file="$AIDEV_ROOT/state/unified.json"
-    local framework_version="${AIDEV_VERSION:-4.4.2}"
+    local framework_version="${AIDEV_VERSION:-$(cat "$AIDEV_ROOT/../VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    framework_version="${framework_version:-4.5.1}"
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     
     if [ -f "$unified_file" ]; then

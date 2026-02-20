@@ -174,7 +174,8 @@ get_framework_checksums() {
 # ============================================================================
 check_unified_sync() {
     local unified_file="$STATE_DIR/unified.json"
-    local framework_version="${AIDEV_VERSION:-4.4.2}"
+    local framework_version="${AIDEV_VERSION:-$(cat "$AIDEV_ROOT/VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    framework_version="${framework_version:-4.5.1}"
     
     if [ ! -f "$unified_file" ]; then
         echo "{\"version\":\"none\",\"needs_sync\":true}"
@@ -197,7 +198,8 @@ check_unified_sync() {
 generate_activation_snapshot() {
     local runtime=$(detect_runtime)
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-    local framework_version="${AIDEV_VERSION:-4.4.2}"
+    local framework_version="${AIDEV_VERSION:-$(cat "$AIDEV_ROOT/VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    framework_version="${framework_version:-4.5.1}"
     
     # Obter informações do git
     local current_branch=$(git branch --show-current 2>/dev/null || echo "unknown")
@@ -225,7 +227,7 @@ generate_activation_snapshot() {
     # Montar JSON final
     local snapshot=$(cat <<EOF
 {
-  "version": "$AIDEV_VERSION",
+  "version": "$framework_version",
   "generated_at": "$timestamp",
   "framework_version": "$framework_version",
   "runtime": "$runtime",

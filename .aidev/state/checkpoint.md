@@ -3,93 +3,137 @@
 ## Status Geral
 
 - Projeto: aidev-superpowers-v3-1
-- Versao: v4.5.2 (tag publicada no GitHub)
-- Branch: main (sincronizado com origin)
-- Suite de testes: 24 passed, 1 fail pre-existente (ckpt_sync_to_basic_memory)
+- Versao: v4.5.2
+- Branch: main
+- Suite de testes: 24 passed, 1 fail pre-existente (ckpt_sync_to_basic_memory — resolvido no Sprint 3)
 
 ---
 
 ## Sessao Atual — O que foi feito
 
-### Fix v4.5.2 (concluido e publicado)
+### Refinamento do Plano: basic-memory-graceful-integration
 
-Tres bugs corrigidos originados de relatorio do projeto check-print:
+Sessao dedicada a **estruturar e refinar o planejamento** da feature de integracao graceful
+do Basic Memory. Nenhum codigo foi implementado — apenas planejamento e correcao de premissas.
 
-| Bug | Arquivos | Fix |
-|-----|----------|-----|
-| Versao hardcoded `4.4.2` em `.aidev/lib/` | activation-snapshot.sh (x2), workflow-sync.sh (x2) | Le `$AIDEV_ROOT/../VERSION` antes do fallback |
-| JSON hardcoded `"version": "4.5.0"` no snapshot | activation-snapshot.sh linha 228 | Usa variavel `$framework_version` |
-| `migration_stamp` gravava `0.0.0` sem CLI | lib/migration.sh (linhas 57 e 146) | Mesmo padrao: le VERSION antes do fallback |
-| `.mcp.json` sobrescrito em `--force` | lib/mcp.sh | Nova funcao `_mcp_extract_custom_servers` + merge via jq |
+#### Descobertas da exploracao
 
-Commits desta sessao:
-- `39d8d47` fix(lib): le versao do arquivo VERSION antes do fallback hardcoded
-- `6855a43` fix(mcp): preserva servidores customizados ao sobrescrever .mcp.json com --force
-- `def96f3` chore(session): conclui feature fix-version-hardcoded-mcp-merge
-- `925adb2` chore(state): sincroniza estado apos conclusao de feature
-- `d083b1a` release(patch): bump versao para v4.5.2
-- `7d2906d` chore(backlog): organiza backlog removendo itens concluidos e fora de escopo
+| Componente | Premissa original | Realidade descoberta |
+|---|---|---|
+| `checkpoint-manager.sh` | "em `.aidev/lib/`" | Em `lib/` (raiz, 491 linhas) + `~/.aidev-superpowers/lib/` |
+| `cmd_status` / `cmd_doctor` | "atualizar" | NAO EXISTEM — precisam ser criados do zero |
+| Guards do Sprint 2 | "so bash" | Duas camadas: bash (.sh) + instrucoes LLM (.md) |
+| Deteccao via `type mcp__*` | abordagem principal | So funciona no Claude Code — invalido para outros runtimes |
+| `.aidev/lib/` no self-upgrade | incluida | NAO incluida — lacuna critica descoberta |
 
-### Organizacao do Backlog (concluido)
+#### Novo Pré-Sprint 0 adicionado
 
-Movidos para `history/2026-02/` via `feature_cli complete`:
-- `refinamento-framework-v4.4` — 5 sprints todos implementados (manifest, upgrade-safety, llm-guard, testes+bugfixes, migration)
-- `sistema-atualizacao-interativa` — version_check_prompt + upgrade_project_if_needed implementados
+**Problema critico**: `.aidev/lib/` nao e sincronizada pelo self-upgrade nem pelo `aidev upgrade`.
+Qualquer arquivo novo em `.aidev/lib/` existe so no projeto-fonte. Evidencia imediata:
+`~/.aidev-superpowers/.aidev/lib/` esta desatualizado — faltam `activation-snapshot.sh`,
+`workflow-commit.sh`, `workflow-release.sh`, `workflow-sync.sh`.
 
-Removidos do backlog:
-- `relatorio_outro_projeto.md` — evidencia consumida (bugs resolvidos na v4.5.2)
-- `mcp-universal-install.md` — fora de escopo (era para o projeto check-print/Laravel)
+**Solucao**: Criar `install_aidev_lib()` em `bin/aidev` e integrar no self-upgrade,
+`create_base_structure()` e `cmd_upgrade()`.
+
+#### Multi-runtime esclarecido
+
+O usuario usa 5 runtimes: Claude Code CLI, Antigravity (Claude), Antigravity (Gemini),
+Gemini CLI, OpenCode. O Sprint 1 precisa de deteccao multi-camada:
+1. Variavel de ambiente explicita (`BASIC_MEMORY_ENABLED`, `MCP_BASIC_MEMORY_AVAILABLE`)
+2. Presenca em `.mcp.json` + mapa de capacidades por runtime
+3. CLI como fallback (`command -v basic-memory`)
+
+#### Fluxo aidev self-upgrade clarificado
+
+O projeto `aidev-superpowers-v3-1` e o **projeto-fonte** do framework. O usuario
+desenvolve aqui, faz self-upgrade para `~/.aidev-superpowers/`, publica no GitHub,
+e os projetos recebem upgrade automatico com sugestao no primeiro comando.
 
 ---
 
-## Estado Atual do Backlog
+## Feature em Execucao (current/)
+
+**Arquivo**: `.aidev/plans/current/basic-memory-graceful-integration.md`
+
+| Sprint | Objetivo | Status |
+|--------|----------|--------|
+| Pré-Sprint 0 | Pipeline de distribuicao — `install_aidev_lib()` | **PROXIMO** |
+| Sprint 1 | `mcp-detect.sh` — deteccao multi-runtime | pendente |
+| Sprint 2 | `basic-memory-guard.sh` — wrappers bash + .md LLM | pendente |
+| Sprint 3 | `ckpt_sync_to_basic_memory()` em checkpoint-manager | pendente |
+| Sprint 4 | `context_compressor_generate()` enriquecido | pendente |
+| Sprint 5 | `cmd_status`, `cmd_doctor`, QUICKSTART | pendente |
+
+**Estimativa total**: ~305min (~5h05)
+
+---
+
+## Proximo Passo EXATO para Retomar
+
+1. Dizer "modo agente" para ativar o orquestrador
+2. Iniciar **Pre-Sprint 0**: adicionar `install_aidev_lib()` em `bin/aidev`
+   - Funcao que copia todos os `.sh` de `.aidev/lib/` para o projeto destino
+   - Integrar em `create_base_structure()` (substituir if manual do feature-lifecycle)
+   - Integrar em `cmd_upgrade()` (junto com install_agents/skills/rules)
+   - Adicionar rsync `.aidev/lib/` no self-upgrade (apos rsync `lib/`)
+   - Atualizar dry-run para listar os arquivos
+3. Rodar testes: `bash tests/test-runner.sh`
+4. Commit + push + self-upgrade para validar que `.aidev/lib/` chega no global
+
+---
+
+## Analise do Fluxo de Plans (problema identificado e corrigido)
+
+**Problema observado**: A feature foi criada diretamente em `backlog/` e nunca passou
+por `features/` (planejamento) nem por `current/` (execucao). Isso viola o fluxo:
 
 ```
-.aidev/plans/backlog/
-├── README.md
-└── basic-memory-graceful-integration.md   ← UNICO ITEM PENDENTE
+backlog/ → features/ → current/ → history/YYYY-MM/
 ```
 
----
+**Correcao aplicada nesta sessao**:
+- Feature copiada para `current/basic-memory-graceful-integration.md` ← em execucao
+- `backlog/basic-memory-graceful-integration.md` ← permanece como referencia ate conclusao
+- Ao concluir todos os sprints: mover para `history/2026-02/` e remover do backlog
 
-## Proximo Passo — basic-memory-graceful-integration.md
-
-Feature completa com 5 sprints (~3h45 estimados). Pré-requisitos em ordem:
-
-| Sprint | Objetivo | Dependencia |
-|--------|----------|-------------|
-| 1 | `lib/mcp-detect.sh` — deteccao unificada de MCPs | nenhuma |
-| 2 | `lib/basic-memory-guard.sh` — wrappers com fallback local | Sprint 1 |
-| 3 | `ckpt_sync_to_basic_memory()` em checkpoint-manager.sh | Sprint 2 |
-| 4 | Contexto inteligente na ativacao (context-compressor.sh) | Sprint 2 |
-| 5 | Dashboard + docs (cmd_status, cmd_doctor, QUICKSTART) | Sprints 3+4 |
-
-**Para retomar:** dizer "modo agente" ou "iniciar basic-memory integration".
-O Sprint 1 e o desbloqueador — arquivo `lib/mcp-detect.sh` ainda nao existe.
-
-**Teste com falha ativa:** `ckpt_sync_to_basic_memory nao existe` — resolvido pelo Sprint 3.
+**Causa raiz**: O `feature_cli` ou o orquestrador nao esta fazendo a transicao automatica
+backlog → features → current. Isso e um gap a documentar para correcao futura.
 
 ---
 
-## Contexto Tecnico Util para Proxima Sessao
+## Contexto Tecnico Util
+
+### Estrutura das instalacoes
+
+```
+aidev-superpowers-v3-1/    ← projeto-fonte (desenvolvimento)
+    lib/                   ← modulos CLI (distribuidos via rsync no self-upgrade)
+    .aidev/lib/            ← modulos runtime do orquestrador (GAP: nao distribuidos ainda)
+    bin/aidev              ← binario principal
+
+~/.aidev-superpowers/      ← instalacao global ativa (v4.5.1, desatualizada)
+    lib/                   ← copia de lib/ do projeto-fonte
+    .aidev/lib/            ← DESATUALIZADO — faltam 4 arquivos vs projeto-fonte
+    bin/aidev              ← binario ativo (via symlink ~/.local/bin/aidev)
+```
+
+### Arquivos ausentes no global vs projeto-fonte
+
+```bash
+# Faltam em ~/.aidev-superpowers/.aidev/lib/:
+activation-snapshot.sh
+workflow-commit.sh
+workflow-release.sh
+workflow-sync.sh
+```
 
 ### Padroes de leitura de VERSION
 
 - Scripts em `.aidev/lib/`: `$AIDEV_ROOT/../VERSION`
 - Scripts em `lib/` (CLI): `$AIDEV_ROOT/VERSION`
-- `lib/migration.sh`: `$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../VERSION`
 
-### Ciclo de desenvolvimento do aidev
-
-```
-backlog/  →  features/ (criar com feature_cli)
-          →  implementar (TDD quando aplicavel)
-          →  feature_cli complete "id" "notas"   → history/YYYY-MM/
-          →  release patch/minor/major
-          →  workflow-sync.sh sync true
-```
-
-### Comandos uteis de verificacao
+### Comandos uteis
 
 ```bash
 # Validar sistema
@@ -98,9 +142,9 @@ AIDEV_ROOT=.aidev .aidev/lib/workflow-sync.sh validate
 # Rodar suite de testes
 bash tests/test-runner.sh
 
-# Gerar snapshot atualizado
-AIDEV_ROOT=.aidev .aidev/lib/activation-snapshot.sh
-
 # Ver versao atual
 cat VERSION
+
+# Self-upgrade (apos Pre-Sprint 0 implementado)
+aidev self-upgrade
 ```

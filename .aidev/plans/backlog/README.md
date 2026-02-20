@@ -19,6 +19,19 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Ideias Pendentes
 
+### Fix: AIDEV_ROOT — Fonte Única de Verdade
+
+**Arquivo:** [fix-aidev-root-single-source.md](fix-aidev-root-single-source.md)
+**Status:** Ideia
+**Prioridade:** Média
+**Criado:** 2026-02-20
+
+**Descrição:** Eliminar a geração de `state/activation_snapshot.json` na raiz do projeto.
+Fix cirúrgico em `activation-snapshot.sh` para que `AIDEV_ROOT` seja sempre derivado
+do `BASH_SOURCE` e nunca do CWD. Resolver junto com o Pré-Sprint 0.
+
+---
+
 ### Automação do Ciclo de Vida de Features
 
 **Arquivo:** [feature-lifecycle-automation.md](feature-lifecycle-automation.md)

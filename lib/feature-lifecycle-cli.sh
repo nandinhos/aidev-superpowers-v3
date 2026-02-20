@@ -148,11 +148,27 @@ flc_feature_start() {
     source_file=$(find "$_FLC_FEATURES_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
     [ -z "$source_file" ] && source_file=$(find "$_FLC_FEATURES_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
 
+    # Fallback: busca em backlog/ e promove automaticamente para features/ antes de iniciar
     if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
-        print_error "Feature nao encontrada em features/: $feature_id"
+        local backlog_file
+        backlog_file=$(find "$_FLC_BACKLOG_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
+        [ -z "$backlog_file" ] && backlog_file=$(find "$_FLC_BACKLOG_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
+
+        if [ -n "$backlog_file" ] && [ -f "$backlog_file" ]; then
+            print_info "Feature encontrada em backlog/ - promovendo para features/..."
+            mkdir -p "$_FLC_FEATURES_DIR"
+            mv "$backlog_file" "$_FLC_FEATURES_DIR/$(basename "$backlog_file")"
+            source_file="$_FLC_FEATURES_DIR/$(basename "$backlog_file")"
+        fi
+    fi
+
+    if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
+        print_error "Feature nao encontrada em features/ nem em backlog/: $feature_id"
         print_info "Arquivos disponíveis:"
         ls "$_FLC_FEATURES_DIR"/*.md 2>/dev/null | xargs -n1 basename 2>/dev/null | grep -v README || \
             print_info "  (nenhuma feature em features/)"
+        ls "$_FLC_BACKLOG_DIR"/*.md 2>/dev/null | xargs -n1 basename 2>/dev/null | grep -v README || \
+            print_info "  (nenhuma feature em backlog/)"
         return 1
     fi
 
@@ -205,9 +221,9 @@ _flc_update_current_readme() {
     local started_date
     started_date=$(date +%Y-%m-%d)
 
-    # Extrai sprints do arquivo da feature (linhas com "Sprint N" ou "| Sprint")
+    # Extrai sprints do arquivo da feature (linhas de dados, exclui cabecalho)
     local sprints_table
-    sprints_table=$(grep -E "^\| Sprint|\| sprint|\| Pré-Sprint|\| Pre-Sprint" \
+    sprints_table=$(grep -E "^\| Sprint [0-9]|\| Pré-Sprint|\| Pre-Sprint" \
         "$_FLC_CURRENT_DIR/$feature_file" 2>/dev/null | head -20)
 
     cat > "$readme" <<EOF

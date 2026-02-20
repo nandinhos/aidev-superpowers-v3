@@ -151,6 +151,86 @@ assert_equals "0" "$?" "cmd_start sem argumento retorna exit 1"
 teardown
 
 # ============================================================================
+# Gap 1: aidev start busca em backlog/ se nao encontrar em features/
+# ============================================================================
+
+test_section "cmd_start: busca em backlog/ se nao esta em features/"
+
+setup_backlog_only() {
+    mkdir -p "$TEST_TMP/.aidev/plans/backlog"
+    mkdir -p "$TEST_TMP/.aidev/plans/features"
+    mkdir -p "$TEST_TMP/.aidev/plans/current"
+    mkdir -p "$TEST_TMP/.aidev/plans/history"
+    mkdir -p "$TEST_TMP/.aidev/state"
+    mkdir -p "$TEST_TMP/.aidev/lib"
+    cp "$ROOT_DIR/.aidev/lib/mcp-detect.sh" "$TEST_TMP/.aidev/lib/" 2>/dev/null || true
+    touch "$TEST_TMP/.aidev/.initialized"
+    # Feature SOMENTE em backlog/ (nao em features/)
+    echo "$FIXTURE_FEATURE" > "$TEST_TMP/.aidev/plans/backlog/autenticacao-oauth.md"
+    cat > "$TEST_TMP/.aidev/plans/features/README.md" <<'EOF'
+# Features
+
+## Em Execucao
+
+| Feature | Arquivo | Movida em |
+|---|---|---|
+
+## Concluidas
+
+| Feature | History | Data |
+|---|---|---|
+EOF
+    cat > "$TEST_TMP/.aidev/plans/current/README.md" <<'EOF'
+# Current
+
+*Nenhuma feature em execucao no momento.*
+EOF
+}
+
+setup_backlog_only
+(
+    cd "$TEST_TMP"
+    AIDEV_ROOT=".aidev" bash "$AIDEV_BIN" start autenticacao-oauth 2>/dev/null
+)
+[ -f "$TEST_TMP/.aidev/plans/current/autenticacao-oauth.md" ]
+assert_equals "0" "$?" "start de backlog: arquivo chega em current/"
+[ ! -f "$TEST_TMP/.aidev/plans/backlog/autenticacao-oauth.md" ]
+assert_equals "0" "$?" "start de backlog: arquivo removido de backlog/"
+teardown
+
+# ============================================================================
+# Gap 1: current/README.md atualizado mesmo quando veio do backlog
+# ============================================================================
+
+test_section "cmd_start: current/README.md atualizado quando veio do backlog"
+
+setup_backlog_only
+(
+    cd "$TEST_TMP"
+    AIDEV_ROOT=".aidev" bash "$AIDEV_BIN" start autenticacao-oauth 2>/dev/null
+)
+grep -qi "Autenticacao OAuth\|autenticacao-oauth" "$TEST_TMP/.aidev/plans/current/README.md"
+assert_equals "0" "$?" "current/README.md menciona feature iniciada a partir do backlog"
+teardown
+
+# ============================================================================
+# Gap 1: feature em backlog/ E em features/ - usa features/ (nao duplica)
+# ============================================================================
+
+test_section "cmd_start: prefere features/ se arquivo existe nos dois lugares"
+
+setup
+# Adiciona copia em backlog/ tambem (nao deveria acontecer, mas garante robustez)
+echo "$FIXTURE_FEATURE" > "$TEST_TMP/.aidev/plans/backlog/autenticacao-oauth.md"
+(
+    cd "$TEST_TMP"
+    AIDEV_ROOT=".aidev" bash "$AIDEV_BIN" start autenticacao-oauth 2>/dev/null
+)
+[ -f "$TEST_TMP/.aidev/plans/current/autenticacao-oauth.md" ]
+assert_equals "0" "$?" "arquivo chegou em current/ quando existia nos dois dirs"
+teardown
+
+# ============================================================================
 # Resumo
 # ============================================================================
 

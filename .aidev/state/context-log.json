@@ -79,6 +79,22 @@
       "intent": "Feature concluída e arquivada",
       "feature_title": "Fix: Versão Hardcoded e MCP Merge em aidev upgrade",
       "history_file": ".aidev/plans/history/2026-02/fix-version-hardcoded-mcp-merge-19.md"
+    },
+    {
+      "ts": "2026-02-20T03:09:23Z",
+      "action": "feature_complete",
+      "target": "refinamento-framework-v4.4",
+      "intent": "Feature concluída e arquivada",
+      "feature_title": "Refinamento Framework v4.4 — 5 Sprints",
+      "history_file": ".aidev/plans/history/2026-02/refinamento-framework-v4.4-20.md"
+    },
+    {
+      "ts": "2026-02-20T03:09:23Z",
+      "action": "feature_complete",
+      "target": "sistema-atualizacao-interativa",
+      "intent": "Feature concluída e arquivada",
+      "feature_title": "Sistema de Atualização Interativa Universal",
+      "history_file": ".aidev/plans/history/2026-02/sistema-atualizacao-interativa-20.md"
     }
   ]
 }

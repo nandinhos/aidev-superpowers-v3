@@ -391,6 +391,9 @@ flc_feature_complete() {
     # Reconstrói ROADMAP como índice
     _flc_roadmap_rebuild
 
+    # Reconstrói history/README.md como índice consolidado
+    _flc_history_index_rebuild
+
     print_success "Feature concluida: $feature_title"
     print_info "Arquivada em: $dest_file"
 
@@ -406,6 +409,7 @@ flc_feature_complete() {
         "$_FLC_FEATURES_DIR/README.md"
         "$_FLC_BACKLOG_DIR/README.md"
         "$_FLC_ROADMAP"
+        "$_FLC_HISTORY_DIR/README.md"
     )
     _flc_stage_and_show "${files_to_stage[@]}"
 }
@@ -448,7 +452,7 @@ Use \`aidev start <feature-id>\` para iniciar uma feature de features/.
 EOF
 }
 
-# Atualiza features/README.md adicionando à seção Concluídas
+# Atualiza features/README.md adicionando à seção Concluídas (max 5 entradas)
 _flc_update_features_readme_complete() {
     local feature_basename="$1"
     local feature_title="$2"
@@ -465,15 +469,15 @@ _flc_update_features_readme_complete() {
         /$feature_basename/d
     }" "$readme" 2>/dev/null || true
 
-    # Adiciona à seção Concluídas
-    if grep -q "Concluidas\|Concluídas" "$readme"; then
-        sed -i "/Concluidas\|Concluídas/,/^---/{
-            /^\| [A-Za-z]/a\| $feature_title | [history/$month/](../history/$month/) | $date_now |
-        }" "$readme" 2>/dev/null || true
-    fi
+    # Adiciona nova entrada ao final da seção Concluídas usando awk
+    local new_row="| $feature_title | [history/$month/](../history/$month/) | $date_now |"
+    _flc_readme_append_to_section "$readme" "Concluidas" "$new_row"
+
+    # Trunca seção Concluídas a 5 entradas mais recentes
+    _flc_truncate_readme_section "$readme" "Concluidas" 5
 }
 
-# Atualiza backlog/README.md movendo item para "Removidas/Concluídas"
+# Atualiza backlog/README.md movendo item para "Removidas/Concluídas" (max 5 entradas)
 _flc_update_backlog_readme_complete() {
     local feature_basename="$1"
     local feature_title="$2"
@@ -483,14 +487,144 @@ _flc_update_backlog_readme_complete() {
 
     [ ! -f "$readme" ] && return 0
 
-    local safe_id="${feature_basename%.md}"
+    # Adiciona nova entrada ao final da seção Concluídas usando awk
+    local new_row="| $feature_title | Concluido em history/ | $date_now |"
+    _flc_readme_append_to_section "$readme" "Concluidas" "$new_row"
 
-    # Adiciona à tabela de concluídas se existir
-    if grep -q "Concluidas\|Concluídas\|Removidas" "$readme"; then
-        sed -i "/Concluidas\|Concluídas\|Removidas/,/\*Ultima/{
-            /^\| [A-Za-z]/a\| $feature_title | Concluido em history/ | $date_now |
-        }" "$readme" 2>/dev/null || true
-    fi
+    # Trunca seção Concluídas a 5 entradas mais recentes
+    _flc_truncate_readme_section "$readme" "Concluidas" 5
+}
+
+# Insere uma linha de dados no final de uma seção de tabela markdown (antes do próximo ---)
+# Uso: _flc_readme_append_to_section <readme> <secao_pattern> <nova_linha>
+_flc_readme_append_to_section() {
+    local readme="$1"
+    local section_pattern="$2"
+    local new_row="$3"
+
+    [ ! -f "$readme" ] && return 0
+    grep -qE "($section_pattern)" "$readme" 2>/dev/null || return 0
+
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    # Estratégia: encontrar a última linha de dados (^\| ) da seção e inserir depois dela
+    awk -v pattern="$section_pattern" -v row="$new_row" '
+        BEGIN { in_s=0; last_data_line=0; inserted=0 }
+        $0 ~ pattern { in_s=1 }
+        in_s && NR>1 && /^## / && $0 !~ pattern { in_s=0 }
+        in_s && /^\| / && !/^\|---/ { last_data_line=NR }
+        { lines[NR]=$0 }
+        END {
+            for (i=1; i<=NR; i++) {
+                print lines[i]
+                if (i==last_data_line && !inserted) {
+                    print row
+                    inserted=1
+                }
+            }
+            # Se não encontrou linha de dados, insere após o separador |---| da seção
+            if (!inserted) {
+                # Fallback: não faz nada (seção sem dados existentes é caso raro)
+            }
+        }
+    ' "$readme" > "$tmpfile" && mv "$tmpfile" "$readme"
+}
+
+# Trunca uma seção de tabela markdown a N linhas de dados (mantém as N mais recentes)
+# Uso: _flc_truncate_readme_section <readme> <secao_pattern> <max_linhas>
+_flc_truncate_readme_section() {
+    local readme="$1"
+    local section_pattern="$2"
+    local max_lines="${3:-5}"
+
+    [ ! -f "$readme" ] && return 0
+
+    # Conta linhas de dados da seção (linhas que começam com "| " mas não são cabeçalho |---|)
+    local total_lines
+    total_lines=$(awk "
+        /${section_pattern}/ { in_s=1; next }
+        in_s && /^---/ { in_s=0; next }
+        in_s && /^\| / && !/\|---/ { count++ }
+        END { print count+0 }
+    " "$readme" 2>/dev/null)
+
+    # Desconta o cabeçalho da tabela (a primeira linha de dados é o cabeçalho | Feature | ... |)
+    # O cabeçalho é contado acima, então subtrai 1 para obter apenas as linhas de dados reais
+    local data_lines=$(( total_lines - 1 ))
+
+    # Se dentro do limite, nada a fazer
+    [ "${data_lines}" -le "$max_lines" ] && return 0
+
+    local lines_to_remove=$(( data_lines - max_lines ))
+
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    awk -v pattern="$section_pattern" -v remove="$lines_to_remove" '
+        BEGIN { in_s=0; header_done=0; removed=0 }
+        $0 ~ pattern { in_s=1; print; next }
+        in_s && /^---/ { in_s=0; header_done=0; print; next }
+        in_s && /^\|---/ { print; next }
+        in_s && /^\| / {
+            if (!header_done) { header_done=1; print; next }
+            if (removed < remove) { removed++; next }
+            print; next
+        }
+        { print }
+    ' "$readme" > "$tmpfile" && mv "$tmpfile" "$readme"
+}
+
+# ============================================================================
+# _flc_history_index_rebuild
+# Reconstrói history/README.md como índice consolidado de todos os itens
+# Varre history/YYYY-MM/*.md e extrai título + data
+# ============================================================================
+_flc_history_index_rebuild() {
+    local history_dir="$_FLC_HISTORY_DIR"
+    local index="$history_dir/README.md"
+    local date_now
+    date_now=$(date +%Y-%m-%d)
+
+    mkdir -p "$history_dir"
+
+    # Monta tabela por mês (desc)
+    local rows=""
+    for month_dir in $(ls -rd "$history_dir"/[0-9][0-9][0-9][0-9]-[0-9][0-9] 2>/dev/null); do
+        local month_name
+        month_name=$(basename "$month_dir")
+        for f in "$month_dir"/*.md; do
+            [ -f "$f" ] || continue
+            local title
+            title=$(grep "^# " "$f" 2>/dev/null | head -1 | sed 's/^# //')
+            [ -z "$title" ] && title=$(basename "$f" .md)
+            local file_date
+            file_date=$(grep -E "^\*\*Concluido\*\*:|^\*\*Data\*\*:" "$f" 2>/dev/null | head -1 | sed 's/.*: //' | tr -d ' ' || echo "$month_name")
+            rows="${rows}| $title | $month_name | [ver]($(basename "$month_dir")/$(basename "$f")) |\n"
+        done
+    done
+
+    cat > "$index" <<EOF
+# History — Índice Consolidado
+
+> Todas as features concluídas, organizadas por período.
+> Atualizado automaticamente por \`aidev complete\`.
+> Última atualização: $date_now
+
+---
+
+## Features Concluídas
+
+| Feature | Período | Arquivo |
+|---------|---------|---------|
+$(printf "$rows")
+
+---
+
+*Detalhes completos em cada arquivo de history/YYYY-MM/*
+EOF
+
+    _flc_log "INFO" "history/README.md reconstruido: $index"
 }
 
 # ============================================================================

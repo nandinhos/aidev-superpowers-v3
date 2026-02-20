@@ -173,6 +173,16 @@ aidev lessons --kb-stats
 aidev lessons --kb-export > kb-backup.json
 ```
 
+## Verificacao de Disponibilidade do Basic Memory
+
+**Antes de chamar `mcp__basic-memory__*`**, verifique se `basic_memory_available` é `true`
+no snapshot de ativação (`.aidev/state/activation_snapshot.json`) ou se a variável
+`BASIC_MEMORY_AVAILABLE=true` está definida no contexto.
+
+- Se disponível (`basic_memory_available: true`) → use os MCPs normalmente
+- Se **não** disponível → use **Write tool** para salvar em `.aidev/memory/kb/[titulo].md`
+- Se **não** disponível → use **Read/Grep** para buscar em `.aidev/memory/kb/`
+
 ## Integracao MCP
 
 ### Basic Memory

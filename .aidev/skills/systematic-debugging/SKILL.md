@@ -344,11 +344,18 @@ Apos resolver o bug, a licao deve ser salva em dois lugares:
 ```
 
 ### 2. Global (Cross-Project via MCP)
+
+> **Verificar disponibilidade antes de usar**: se `basic_memory_available: true` no snapshot
+> ou `BASIC_MEMORY_AVAILABLE=true` no contexto, use o MCP. Caso contrário, use **Write tool**
+> para salvar em `.aidev/memory/kb/lessons/[titulo].md` como fallback local.
+
 ```bash
 # Se a solucao for generica (ex: bug de versao de biblioteca)
+# Quando Basic Memory disponível:
 mcp__basic-memory__write_note(
   title: "Bug: [titulo]",
   content: "[conteudo da licao]",
   directory: "lessons"
 )
+# Fallback (sem Basic Memory): Write tool → .aidev/memory/kb/lessons/[titulo].md
 ```

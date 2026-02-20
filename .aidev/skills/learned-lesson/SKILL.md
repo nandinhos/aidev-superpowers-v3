@@ -182,9 +182,14 @@ YYYY-MM-DD-<slug-do-problema>.md
 #### Memoria Global (Cross-Project)
 Se aplicavel a outros projetos:
 
+> **Verificar disponibilidade antes de usar**: se `basic_memory_available: true` no snapshot
+> ou `BASIC_MEMORY_AVAILABLE=true` no contexto, use o MCP. Caso contrário, use **Write tool**
+> para salvar em `.aidev/memory/kb/[titulo].md` como fallback local.
+
 ```bash
-# Usar basic-memory MCP
+# Usar basic-memory MCP (quando disponível)
 mcp__basic-memory__write_note
+# Fallback (sem Basic Memory): Write tool → .aidev/memory/kb/[titulo].md
 ```
 
 ### Template Final da Licao
@@ -300,8 +305,9 @@ aidev lessons
 aidev lessons --search "termo"
 aidev lessons --read "nome-arquivo"
 
-# Busca global (basic-memory)
+# Busca global (basic-memory, quando disponível)
 mcp__basic-memory__search_notes query="palavra-chave"
+# Fallback (sem Basic Memory): Grep tool → .aidev/memory/kb/
 ```
 
 ---

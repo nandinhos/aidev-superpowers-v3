@@ -33,62 +33,119 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [current/](../current/lifecycle-100-automatizado-backlog-para-current-sem-friccao.md) | 2026-02-20 |
 
 ## Features Concluídas
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature | History | Data |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 |---|---|---|
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Refinamento Framework v4.4 | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Sistema Atualização Interativa | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 ---
+| Ideia: Fix checkpoint-manager — campos "unknown" em project/sprint/version | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Feature: lifecycle 100% automatizado - backlog para current sem fricção | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
 | Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |

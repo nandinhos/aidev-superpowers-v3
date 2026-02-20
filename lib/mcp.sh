@@ -41,6 +41,18 @@ generate_mcp_config() {
     esac
 }
 
+# Extrai servidores MCP que nao fazem parte do template padrao
+# Uso: custom=$(mcp_extract_custom_servers "/path/to/.mcp.json")
+_mcp_extract_custom_servers() {
+    local mcp_file="$1"
+    [ ! -f "$mcp_file" ] && echo "{}" && return 0
+    command -v jq >/dev/null 2>&1 || { echo "{}"; return 0; }
+    local defaults_json='["context7","serena","basic-memory"]'
+    jq --argjson defaults "$defaults_json" \
+        '.mcpServers | to_entries | map(select(.key as $k | $defaults | index($k) | not)) | from_entries' \
+        "$mcp_file" 2>/dev/null || echo "{}"
+}
+
 # Gera .mcp.json para Claude Code
 generate_claude_mcp_config() {
     local project_path="$1"
@@ -52,6 +64,12 @@ generate_claude_mcp_config() {
 
     local project_name
     project_name=$(detect_project_name "$project_path")
+
+    # Captura servidores customizados ANTES de sobrescrever (protege em --force)
+    local _custom_servers="{}"
+    if [ -f "$mcp_file" ] && [ "${AIDEV_FORCE:-false}" = "true" ]; then
+        _custom_servers=$(_mcp_extract_custom_servers "$mcp_file")
+    fi
 
     if should_write_file "$mcp_file"; then
         # Normalização de path para portabilidade
@@ -107,6 +125,16 @@ EOF
             increment_files
         fi
         print_success "Configuração MCP criada: $mcp_file"
+
+        # Mescla servidores customizados de volta se havia customizacoes
+        if [ "$_custom_servers" != "{}" ] && [ "$_custom_servers" != "null" ] && command -v jq >/dev/null 2>&1; then
+            local _merged
+            _merged=$(jq --argjson custom "$_custom_servers" '.mcpServers += $custom' "$mcp_file")
+            if [ $? -eq 0 ] && [ -n "$_merged" ]; then
+                echo "$_merged" > "$mcp_file"
+                print_info "Servidores customizados preservados: $(echo "$_custom_servers" | jq -r 'keys | join(", ")')"
+            fi
+        fi
     fi
 }
 

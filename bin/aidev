@@ -3332,8 +3332,20 @@ cmd_self_upgrade() {
 
     # Verifica se precisa atualizar
     if [ "$current_version" = "$source_version" ] && [ "$AIDEV_FORCE" != true ]; then
-        print_success "Ja esta na versao mais recente ($current_version)"
-        exit 0
+        # Segunda camada: verifica divergencia real de arquivos mesmo com versao igual
+        local lib_diff_count=0
+        if command -v diff >/dev/null 2>&1; then
+            lib_diff_count=$(diff -rq "$source_dir/lib/" "$global_install/lib/" 2>/dev/null | wc -l | tr -d ' ')
+        fi
+
+        if [ "${lib_diff_count:-0}" -eq 0 ]; then
+            print_success "Ja esta na versao mais recente e sincronizado ($current_version)"
+            exit 0
+        fi
+
+        print_info "Versao igual ($current_version) mas $lib_diff_count arquivo(s) divergente(s) em lib/"
+        print_info "Sincronizando arquivos desatualizados..."
+        echo ""
     fi
 
     print_step "Atualizando $current_version -> $source_version"

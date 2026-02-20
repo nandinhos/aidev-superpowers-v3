@@ -138,3 +138,56 @@ else
 fi
 
 cleanup
+
+# ============================================================================
+# Tests: Segunda camada de verificacao - mesma versao com arquivos divergentes
+# ============================================================================
+
+test_section "Self-Upgrade - segunda camada: mesma versao com diff real"
+
+setup_same_version() {
+    FAKE_GLOBAL=$(mktemp -d)
+    FAKE_SOURCE=$(mktemp -d)
+    mkdir -p "$FAKE_GLOBAL/bin" "$FAKE_GLOBAL/lib"
+    mkdir -p "$FAKE_SOURCE/bin" "$FAKE_SOURCE/lib"
+    # Mesma versao nos dois lados
+    echo "4.5.6" > "$FAKE_GLOBAL/VERSION"
+    echo "4.5.6" > "$FAKE_SOURCE/VERSION"
+    echo "echo global" > "$FAKE_GLOBAL/lib/core.sh"
+    echo "echo source" > "$FAKE_SOURCE/lib/core.sh"
+}
+
+# Test 1: detecta divergencia quando mesma versao mas lib/ difere
+setup_same_version
+diff_count=$(diff -rq "$FAKE_SOURCE/lib/" "$FAKE_GLOBAL/lib/" 2>/dev/null | wc -l | tr -d ' ')
+[ "$diff_count" -gt 0 ] && assert_equals "1" "1" "detecta divergencia entre lib/ mesmo com mesma versao" || assert_equals "0" "1" "detecta divergencia entre lib/ mesmo com mesma versao"
+rm -rf "$FAKE_GLOBAL" "$FAKE_SOURCE"
+
+# Test 2: nao detecta divergencia quando lib/ identica
+setup_same_version
+cp "$FAKE_SOURCE/lib/core.sh" "$FAKE_GLOBAL/lib/core.sh"
+diff_count=$(diff -rq "$FAKE_SOURCE/lib/" "$FAKE_GLOBAL/lib/" 2>/dev/null | wc -l | tr -d ' ')
+assert_equals "0" "$diff_count" "nao detecta divergencia quando lib/ e identica"
+rm -rf "$FAKE_GLOBAL" "$FAKE_SOURCE"
+
+# Test 3: detecta arquivo ausente na global como divergencia
+setup_same_version
+echo "echo novo-modulo" > "$FAKE_SOURCE/lib/feature-lifecycle-cli.sh"
+diff_count=$(diff -rq "$FAKE_SOURCE/lib/" "$FAKE_GLOBAL/lib/" 2>/dev/null | wc -l | tr -d ' ')
+[ "$diff_count" -gt 0 ] && assert_equals "1" "1" "detecta arquivo ausente na global como divergencia" || assert_equals "0" "1" "detecta arquivo ausente na global como divergencia"
+rm -rf "$FAKE_GLOBAL" "$FAKE_SOURCE"
+
+# Test 4: apos sync, divergencia cai a zero
+FAKE_GLOBAL=$(mktemp -d)
+FAKE_SOURCE=$(mktemp -d)
+mkdir -p "$FAKE_GLOBAL/lib" "$FAKE_SOURCE/lib"
+echo "4.5.6" > "$FAKE_GLOBAL/VERSION"
+echo "4.5.6" > "$FAKE_SOURCE/VERSION"
+# lib/ identica exceto por arquivo extra no source
+echo "echo core" > "$FAKE_GLOBAL/lib/core.sh"
+echo "echo core" > "$FAKE_SOURCE/lib/core.sh"
+echo "echo novo-modulo" > "$FAKE_SOURCE/lib/feature-lifecycle-cli.sh"
+rsync -a "$FAKE_SOURCE/lib/" "$FAKE_GLOBAL/lib/" 2>/dev/null
+diff_count=$(diff -rq "$FAKE_SOURCE/lib/" "$FAKE_GLOBAL/lib/" 2>/dev/null | wc -l | tr -d ' ')
+assert_equals "0" "$diff_count" "apos sync divergencia cai a zero"
+rm -rf "$FAKE_GLOBAL" "$FAKE_SOURCE"

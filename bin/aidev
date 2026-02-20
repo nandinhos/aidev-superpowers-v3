@@ -1570,7 +1570,7 @@ cmd_doctor() {
 # Cria estrutura base de diretórios
 create_base_structure() {
     local path="$1"
-    
+
     ensure_dir "$path/.aidev"
     ensure_dir "$path/.aidev/agents"
     ensure_dir "$path/.aidev/skills"
@@ -1579,13 +1579,35 @@ create_base_structure() {
     ensure_dir "$path/.aidev/memory/kb"
     ensure_dir "$path/.aidev/analysis"
     ensure_dir "$path/.aidev/lib"
-    
-    # Copia bibliotecas auxiliares do projeto (v4.2.0)
-    # Sprint 6.2: Feature Lifecycle precisa estar disponível no projeto
-    if [ -f "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" ] && [ "$AIDEV_ROOT_DIR" != "$path" ]; then
-        cp "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" "$path/.aidev/lib/"
-        chmod +x "$path/.aidev/lib/feature-lifecycle.sh"
-    fi
+
+    # Copia todas as bibliotecas de runtime do orquestrador (v4.5.5)
+    install_aidev_lib "$path"
+}
+
+# Copia todos os scripts de .aidev/lib/ do projeto-fonte para o projeto destino
+# Garante que o runtime do orquestrador esteja sempre atualizado em cada projeto
+install_aidev_lib() {
+    local path="$1"
+
+    # Não copia para si mesmo
+    [ "$AIDEV_ROOT_DIR" = "$path" ] && return 0
+
+    local src_lib="$AIDEV_ROOT_DIR/.aidev/lib"
+    local dst_lib="$path/.aidev/lib"
+
+    [ -d "$src_lib" ] || return 0
+
+    ensure_dir "$dst_lib"
+
+    local count=0
+    for script in "$src_lib"/*.sh; do
+        [ -f "$script" ] || continue
+        cp "$script" "$dst_lib/"
+        chmod +x "$dst_lib/$(basename "$script")"
+        ((count++))
+    done
+
+    print_debug "install_aidev_lib: $count scripts copiados para $dst_lib"
 }
 
 # Instala agentes a partir dos templates com suporte a overrides por plataforma
@@ -3292,6 +3314,15 @@ cmd_self_upgrade() {
         _self_upgrade_rollback
         exit 1
     }
+
+    # Sincroniza .aidev/lib/ (runtime do orquestrador) — v4.5.5
+    if [ -d "$source_dir/.aidev/lib" ]; then
+        print_step "Sincronizando .aidev/lib/..."
+        mkdir -p "$global_install/.aidev/lib"
+        rsync -a --delete "$source_dir/.aidev/lib/" "$global_install/.aidev/lib/" 2>/dev/null || {
+            print_warning "Falha ao sincronizar .aidev/lib/ (nao critico)"
+        }
+    fi
 
     # Sincroniza tests se existir
     if [ -d "$source_dir/tests" ]; then

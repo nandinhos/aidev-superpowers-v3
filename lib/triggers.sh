@@ -26,12 +26,17 @@ triggers__load() {
         return 1
     fi
 
+    if ! python3 -c "import yaml" 2>/dev/null; then
+        print_debug "Módulo PyYAML não detectado. Processamento de triggers ignorado."
+        return 0
+    fi
+
     # Converte YAML para JSON usando Python (suporte a listas de objetos)
     # Cache do JSON em memória (variável global para a sessão)
     AIDEV_TRIGGERS_JSON=$(python3 -c "import yaml, json, sys; print(json.dumps(yaml.safe_load(sys.stdin)))" < "$yaml_file" 2>/dev/null)
     
     if [ -z "$AIDEV_TRIGGERS_JSON" ] || [ "$AIDEV_TRIGGERS_JSON" = "null" ]; then
-        print_error "Falha ao processar arquivo de triggers (YAML inválido?)"
+        print_error "Falha ao processar arquivo de triggers (YAML inválido ou vazio)."
         return 1
     fi
 

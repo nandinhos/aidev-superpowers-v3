@@ -67,11 +67,6 @@ load_module "error-recovery" 2>/dev/null || true
 # Carrega módulo de verificação de versão (silencioso)
 load_module "version-check" 2>/dev/null || true
 
-# Verifica atualizações e pergunta ao usuário (síncrono)
-if type version_check_prompt &>/dev/null; then
-    version_check_prompt
-fi
-
 # Tenta carregar ambiente (idioma, segredos)
 load_env 2>/dev/null || true
 
@@ -1587,7 +1582,7 @@ create_base_structure() {
     
     # Copia bibliotecas auxiliares do projeto (v4.2.0)
     # Sprint 6.2: Feature Lifecycle precisa estar disponível no projeto
-    if [ -f "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" ]; then
+    if [ -f "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" ] && [ "$AIDEV_ROOT_DIR" != "$path" ]; then
         cp "$AIDEV_ROOT_DIR/.aidev/lib/feature-lifecycle.sh" "$path/.aidev/lib/"
         chmod +x "$path/.aidev/lib/feature-lifecycle.sh"
     fi
@@ -3812,6 +3807,15 @@ cmd_patch() {
 # Gerencia ciclo de vida de features (list, complete, status)
 main() {
     local command="${1:-help}"
+    
+    # Verifica atualizações e pergunta ao usuário (síncrono)
+    # Evita loop se o comando já for de atualização ou versão
+    if type version_check_prompt &>/dev/null; then
+        if [[ "$command" != "self-upgrade" && "$command" != "upgrade" && "$command" != "version" && "$command" != "system" ]]; then
+            version_check_prompt
+        fi
+    fi
+    
     shift || true
 
     case "$command" in

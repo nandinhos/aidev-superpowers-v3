@@ -19,7 +19,7 @@ load_essential_modules
 test_section "Core - Variáveis"
 
 assert_not_empty "$AIDEV_VERSION" "AIDEV_VERSION está definida"
-assert_equals "4.5.1" "$AIDEV_VERSION" "AIDEV_VERSION = 4.5.1"
+assert_equals "4.5.5" "$AIDEV_VERSION" "AIDEV_VERSION = 4.5.5"
 assert_not_empty "$RED" "Cor RED definida"
 assert_not_empty "$GREEN" "Cor GREEN definida"
 assert_not_empty "$NC" "Cor NC (reset) definida"

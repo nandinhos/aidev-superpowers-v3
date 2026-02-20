@@ -5,6 +5,18 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.5.5] - 2026-02-20
+
+### Adicionado: Basic Memory Graceful Integration
+
+- **`mcp-detect.sh`** (Sprint 1): Detecção unificada multi-runtime (Claude Code, Antigravity, Gemini, OpenCode) com cache via `_AIDEV_BM_DETECTED`. Suporta variáveis de ambiente como layer de override.
+- **`basic-memory-guard.sh`** (Sprint 2): Wrappers seguros `bm_write_note`, `bm_search`, `bm_build_context` com fallback local em `.aidev/memory/kb/`. Todos os wrappers são no-fail.
+- **`ckpt_sync_to_basic_memory`** (Sprint 3): Sincronização graceful de checkpoints para Basic Memory. Fallback local em `.aidev/memory/kb/checkpoints/`. Integrado ao `ckpt_create`.
+- **Context Compressor + BM** (Sprint 4): `context-compressor.sh` enriquecido com `_ctx_fetch_cross_session_memory`. Seção "Memoria Cross-Session" aparece quando BM disponível.
+- **Dashboard + Diagnóstico** (Sprint 5): `cmd_status` exibe seção "Integracoes MCP" com status do Basic Memory. `cmd_doctor` diagnostica e sugere instalação. `QUICKSTART.md` atualizado com seção de Basic Memory (opcional, recomendado).
+- **`install_aidev_lib`** (Pre-Sprint 0): Nova função distribui `.aidev/lib/*.sh` em `aidev init`, `upgrade` e `self-upgrade`, resolvendo gap de distribuição.
+- **54 novos testes unitários** cobrindo todos os sprints (test-mcp-detect.sh, test-basic-memory-guard.sh, test-checkpoint-sync.sh, test-context-compressor-bm.sh, test-status-doctor-bm.sh).
+
 ## [4.5.4] - 2026-02-20
 
 ### 🐛 Correções de Bugs (Instalador e VPS)

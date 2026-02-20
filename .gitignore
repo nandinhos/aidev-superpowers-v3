@@ -53,6 +53,10 @@ node_modules/
 .aidev/memories/
 .aidev/memory/kb/*.md
 !.aidev/memory/kb/index.json
+.aidev/memory/kb/checkpoints/
+
+# Cache de ativacao (gerado em runtime a cada sessao)
+.aidev/state/activation_snapshot.json
 
 # MCP Laravel - artefatos de runtime (gerados por aidev mcp laravel)
 .aidev/mcp/laravel/config/

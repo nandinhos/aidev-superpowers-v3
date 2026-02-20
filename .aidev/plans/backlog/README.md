@@ -1,51 +1,45 @@
-# 📋 Backlog - Ideias Futuras
+# Backlog - Ideias Futuras
 
-> Ideias que serão transformadas em features quando priorizadas
-
----
-
-## 🎯 Ideias em Backlog
-
-### Sistema de Atualização Interativa Universal
-**Arquivo:** [sistema-atualizacao-interativa-universal.md](sistema-atualizacao-interativa-universal.md)  
-**Status:** ✅ Concluído  
-**Prioridade:** Alta  
-**Criado:** 2026-02-18
-
-**Descrição:** Sistema interativo de atualização que verifica versão em qualquer comando, pergunta ao usuário se deseja atualizar, e executa atualização em duas frentes (global + projeto) preservando customizações
+> Ideias brutas que aguardam refinamento e priorização para se tornarem features.
 
 ---
 
-### MCP Universal Install
-**Arquivo:** [mcp-universal-install.md](mcp-universal-install.md)  
-**Status:** Ideia  
-**Prioridade:** Média  
-**Criado:** 2026-02-12  
+## Fluxo
 
-**Descrição:** Sistema universal de instalação e configuração de MCP servers  
-**Motivação:** Automatizar configuração de MCP em diferentes ambientes
+```
+backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluída)
+```
 
----
-
-## 🔄 Como priorizar uma ideia
-
-Quando uma ideia for priorizada:
-
-1. **Mover** arquivo para `../features/`
-2. **Criar** plano de implementação detalhado
-3. **Definir** sprint no ROADMAP.md
-4. **Estimar** tasks e recursos necessários
-5. **Atualizar** este README (remover da lista)
+**Regras:**
+- Backlog contém ideias sem sprint definida
+- Ao priorizar: criar plano completo em `features/` e remover daqui
+- Nunca iniciar implementação a partir do backlog diretamente
 
 ---
 
-## 📊 Estatísticas
+## Ideias Pendentes
 
-- **Total de ideias:** 2
-- **Concluídas:** 1
-- **Prontas para priorização:** 0
-- **Em análise:** 1
+### Automação do Ciclo de Vida de Features
+
+**Arquivo:** [feature-lifecycle-automation.md](feature-lifecycle-automation.md)
+**Status:** Ideia
+**Prioridade:** Alta
+**Criado:** 2026-02-20
+
+**Descrição:** Implementar comandos `aidev plan`, `aidev start` e `aidev done` para automatizar
+as transições entre backlog → features → current → history, com atualização automática de READMEs,
+checkpoint e snapshot a cada transição e conclusão de task/sprint/milestone.
 
 ---
 
-*Última atualização: 2026-02-18*
+## Ideias Concluídas / Removidas
+
+| Item | Destino | Data |
+|---|---|---|
+| Sistema de Atualização Interativa | Concluído em `history/2026-02/` | 2026-02-18 |
+| MCP Universal Install | Removido (fora de escopo) | 2026-02-18 |
+| Basic Memory Graceful Integration | Movido para `features/` → `current/` | 2026-02-20 |
+
+---
+
+*Última atualização: 2026-02-20*

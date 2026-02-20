@@ -1,45 +1,41 @@
-# 🏃 Current - Em Execução
+# Current - Em Execução
 
-> Sprint ativa sendo executada no momento
-
----
-
-## 🎯 Sprint Ativa
-
-*Nenhuma sprint em execução no momento.*
+> Feature sendo executada agora. Máximo 1 por vez.
 
 ---
 
-## 📝 Como iniciar uma sprint
+## Fluxo
 
-Quando uma feature for priorizada para execução:
+```
+backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluída)
+```
 
-1. **Copiar** ou linkar a feature de `../features/` para esta pasta
-2. **Definir** sprint no ROADMAP.md
-3. **Criar** `sprint-status.json` em `.aidev/state/`
-4. **Atualizar** `unified.json` com tasks
-5. **Iniciar** desenvolvimento
-
----
-
-## ✅ Como concluir uma sprint
-
-Quando uma sprint for concluída:
-
-1. **Mover** feature arquivada para `../history/YYYY-MM/`
-2. **Limpar** esta pasta
-3. **Atualizar** ROADMAP.md (marcar como concluída)
-4. **Criar** release notes se necessário
-5. **Taggear** versão no git
+**Regras:**
+- Apenas 1 feature ativa aqui por vez
+- Checkpoint atualizado a cada sprint concluída
+- Ao concluir: mover para `history/YYYY-MM/`, limpar esta pasta, atualizar READMEs
 
 ---
 
-## 📊 Status
+## Feature Ativa
 
-- **Sprint atual:** Nenhuma
-- **Fase:** -  
-- **Progresso:** 0%
+### Basic Memory Graceful Integration
+
+**Arquivo:** [basic-memory-graceful-integration.md](basic-memory-graceful-integration.md)
+**Iniciada:** 2026-02-20
+**Estimativa total:** ~305min (~5h05)
+
+| Sprint | Objetivo | Status |
+|---|---|---|
+| Pré-Sprint 0 | Pipeline de distribuição — `install_aidev_lib()` | **PROXIMO** |
+| Sprint 1 | `mcp-detect.sh` — detecção multi-runtime | Pendente |
+| Sprint 2 | `basic-memory-guard.sh` — bash + LLM | Pendente |
+| Sprint 3 | `ckpt_sync_to_basic_memory()` | Pendente |
+| Sprint 4 | `context_compressor_generate()` enriquecido | Pendente |
+| Sprint 5 | `cmd_status`, `cmd_doctor`, QUICKSTART | Pendente |
+
+**Próximo passo:** Implementar Pré-Sprint 0 — adicionar `install_aidev_lib()` em `bin/aidev`
 
 ---
 
-*Última atualização: 2026-02-13*
+*Última atualização: 2026-02-20*

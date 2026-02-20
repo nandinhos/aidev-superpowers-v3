@@ -1,47 +1,43 @@
-# 🚀 Features - Planejados
+# Features - Planejadas
 
-> Features com planejamento completo, prontos para execução
-
----
-
-## 📋 Features em Planejamento
-
-### Smart Upgrade: Merge Inteligente
-**Arquivo:** [smart-upgrade-merge.md](smart-upgrade-merge.md)  
-**Status:** Planejado ✅  
-**Sprint:** A definir  
-**Prioridade:** Alta  
-**Estimativa:** 4-6 tasks  
-
-**Descrição:** Proteção de customizações do usuário durante o `aidev upgrade` com merge inteligente e diff interativo.
-
-**Checklist de Planejamento:**
-- [x] Plano de implementação completo
-- [x] Arquitetura definida
-- [x] Tasks identificadas
-- [ ] Sprint definida
-- [ ] Recursos alocados
-- [ ] Testes planejados
+> Features com plano completo, prontas para entrar em execução (current/).
 
 ---
 
-## 🎯 Próximos Passos
+## Fluxo
 
-Quando uma feature for priorizada para execução:
+```
+backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluída)
+```
 
-1. **Definir** sprint no ROADMAP.md
-2. **Criar** entrada em `../current/`
-3. **Atualizar** este README (mover para seção "Em Execução")
-4. **Iniciar** desenvolvimento
-
----
-
-## 📊 Estatísticas
-
-- **Features planejadas:** 1
-- **Prontas para execução:** 1
-- **Em execução:** 0
+**Regras:**
+- Feature aqui tem plano detalhado, sprints definidas e testes especificados
+- Ao iniciar execução: mover para `current/` e atualizar README de ambos
+- Máximo 1 feature em `current/` por vez
 
 ---
 
-*Última atualização: 2026-02-13*
+## Features Prontas para Execução
+
+*Nenhuma feature aguardando execução no momento.*
+
+---
+
+## Features Em Execução
+
+| Feature | Arquivo | Movida para current em |
+|---|---|---|
+| Basic Memory Graceful Integration | [current/](../current/basic-memory-graceful-integration.md) | 2026-02-20 |
+
+---
+
+## Features Concluídas
+
+| Feature | History | Data |
+|---|---|---|
+| Refinamento Framework v4.4 | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
+| Sistema Atualização Interativa | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
+
+---
+
+*Última atualização: 2026-02-20*

@@ -1,6 +1,6 @@
 # Fix: self-upgrade com segunda camada de verificação quando versões são iguais
 
-**Status:** Ideia
+**Status:** Concluido
 **Prioridade:** Média
 **Criado:** 2026-02-20
 

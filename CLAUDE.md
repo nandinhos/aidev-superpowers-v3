@@ -94,6 +94,20 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - Ao iniciar sessão, verifique se existe `.aidev/state/checkpoint.md` e retome sem re-explorar contexto já documentado.
 - A cada milestone concluído, atualize o checkpoint.
 
+## Feature Lifecycle Rules (INEGOCIÁVEL)
+
+Todo ciclo de feature DEVE usar os scripts CLI. Movimentações manuais de arquivo são **PROIBIDAS**.
+
+```
+aidev start <feature-id>     # SEMPRE antes de implementar
+aidev done <sprint-id>       # ao concluir cada sprint
+aidev complete <feature-id>  # SEMPRE ao encerrar — nunca arquivar manualmente
+```
+
+- NUNCA usar `cp` ou `mv` para mover arquivos de plano
+- NUNCA editar status de features manualmente nos arquivos `.md`
+- Os scripts criam checkpoints, atualizam READMEs e ROADMAP automaticamente
+
 ## Debugging Rules
 
 - Ao corrigir bug, OBRIGATORIAMENTE siga `.aidev/skills/systematic-debugging/SKILL.md` (4 fases: REPRODUCE → ISOLATE → ROOT CAUSE → FIX).

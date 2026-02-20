@@ -83,7 +83,36 @@ feat(auth): adiciona auth
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## 7. Session Continuity
+## 7. Feature Lifecycle (OBRIGATORIO)
+
+Todo ciclo de desenvolvimento de feature DEVE ser executado via scripts CLI. Movimentacoes manuais de arquivo sao PROIBIDAS.
+
+### Ordem de Execucao Obrigatoria
+
+```
+1. aidev start <feature-id>     # move backlog/ → current/, cria checkpoint
+2. [desenvolver — TDD: RED → GREEN → REFACTOR]
+3. aidev done <sprint-id>       # marca sprint concluida no current/README.md
+4. [repetir steps 2-3 para cada sprint da feature]
+5. aidev complete <feature-id>  # move current/ → history/, atualiza READMEs e ROADMAP
+```
+
+### Regras Inegociaveis
+
+- **NUNCA** mover arquivos de plano manualmente (`cp`, `mv` direto)
+- **NUNCA** editar status nos arquivos de plano manualmente
+- **SEMPRE** usar `aidev start` antes de qualquer trabalho de implementacao
+- **SEMPRE** usar `aidev complete` ao encerrar — nunca arquivar manualmente
+- Checkpoints automaticos sao criados pelos scripts em cada transicao
+
+### Consequencias de Nao Seguir
+
+- Arquivos duplicados em backlog/ e features/ simultaneamente
+- Status desatualizado no ROADMAP
+- Checkpoints sem feature_id na descricao
+- README de current/ fora de sincronia
+
+## 8. Session Continuity
 
 - A cada milestone concluido, atualizar `.aidev/state/checkpoint.md`
 - Formato do checkpoint:

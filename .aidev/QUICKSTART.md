@@ -67,11 +67,36 @@ Tipos: `feat` | `fix` | `refactor` | `test` | `docs` | `chore`
 
 ---
 
+## Basic Memory (Opcional — Recomendado)
+
+Persistencia cross-session e economia de ~60% em tokens na ativacao de agentes.
+
+**Instalacao**:
+```bash
+pipx install basic-memory   # ou: uvx basic-memory
+```
+
+**Ativacao**: adicione ao `.mcp.json` do projeto:
+```json
+{
+  "mcpServers": {
+    "basic-memory": { "command": "uvx", "args": ["basic-memory", "mcp"] }
+  }
+}
+```
+
+**Verificar**: `aidev status` ou `aidev doctor`
+
+**Sem Basic Memory**: o framework funciona normalmente em modo standard.
+Checkpoints e licoes sao salvos localmente em `.aidev/memory/kb/`.
+
+---
+
 ## Estado Persistente
 
 - `.aidev/state/session.json` - Estado da sessao
 - `.aidev/state/lessons/` - Licoes aprendidas
-- `.aidev/memory/kb/` - Base de conhecimento
+- `.aidev/memory/kb/` - Base de conhecimento (fallback local do Basic Memory)
 
 ---
 

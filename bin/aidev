@@ -625,7 +625,28 @@ cmd_status() {
     else
         echo "  Nenhuma rule instalada"
     fi
-    
+
+    # Integrações MCP (Sprint 5: basic-memory-graceful-integration)
+    print_section "Integracoes MCP"
+    local _bm_detect_lib="$install_path/.aidev/lib/mcp-detect.sh"
+    if [ -f "$_bm_detect_lib" ] && ! type mcp_detect_basic_memory &>/dev/null; then
+        source "$_bm_detect_lib" 2>/dev/null || true
+    fi
+    if type mcp_detect_basic_memory &>/dev/null; then
+        unset _AIDEV_BM_DETECTED
+        if mcp_detect_basic_memory 2>/dev/null; then
+            local _bm_runtime
+            _bm_runtime=$(detect_runtime 2>/dev/null || echo "unknown")
+            print_success "Basic Memory: ativo [$_bm_runtime]"
+        else
+            print_info "Basic Memory: indisponivel (modo standard)"
+            print_info "  Dica: adicione 'basic-memory' ao .mcp.json para ativar persistencia cross-session"
+        fi
+    else
+        print_info "Basic Memory: modulo de deteccao ausente (execute 'aidev upgrade')"
+    fi
+    unset _AIDEV_BM_DETECTED
+
     echo ""
 }
 
@@ -1508,6 +1529,36 @@ cmd_doctor() {
     local stack=$(detect_stack "$install_path")
     print_info "Plataforma: $platform"
     print_info "Stack:      $stack"
+
+    # 5.1 Diagnóstico Basic Memory (Sprint 5: basic-memory-graceful-integration)
+    print_section "Basic Memory (Opcional)"
+    local _bm_lib="$install_path/.aidev/lib/mcp-detect.sh"
+    if [ -f "$_bm_lib" ] && ! type mcp_detect_basic_memory &>/dev/null; then
+        source "$_bm_lib" 2>/dev/null || true
+    fi
+    if type mcp_detect_basic_memory &>/dev/null; then
+        unset _AIDEV_BM_DETECTED
+        if mcp_detect_basic_memory 2>/dev/null; then
+            local _bm_rt
+            _bm_rt=$(detect_runtime 2>/dev/null || echo "unknown")
+            print_success "Basic Memory: ativo [$_bm_rt] — persistencia cross-session habilitada"
+        else
+            local _mcp_json="$install_path/.mcp.json"
+            if [ -f "$_mcp_json" ] && grep -q '"basic-memory"' "$_mcp_json" 2>/dev/null; then
+                print_warning "Basic Memory: declarado no .mcp.json mas nao acessivel neste runtime"
+                print_info "  Verifique se o servidor MCP esta rodando: uvx basic-memory"
+                ((warnings++)) || true
+            else
+                print_info "Basic Memory: nao configurado (opcional, mas recomendado)"
+                print_info "  Instale com: pipx install basic-memory  (ou: uvx basic-memory)"
+                print_info "  Economia de tokens: ~60% na inicializacao de agentes"
+            fi
+        fi
+        unset _AIDEV_BM_DETECTED
+    else
+        print_info "Basic Memory: modulo de deteccao ausente — execute 'aidev upgrade' para ativar"
+        ((warnings++)) || true
+    fi
 
     # 6. Verificação de Integridade Crítica
     print_section "Integridade do Sistema"

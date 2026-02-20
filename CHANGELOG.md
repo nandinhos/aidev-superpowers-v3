@@ -5,8 +5,15 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [4.5.1] - 2026-02-18
+## [4.5.3] - 2026-02-20
 
+### 🔧 Correções e Melhorias Essenciais (Activations)
+- **Fonte Singular de Verdade (AIDEV_ROOT Bug)**: Resolvido o problema de resolução do `AIDEV_ROOT` nos modulos `activation-snapshot.sh`, `workflow-sync.sh` e `workflow-commit.sh` com enforcement unificado a partir da pasta isolada de scripts, eliminando a criação espúria de diretórios `state/` falsos na raiz dos projetos.
+- **Validação Anti-Duplicidade**: `workflow-sync.sh validate` agora realiza o check forçado reportando e bloqueando conformidade caso existam pastas de estados na raiz real do projeto.
+- **Padronização de System Prompts**: Desacoplamento do `AI_INSTRUCTIONS.md`, focando-o agora para atuar apenas como Interceptor/Roteador de Agentes de IDE, direcionando as configurações core 100% para o `QUICKSTART.md`.
+- **Systematic Fallback**: Adoção no `QUICKSTART.md` de uma diretiva crítica que orienta LLMs ativados independentemente a procurarem ou gerarem ativamente sua matriz `.aidev/.cache/activation_context.md`.
+
+## [4.5.1] - 2026-02-18
 ## [4.4.0] - 2026-02-16
 
 ### Guardrails de Execucao LLM (Sprint 3)

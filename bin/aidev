@@ -647,6 +647,21 @@ cmd_status() {
     fi
     unset _AIDEV_BM_DETECTED
 
+    # Janela de Contexto (pressao heuristica via context-log.json)
+    local ctx_log="$install_path/.aidev/state/context-log.json"
+    if [ -f "$ctx_log" ] && command -v jq >/dev/null 2>&1; then
+        local ctx_events
+        ctx_events=$(jq '.entries | length' "$ctx_log" 2>/dev/null || echo 0)
+        print_section "Janela de Contexto"
+        echo "  Eventos nesta sessao: $ctx_events"
+        if [ "${ctx_events:-0}" -gt 20 ]; then
+            echo "  ATENCAO: Sessao longa detectada - recomendado criar checkpoint"
+            echo "  Execute: aidev checkpoint"
+        else
+            echo "  Sessao dentro do limite (threshold: 20 eventos)"
+        fi
+    fi
+
     echo ""
 }
 
@@ -1215,6 +1230,64 @@ cmd_plan() {
     }
 
     flc_plan_create "$title"
+}
+
+# Subcomando: checkpoint
+# Cria checkpoint de continuidade e sincroniza estado
+# Uso: aidev checkpoint
+cmd_checkpoint() {
+    local install_path="."
+    install_path=$(cd "$install_path" 2>/dev/null && pwd || echo "$install_path")
+
+    local checkpoint_file="$install_path/.aidev/state/checkpoint.md"
+    local date_now
+    date_now=$(date +%Y-%m-%d)
+    local time_now
+    time_now=$(date +%H:%M:%S)
+
+    mkdir -p "$(dirname "$checkpoint_file")"
+
+    # Lê feature ativa em current/ (se houver)
+    local active_feature=""
+    local current_dir="$install_path/.aidev/plans/current"
+    if [ -d "$current_dir" ]; then
+        active_feature=$(find "$current_dir" -name "*.md" ! -name "README.md" 2>/dev/null | head -1 | xargs basename 2>/dev/null)
+        active_feature="${active_feature%.md}"
+    fi
+
+    # Lê último commit
+    local last_commit=""
+    last_commit=$(git -C "$install_path" log -1 --oneline 2>/dev/null || echo "")
+
+    cat > "$checkpoint_file" <<EOF
+# Checkpoint de Continuidade
+
+**Data:** $date_now $time_now
+**Gerado por:** aidev checkpoint
+
+## Estado Atual
+
+- **Feature ativa:** ${active_feature:-nenhuma}
+- **Ultimo commit:** ${last_commit:-desconhecido}
+
+## Como Retomar
+
+1. Abra nova conversa
+2. Diga: modo agente
+3. Execute: \`aidev status\` para ver o estado atual
+
+---
+*Checkpoint automatico criado em $date_now $time_now*
+EOF
+
+    print_success "Checkpoint criado: $checkpoint_file"
+    print_info "Abra nova conversa e diga 'modo agente' para continuar."
+
+    # Sincroniza estado se workflow-sync disponivel
+    local sync_script="$install_path/.aidev/lib/workflow-sync.sh"
+    if [ -f "$sync_script" ]; then
+        bash "$sync_script" sync true 2>/dev/null || true
+    fi
 }
 
 # Subcomando: lessons
@@ -4041,6 +4114,9 @@ main() {
             ;;
         plan)
             cmd_plan "$@"
+            ;;
+        checkpoint)
+            cmd_checkpoint "$@"
             ;;
         error-recovery)
             cmd_error_recovery "$@"

@@ -96,17 +96,26 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Feature Lifecycle Rules (INEGOCIÁVEL)
 
-Todo ciclo de feature DEVE usar os scripts CLI. Movimentações manuais de arquivo são **PROIBIDAS**.
+**OBRIGATÓRIO: TODA feature DEVE ser executada rigorosamente via scripts CLI, sem exceção.**
 
-```
-aidev start <feature-id>     # SEMPRE antes de implementar
-aidev done <sprint-id>       # ao concluir cada sprint
-aidev complete <feature-id>  # SEMPRE ao encerrar — nunca arquivar manualmente
+### Fluxo Obrigatório
+
+```bash
+aidev start <feature-id>     # PASSO 1 — SEMPRE, antes de qualquer implementação
+aidev done <sprint-id>       # PASSO 2 — ao concluir cada sprint
+aidev complete <feature-id>  # PASSO 3 — SEMPRE ao encerrar, sem exceção
 ```
 
-- NUNCA usar `cp` ou `mv` para mover arquivos de plano
-- NUNCA editar status de features manualmente nos arquivos `.md`
-- Os scripts criam checkpoints, atualizam READMEs e ROADMAP automaticamente
+### PROIBIDO (sem exceção)
+
+- NUNCA usar `cp`, `mv` ou qualquer edição manual para mover/alterar arquivos de plano
+- NUNCA alterar status (`Status: Concluido`, etc.) manualmente nos `.md`
+- NUNCA pular o `aidev start` e começar a implementar diretamente
+- NUNCA arquivar feature sem executar `aidev complete`
+
+### Por que isso é crítico
+
+Os scripts fazem automaticamente: checkpoint, atualização de READMEs, atualização do ROADMAP e registro de histórico. Qualquer desvio causa inconsistência de estado difícil de corrigir.
 
 ## Debugging Rules
 

@@ -369,5 +369,24 @@ upgrade_project_if_needed() {
     return 0
 }
 
+# Detecta arquivos divergentes entre source e instalacao global
+# Uso: self_upgrade_detect_drift <source_dir> <global_install>
+# Retorna (stdout): numero de arquivos divergentes (0 = sincronizado)
+self_upgrade_detect_drift() {
+    local source_dir="$1"
+    local global_install="$2"
+    local diff_count=0
+
+    if command -v diff >/dev/null 2>&1; then
+        local lib_diff bin_diff
+        lib_diff=$(diff -rq "$source_dir/lib/" "$global_install/lib/" 2>/dev/null | wc -l | tr -d ' ')
+        bin_diff=$(diff -q "$source_dir/bin/aidev" "$global_install/bin/aidev" 2>/dev/null | wc -l | tr -d ' ')
+        diff_count=$(( ${lib_diff:-0} + ${bin_diff:-0} ))
+    fi
+
+    echo "$diff_count"
+}
+
 # Exporta funções para uso externo
 export -f upgrade_project_if_needed
+export -f self_upgrade_detect_drift

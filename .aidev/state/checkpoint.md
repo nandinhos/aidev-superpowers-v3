@@ -3,60 +3,57 @@
 ## Status Geral
 
 - Projeto: aidev-superpowers-v3-1
-- Versao: v4.5.4 (próximo release: v4.5.5)
+- Versão: v4.5.6
 - Branch: main
-- Suite de testes: 54 novos testes adicionados, zero regressões
+- Último commit: `ab92302 chore(readme): limpa historico acumulado em backlog/ e features/ - trunca a 5 entradas`
+- Instalação global: Sincronizada (`~/.aidev-superpowers/`)
+- Feature ativa: **Nenhuma** (current/ vazio)
 
 ---
 
-## Feature Concluída: basic-memory-graceful-integration
+## Features Entregues nesta Sessão
 
-**TODOS OS 6 SPRINTS ENTREGUES VIA TDD. FEATURE 100% CONCLUÍDA.**
+### 1. feat(lifecycle): Lifecycle 100% Automatizado
+- `aidev start` busca em `backlog/` como fallback e promove automaticamente para `features/`
+- `current/README.md` atualizado corretamente sem duplicar header da tabela de sprints
+- 11/11 testes passando em `tests/unit/test-lifecycle-start.sh`
 
-| Sprint | Commit | Entregável |
-|--------|--------|-----------|
-| Pré-Sprint 0 | `71ed1b6` | `install_aidev_lib()` + rsync `.aidev/lib/` no self-upgrade |
-| Sprint 1 | `9bccd99` | `.aidev/lib/mcp-detect.sh` — detecção multi-runtime 2 camadas |
-| Sprint 2 | `3d89306` | `.aidev/lib/basic-memory-guard.sh` + guards nos .md |
-| Sprint 3 | `5ea1707` | `ckpt_sync_to_basic_memory()` com fallback graceful |
-| Sprint 4 | `d2012e9` | `context-compressor` com memória cross-session |
-| Sprint 5 | `4990d6b` | `cmd_status`, `cmd_doctor`, `QUICKSTART.md` |
+### 2. feat(context-monitor): Context Window Monitor
+- `aidev status` exibe seção "Janela de Contexto" com contagem de eventos de sessão
+- Novo comando `aidev checkpoint` criado (bug pendente — exit 123, ver abaixo)
+- 7/7 testes passando em `tests/unit/test-context-window-monitor.sh`
+
+### 3. feat(lifecycle): Otimizar READMEs backlog/ e features/
+- Novas funções em `lib/feature-lifecycle-cli.sh`:
+  - `_flc_readme_append_to_section()` — insere linha no fim da seção via awk
+  - `_flc_truncate_readme_section()` — trunca seção a N entradas via awk
+  - `_flc_history_index_rebuild()` — reconstrói `history/README.md` com índice completo
+- 5/5 testes passando em `tests/unit/test-readme-truncate.sh`
+
+### 4. chore(readme): Aplicação prática da otimização
+- `backlog/README.md`: 399 → 61 linhas
+- `features/README.md`: 266 → 45 linhas
+- `history/README.md`: índice consolidado com 20 features
 
 ---
 
-## Próximo Passo EXATO para Retomar
+## Bug Conhecido
 
-1. Dizer "modo agente" para ativar o orquestrador
-2. Fazer **push para o GitHub**: `git push origin main`
-3. Fazer **release patch v4.5.5**: `bash bin/aidev release patch`
-4. Mover plano de `current/` para `history/2026-02/` e remover do backlog
-5. Fazer self-upgrade: `bash bin/aidev self-upgrade`
+**`aidev checkpoint` (cmd_checkpoint) falha com exit 123** na linha ~1254 de `bin/aidev`.
+- Workaround: checkpoint criado manualmente neste arquivo
+- Investigar na próxima sessão: ler `cmd_checkpoint()` em `bin/aidev`
 
 ---
 
-## Contexto Técnico
+## Backlog Pendente
 
-### Arquivos criados nesta feature
-- `.aidev/lib/mcp-detect.sh` — detecção unificada multi-runtime
-- `.aidev/lib/basic-memory-guard.sh` — wrappers bash com fallback local
-- `tests/unit/test-mcp-detect.sh` — 13 testes
-- `tests/unit/test-basic-memory-guard.sh` — 18 testes
-- `tests/unit/test-checkpoint-sync.sh` — 8 testes
-- `tests/unit/test-context-compressor-bm.sh` — 7 testes
-- `tests/unit/test-status-doctor-bm.sh` — 8 testes
+| Item | Prioridade | Arquivo |
+|---|---|---|
+| Fix: AIDEV_ROOT — Fonte Única de Verdade | Média | `.aidev/plans/backlog/fix-aidev-root-single-source.md` |
 
-### Arquivos modificados
-- `bin/aidev` — install_aidev_lib, cmd_status, cmd_doctor
-- `lib/checkpoint-manager.sh` — ckpt_sync_to_basic_memory, ckpt_create refatorado
-- `lib/context-compressor.sh` — enriquecimento cross-session
-- `lib/mcp-bridge.sh` — stub substituído por mcp_detect_available
-- `.aidev/lib/kb-search.sh` — integrado com mcp-detect
-- `.aidev/lib/activation-snapshot.sh` — campo basic_memory_available
-- `.aidev/agents/knowledge-manager.md` — verificação de disponibilidade
-- `.aidev/skills/learned-lesson/SKILL.md` — fallback documentado
-- `.aidev/skills/systematic-debugging/SKILL.md` — fallback documentado
-- `.aidev/QUICKSTART.md` — seção Basic Memory
+---
 
-### Estado do repositório
-- Tudo commitado, nada pendente
-- Não foi feito push ainda — fazer na próxima sessão antes do release
+## Próximo Passo para Retomar
+
+1. Verificar bug `aidev checkpoint` — ler `cmd_checkpoint()` em `bin/aidev` linha ~1254
+2. Ou iniciar próxima feature do backlog: `aidev start fix-aidev-root-single-source`

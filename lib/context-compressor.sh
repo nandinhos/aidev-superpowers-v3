@@ -39,10 +39,43 @@ context_compressor_generate() {
     local unified_file=".aidev/state/unified.json"
 
     mkdir -p "$(dirname "$output_file")"
+    mkdir -p ".aidev/state"
 
     if [ ! -f "$unified_file" ]; then
-        echo "⚠️ Estado não encontrado." > "$output_file"
-        return 1
+        local current_date
+        current_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        cat > "$unified_file" << 'EOF'
+{
+  "version": "4.5.6",
+  "sprint_context": {
+    "sprint_id": null,
+    "sprint_name": "Inicial",
+    "status": "pending",
+    "progress_percentage": 0,
+    "completed_tasks": 0,
+    "total_tasks": 0,
+    "current_task_id": null,
+    "next_action": null,
+    "session_metrics": {
+      "checkpoints_created": 0,
+      "sessions_count": 1,
+      "tokens_used": 0
+    },
+    "context_log": []
+  },
+  "active_intent": "Aguardando comando",
+  "active_skill": "Nenhuma",
+  "unified": {
+    "version": "4.5.6",
+    "needs_sync": true
+  },
+  "metadata": {
+    "created_at": "DATE_PLACEHOLDER",
+    "updated_at": "DATE_PLACEHOLDER"
+  }
+}
+EOF
+        sed -i "s/DATE_PLACEHOLDER/$current_date/g" "$unified_file"
     fi
 
     # Carrega dados via jq

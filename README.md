@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-4.5.1-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-4.6.0-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-412%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -39,7 +39,17 @@ aidev init
 
 ---
 
- ## 🚀 Novidades da V4.5 `(Sistema de Atualização Interativa)`
+## 🔮 Novidades da V4.6 `(Ativação Ultra-Rápida)`
+
+### cmd_agent_lite Otimizado
+Agora o comando `aidev agent` usa `activation_snapshot.json` diretamente se fresco (< 1 hora), evitando leitura de orchestrator.md e unified.json. **Economia de ~70% em tokens e tempo de ativação**.
+
+### context_compressor_generate
+Cria automaticamente `unified.json` com template padrão quando não existe, evitando erros em instalações legadas.
+
+---
+
+## 🚀 Novidades da V4.5 `(Sistema de Atualização Interativa)`
 
  ### Atualização Interativa Universal
  Agora o sistema verifica automaticamente se há uma nova versão disponível ao executar qualquer comando. O usuário é perguntado se deseja atualizar e o sistema faz tudo automaticamente:

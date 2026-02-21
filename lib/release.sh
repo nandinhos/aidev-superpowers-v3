@@ -186,7 +186,7 @@ release_bump_version() {
             
             # Insere após o segundo --- e antes da primeira seção de novidades
             # Procura pelo padrão: ---
----
+# ---
 
  ## 🌐 Novidades
             if sed -i "0,/^---$/{n; /^---$/{n; /^$/a\\

@@ -834,8 +834,62 @@ cmd_snapshot() {
 cmd_agent_lite() {
     local path="${1:-.}"
     local lite_file="$path/.aidev/.cache/activation_context.md"
+    local snapshot_file="$path/.aidev/state/activation_snapshot.json"
 
-    # Garante que o arquivo existe antes de mostrar
+    mkdir -p "$(dirname "$lite_file")"
+
+    local snapshot_age=0
+    if [ -f "$snapshot_file" ]; then
+        local snapshot_time
+        snapshot_time=$(jq -r '.generated_at // ""' "$snapshot_file" 2>/dev/null)
+        if [ -n "$snapshot_time" ] && [ "$snapshot_time" != "null" ]; then
+            local now
+            now=$(date -u +"%s" 2>/dev/null || echo "0")
+            local snap_ts
+            snap_ts=$(date -u -d "$snapshot_time" +"%s" 2>/dev/null || echo "0")
+            if [ "$now" != "0" ] && [ "$snap_ts" != "0" ]; then
+                snapshot_age=$((now - snap_ts))
+            fi
+        fi
+    fi
+
+    if [ -f "$snapshot_file" ] && [ "$snapshot_age" -lt 3600 ]; then
+        local version branch sprints recent active_intent active_skill
+        version=$(jq -r '.framework_version // .version // "4.5.6"' "$snapshot_file")
+        branch=$(jq -r '.git_context.current_branch // "main"' "$snapshot_file")
+        sprints=$(jq -r '.state.sprint_completed // 0' "$snapshot_file")
+        active_intent=$(jq -r '.state.unified.active_intent // "Aguardando comando"' "$snapshot_file")
+        active_skill=$(jq -r '.state.unified.active_skill // "Nenhuma"' "$snapshot_file")
+
+        cat << EOF
+# IDENTIDADE DO SISTEMA
+Você é o **AI Dev Orquestrador v$version**.
+Sua missão é coordenar o desenvolvimento seguindo **TDD, YAGNI e DRY**.
+Comportamento mestre: \`.aidev/agents/orchestrator.md\`
+
+# RESUMO EXECUTIVO
+Estamos no projeto \`$(basename "$path")\`.
+- **Intenção Ativa**: $active_intent
+- **Skill em Uso**: $active_skill
+
+## Estado
+- **Branch**: $branch
+- **Sprints concluídos**: $sprints
+
+## Próximos Passos
+1. Investigar o estado atual do projeto.
+2. Verificar issues abertas no GitHub.
+
+---
+*(Contexto carregado do snapshot - economia de ~70% em tokens)*
+
+---
+INSTRUÇÃO PARA IA: Você foi ativado no modo Zero-Shot.
+Leia o contexto acima e use as ferramentas para investigar os detalhes se necessário.
+EOF
+        return 0
+    fi
+
     load_module "context-compressor"
     context_compressor_generate "$lite_file" >/dev/null 2>&1
 
@@ -1751,7 +1805,7 @@ install_aidev_lib() {
         [ -f "$script" ] || continue
         cp "$script" "$dst_lib/"
         chmod +x "$dst_lib/$(basename "$script")"
-        ((count++))
+        ((count++)) || true
     done
 
     print_debug "install_aidev_lib: $count scripts copiados para $dst_lib"
@@ -3336,6 +3390,9 @@ EOF
 cmd_self_upgrade() {
     parse_args "$@"
 
+    # Carrega modulo upgrade para disponibilizar self_upgrade_detect_drift
+    load_module "upgrade" 2>/dev/null || true
+
     print_header "AI Dev - Self Upgrade"
 
     # Detecta diretorio de instalacao global
@@ -3406,17 +3463,15 @@ cmd_self_upgrade() {
     # Verifica se precisa atualizar
     if [ "$current_version" = "$source_version" ] && [ "$AIDEV_FORCE" != true ]; then
         # Segunda camada: verifica divergencia real de arquivos mesmo com versao igual
-        local lib_diff_count=0
-        if command -v diff >/dev/null 2>&1; then
-            lib_diff_count=$(diff -rq "$source_dir/lib/" "$global_install/lib/" 2>/dev/null | wc -l | tr -d ' ')
-        fi
+        local diff_count
+        diff_count=$(self_upgrade_detect_drift "$source_dir" "$global_install")
 
-        if [ "${lib_diff_count:-0}" -eq 0 ]; then
+        if [ "${diff_count:-0}" -eq 0 ]; then
             print_success "Ja esta na versao mais recente e sincronizado ($current_version)"
             exit 0
         fi
 
-        print_info "Versao igual ($current_version) mas $lib_diff_count arquivo(s) divergente(s) em lib/"
+        print_info "Versao igual ($current_version) mas ${diff_count} arquivo(s) divergente(s) em lib/ ou bin/"
         print_info "Sincronizando arquivos desatualizados..."
         echo ""
     fi

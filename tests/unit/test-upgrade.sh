@@ -280,3 +280,57 @@ else
     assert_equals "0" "1" "upgrade_record_checksums nao disponivel"
 fi
 teardown_test_env
+
+# ============================================================================
+# Tests: self_upgrade_detect_drift
+# ============================================================================
+
+test_section "self_upgrade_detect_drift - Deteccao de Divergencia"
+
+setup_test_env
+
+# Prepara estrutura de source e global simulados
+SRC_DIR=$(mktemp -d)
+GLB_DIR=$(mktemp -d)
+mkdir -p "$SRC_DIR/lib" "$SRC_DIR/bin"
+mkdir -p "$GLB_DIR/lib" "$GLB_DIR/bin"
+
+# Popula lib/ identica nos dois
+echo "# lib script" > "$SRC_DIR/lib/core.sh"
+cp "$SRC_DIR/lib/core.sh" "$GLB_DIR/lib/core.sh"
+
+# Popula bin/aidev identico nos dois
+echo "#!/bin/bash" > "$SRC_DIR/bin/aidev"
+cp "$SRC_DIR/bin/aidev" "$GLB_DIR/bin/aidev"
+
+if type self_upgrade_detect_drift &>/dev/null; then
+    # Test: retorna 0 quando source e global sao identicos
+    count=$(self_upgrade_detect_drift "$SRC_DIR" "$GLB_DIR")
+    assert_equals "0" "$count" "retorna 0 quando source e global sao identicos"
+
+    # Test: detecta divergencia em bin/aidev
+    echo "# fix adicionado" >> "$SRC_DIR/bin/aidev"
+    count=$(self_upgrade_detect_drift "$SRC_DIR" "$GLB_DIR")
+    result=$( [ "$count" -gt 0 ] && echo "divergente" || echo "igual" )
+    assert_equals "divergente" "$result" "detecta divergencia em bin/aidev"
+
+    # Restaura bin/aidev identico
+    cp "$GLB_DIR/bin/aidev" "$SRC_DIR/bin/aidev"
+
+    # Test: detecta divergencia em lib/
+    echo "# fix em lib" >> "$SRC_DIR/lib/core.sh"
+    count=$(self_upgrade_detect_drift "$SRC_DIR" "$GLB_DIR")
+    result=$( [ "$count" -gt 0 ] && echo "divergente" || echo "igual" )
+    assert_equals "divergente" "$result" "detecta divergencia em lib/"
+
+    # Test: retorna valor numerico (nao vazio)
+    assert_not_empty "$count" "retorna valor numerico"
+else
+    assert_equals "0" "1" "self_upgrade_detect_drift nao disponivel"
+    assert_equals "0" "1" "self_upgrade_detect_drift nao disponivel (bin)"
+    assert_equals "0" "1" "self_upgrade_detect_drift nao disponivel (lib)"
+    assert_equals "0" "1" "self_upgrade_detect_drift nao disponivel (not_empty)"
+fi
+
+rm -rf "$SRC_DIR" "$GLB_DIR"
+teardown_test_env

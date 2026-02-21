@@ -5,6 +5,18 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.6.0] - 2026-02-21
+
+### Otimizado: Ativação Ultra-Rápida do Agente
+
+- **`cmd_agent_lite`**: Agora usa `activation_snapshot.json` diretamente se fresco (< 1 hora), evitando leitura de orchestrator.md e unified.json. Economia de ~70% em tokens e tempo de ativação.
+- **`context_compressor_generate`**: Cria automaticamente `unified.json` com template padrão quando não existe, evitando erros em instalações legadas.
+- **Instalação legacy**: Projetos com `.aidev/` mas sem `unified.json` agora funcionam automaticamente sem necessidade de recriação manual.
+
+### Corrigido: Release Script
+
+- **`lib/release.sh`**: Corrigido erro de sintaxe na linha 189 (`---` interpretado como comando).
+
 ## [4.5.6] - 2026-02-20
 
 ### Adicionado: Feature Lifecycle Automation

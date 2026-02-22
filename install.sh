@@ -42,7 +42,21 @@ fi
 if [ -d "$INSTALL_DIR" ]; then
     print_info "Diretório já existe. Atualizando núcleo..."
     cd "$INSTALL_DIR"
-    git pull origin main
+    
+    # Protecao: limpar arquivos nao rastreados que dao conflito com o remote
+    if git status --porcelain | grep -q '^[?]'; then
+        print_info "Limpando arquivos nao rastreados que dao conflito..."
+        for untracked in $(git status --porcelain | grep '^??' | cut -c4-); do
+            if [ -f "$untracked" ]; then
+                rm -f "$untracked" 2>/dev/null || true
+            fi
+        done
+    fi
+    
+    git pull origin main || {
+        print_warning "Conflito ao atualizar. Forcando reset..."
+        git reset --hard origin/main
+    }
 else
     print_info "Clonando repositório..."
     git clone "$REPO_URL" "$INSTALL_DIR"
@@ -86,7 +100,7 @@ read -r response </dev/tty || response="n"
 
 if [[ "$response" =~ ^[yY] ]]; then
     echo ""
-    "$BIN_PATH/aidev" init
+    "$BIN_PATH/aidev" init --install-in "$PWD"
 else
     echo ""
     print_info "Instalação concluída!"

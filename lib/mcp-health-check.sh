@@ -46,6 +46,7 @@ mcp_health_check() {
 
 # ============================================================================
 # _mcp_health_basic_memory
+# Basic Memory é local-first, não precisa de API key
 # ============================================================================
 _mcp_health_basic_memory() {
     local verbose="$1"
@@ -56,19 +57,14 @@ _mcp_health_basic_memory() {
         return 1
     fi
     
-    # Verifica variáveis de ambiente necessárias
-    if [ -z "$BASIC_MEMORY_API_KEY" ]; then
-        [ "$verbose" = "true" ] && echo "  ⚠️  basic-memory: API key não configurada (opcional)"
-        return 2
-    fi
-    
-    # Tenta verificar conexão (timeout curto)
+    # Basic Memory é local-first, não precisa de API key
+    # Tenta verificar se está funcionando
     if timeout $_MCP_HEALTH_TIMEOUT basic-memory --version &>/dev/null 2>&1; then
-        [ "$verbose" = "true" ] && echo "  ✅ basic-memory: OK"
+        [ "$verbose" = "true" ] && echo "  ✅ basic-memory: OK (local-first)"
         return 0
     fi
     
-    [ "$verbose" = "true" ] && echo "  ⚠️  basic-memory: não responded"
+    [ "$verbose" = "true" ] && echo "  ⚠️  basic-memory: não está respondendo"
     return 2
 }
 
@@ -131,13 +127,29 @@ _mcp_health_serena() {
 
 # ============================================================================
 # _mcp_health_laravel
+# Verifica stack primeiro - se não é Laravel, retorna sem erro
 # ============================================================================
 _mcp_health_laravel() {
     local verbose="$1"
     
+    # Detecta stack do projeto
+    local stack="generic"
+    if type stack_detect &>/dev/null; then
+        stack=$(stack_detect "." 2>/dev/null || echo "generic")
+    fi
+    
+    # Se não é projeto Laravel, não é aplicável
+    if [ "$stack" != "laravel" ]; then
+        [ "$verbose" = "true" ] && echo "  ℹ️  laravel-boost: não aplicável (stack: $stack)"
+        return 0  # Não é erro, simplesmente não se aplica
+    fi
+    
+    # A partir daqui, é projeto Laravel - verifica configuração
+    
     # Verifica Docker
     if ! command -v docker &>/dev/null; then
-        [ "$verbose" = "true" ] && echo "  ❌ laravel-boost: Docker não disponível"
+        [ "$verbose" = "true" ] && echo "  ❌ laravel-boost: Ops! Seu projeto tem Laravel mas Docker não está disponível"
+        [ "$verbose" = "true" ] && echo "     💡 Execute: docker-compose up -d"
         return 1
     fi
     
@@ -146,11 +158,12 @@ _mcp_health_laravel() {
     container_count=$(docker ps --format "{{.Names}}" 2>/dev/null | wc -l)
     
     if [ "$container_count" -eq 0 ]; then
-        [ "$verbose" = "true" ] && echo "  ❌ laravel-boost: nenhum container rodando"
+        [ "$verbose" = "true" ] && echo "  ❌ laravel-boost: Ops! Seu projeto tem Laravel mas nenhum container está rodando"
+        [ "$verbose" = "true" ] && echo "     💡 Execute: docker-compose up -d"
         return 1
     fi
     
-    # Verifica se artisan existe
+    # Verifica se PHP artisan funciona
     if command -v php &>/dev/null && php artisan &>/dev/null 2>&1; then
         [ "$verbose" = "true" ] && echo "  ✅ laravel-boost: OK ($container_count container(s))"
         return 0
@@ -171,11 +184,24 @@ mcp_health_all() {
     local warn=0
     local fail=0
     
+    # Detecta stack primeiro (para saber se Laravel é aplicável)
+    local current_stack="generic"
+    if [ -f ".aidev/lib/stack-detector.sh" ]; then
+        source ".aidev/lib/stack-detector.sh"
+        current_stack=$(stack_detect "." 2>/dev/null || echo "generic")
+    fi
+    
     echo "🔍 Health Check dos MCPs"
     echo "========================"
+    echo "Stack detectada: $current_stack"
     echo ""
     
     for mcp in basic-memory context7 serena laravel-boost; do
+        # Pula laravel-boost se não é projeto Laravel
+        if [ "$mcp" = "laravel-boost" ] && [ "$current_stack" != "laravel" ]; then
+            continue
+        fi
+        
         total=$((total + 1))
         
         mcp_health_check "$mcp" "$verbose"

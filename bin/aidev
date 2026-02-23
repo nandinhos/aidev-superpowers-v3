@@ -4287,10 +4287,12 @@ main() {
             cmd_commit_push "$@"
             ;;
         sync)
+            [ -d ".aidev" ] && export AIDEV_ROOT="$(pwd)/.aidev"
             source "$AIDEV_LIB_DIR/workflow-sync.sh"
             sync_workflow "$@"
             ;;
         validate)
+            [ -d ".aidev" ] && export AIDEV_ROOT="$(pwd)/.aidev"
             source "$AIDEV_LIB_DIR/workflow-sync.sh"
             validate_conformity
             ;;

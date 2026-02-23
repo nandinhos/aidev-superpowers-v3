@@ -155,18 +155,13 @@ SENÃO → ativar fallback (log warning, não erro)
 
 **Descrição**: Verificar que cada MCP configurado está acessível e funcional
 
-**Status**: ✅ Concluído
+**Status**: ✅ Concluído (com correções)
 
-**Detalhes técnicos**:
-- Para cada MCP no `.mcp.json`:
-  - Verificar que o comando/binário existe
-  - Tentar inicializar e verificar resposta
-  - Para Docker-based (Laravel Boost): verificar container rodando
-- Retornar relatório de status:
-  - `connected`: MCP respondendo
-  - `unavailable`: comando não encontrado
-  - `error`: falha na inicialização
-- Sugerir correções para MCPs com falha
+**Correções aplicadas**:
+- Basic Memory: Removida verificação de API key (local-first)
+- Laravel Boost: Apenas verifica se stack é Laravel
+- Mensagens amigáveis para quando Laravel não está configurado
+- Omitir MCPs condicionais quando stack não corresponde
 
 **Arquivos**:
 - `lib/mcp-health-check.sh` ✅

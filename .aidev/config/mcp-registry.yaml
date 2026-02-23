@@ -1,0 +1,72 @@
+# MCP Registry - Classificação de MCPs
+# ============================================================================
+# Universal: MCPs disponíveis em qualquer projeto
+# Conditional: MCPs ativados apenas quando stack é detectada
+# ============================================================================
+
+universal:
+  - name: basic-memory
+    description: Persistência cross-session de conhecimento
+    command: "uvx basic-memory mcp"
+    fallback: "cat .aidev/memory/kb/"
+    requires:
+      - uvx
+    priority: 1
+
+  - name: context7
+    description: Busca inteligente em documentação
+    command: "npx -y @upstash/context7-mcp@latest"
+    fallback: "ripgrep --hidden -r"
+    requires:
+      - npx
+      - ripgrep
+    priority: 2
+
+  - name: serena
+    description: Navegação inteligente de código
+    command: "uvx --from git+https://github.com/oraios/serena serena start-mcp-server"
+    fallback: "find . -name"
+    requires:
+      - uvx
+    priority: 3
+
+conditional:
+  - name: laravel-boost
+    description: MCP para Laravel (Boost, Sail, etc)
+    command: "docker exec -i -u {UID}:{GID} {CONTAINER} php artisan boost:mcp"
+    stack: laravel
+    detect:
+      - file: composer.json
+        contains: "laravel/framework"
+      - file: artisan
+    fallback: "php artisan"
+    requires:
+      - docker
+      - php
+    priority: 1
+
+  - name: django-mcp
+    description: MCP para Django
+    command: "python -m django_mcp"
+    stack: django
+    detect:
+      - file: requirements.txt
+        contains: "django"
+      - file: manage.py
+    fallback: "python manage.py"
+    requires:
+      - python
+    priority: 1
+
+  - name: nextjs-mcp
+    description: MCP para Next.js
+    command: "npx -y @modelcontextprotocol/server-nextjs"
+    stack: nextjs
+    detect:
+      - file: package.json
+        contains: "next"
+      - file: next.config.js
+    fallback: "npm run"
+    requires:
+      - npm
+    priority: 2

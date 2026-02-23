@@ -32,6 +32,12 @@ ckpt_create() {
 
     mkdir -p "$ckpt_dir"
 
+    # MCP Fallback Check - Hook pré-checkpoint
+    source "$install_path/lib/mcp-fallback.sh" 2>/dev/null || true
+    if type mcp_fallback_hook_ckpt_create &>/dev/null; then
+        mcp_fallback_hook_ckpt_create || true
+    fi
+
     # Gera ID unico
     local timestamp=$(date +%s)
     local random_suffix=$((RANDOM % 100000))

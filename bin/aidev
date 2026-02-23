@@ -1242,6 +1242,12 @@ cmd_done() {
     }
 
     flc_sprint_done "$sprint_id" "$description"
+    
+    # MCP Fallback Check - Hook pós-sprint
+    source "$AIDEV_LIB_DIR/mcp-fallback.sh" 2>/dev/null || true
+    if type mcp_fallback_hook_sprint_done &>/dev/null; then
+        mcp_fallback_hook_sprint_done || true
+    fi
 }
 
 # Subcomando: complete

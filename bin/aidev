@@ -20,25 +20,25 @@ error_handler() {
         return
     fi
 
-    echo ""
-    echo "❌ $(_ "error_ops") (Erro: $exit_code na linha $line_no)"
-    echo "🔍 $(_ "suggest_doctor")"
-    
+    echo "" >&2
+    echo "❌ $(_ "error_ops") (Erro: $exit_code na linha $line_no)" >&2
+    echo "🔍 $(_ "suggest_doctor")" >&2
+
     # Monitoramento de triggers após erro
     if type triggers__watch_errors &>/dev/null; then
-        triggers__watch_errors "${BASH_COMMAND:-}"
+        triggers__watch_errors "${BASH_COMMAND:-}" >&2
     fi
-    
+
     # Sprint 6.2: Advanced Error Recovery
     # Analisa erro e sugere correções automáticas
     if type error_recovery_handler &>/dev/null; then
         local last_error=$(tail -n 5 /tmp/aidev_last_error 2>/dev/null || echo "Erro não capturado")
         # error_recovery_handler exibe sugestões via stderr (visivel no terminal)
         # e retorna JSON de análise via stdout (salvo no arquivo)
-        error_recovery_handler "$exit_code" "$line_no" "${BASH_COMMAND:-}" "$last_error" > /tmp/aidev_error_analysis.json
+        error_recovery_handler "$exit_code" "$line_no" "${BASH_COMMAND:-}" "$last_error" >/tmp/aidev_error_analysis.json 2>&1
     fi
-    
-    echo ""
+
+    echo "" >&2
 }
 
 trap 'error_handler $LINENO' ERR

@@ -135,7 +135,7 @@ get_checkpoint_info() {
     
     if [ -f "$checkpoint_file" ]; then
         local date=$(grep -m1 "^# Checkpoint" "$checkpoint_file" | sed 's/# Checkpoint - //')
-        local next_action=$(grep -A5 "Próxima Ação" "$checkpoint_file" | tail -1 | xargs)
+        local next_action=$(grep -A5 "Próxima Ação" "$checkpoint_file" 2>/dev/null | tail -1 | xargs 2>/dev/null || true)
         echo "{\"date\":\"$date\",\"next_action\":\"$next_action\"}"
     else
         echo "{\"date\":null,\"next_action\":null}"

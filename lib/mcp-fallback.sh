@@ -70,10 +70,16 @@ mcp_fallback_check() {
                 command -v basic-memory &>/dev/null && result=0
                 ;;
             context7|context7-mcp)
-                command -v ripgrep &>/dev/null && result=0
+                # Verifica se tem chave de API configurada OU ripgrep disponível
+                if [ -n "$CONTEXT7_API_KEY" ]; then
+                    result=0
+                elif command -v ripgrep &>/dev/null; then
+                    result=0
+                fi
                 ;;
             serena)
-                command -v serena &>/dev/null && result=0
+                # Verifica se está rodando ou comando disponível
+                pgrep -f "serena.*mcp" &>/dev/null && result=0
                 ;;
             laravel-boost)
                 command -v docker &>/dev/null && result=0
@@ -89,7 +95,7 @@ mcp_fallback_check() {
             return 0
         fi
         
-        ((retries++))
+        retries=$((retries + 1))
         [ $retries -lt $_MCP_MAX_RETRIES ] && sleep $_MCP_RETRY_DELAY
     done
     
@@ -108,9 +114,9 @@ mcp_fallback_check_all() {
     local checked=0
     
     for mcp in "${mcp_list[@]}"; do
-        ((checked++))
+        checked=$((checked + 1))
         if ! mcp_fallback_check "$mcp"; then
-            ((failed++))
+            failed=$((failed + 1))
         fi
     done
     

@@ -25,4 +25,4 @@ Use `aidev start <feature-id>` para iniciar uma feature de features/.
 
 ---
 
-*Ultima atualizacao: 2026-02-20*
+*Ultima atualizacao: 2026-02-23*

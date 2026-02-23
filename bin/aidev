@@ -2399,7 +2399,59 @@ cmd_mcp() {
     load_module "mcp-bridge" 2>/dev/null || source "$AIDEV_LIB_DIR/mcp-bridge.sh"
     
     case "$subcommand" in
-        status|suggest)
+        status|check)
+            # Verifica status de todos os MCPs com fallback
+            source "$AIDEV_LIB_DIR/mcp-fallback.sh" 2>/dev/null || {
+                print_error "Modulo mcp-fallback.sh nao encontrado"
+                exit 1
+            }
+            
+            print_header "Status dos MCPs"
+            echo ""
+            
+            # Carrega registry se existir
+            local registry_file=".aidev/config/mcp-registry.yaml"
+            if [ -f "$registry_file" ]; then
+                print_info "Registry: $registry_file"
+            fi
+            
+            echo ""
+            mcp_fallback_check_all || true
+            local result=$?
+            
+            echo ""
+            print_header "Detalhes por MCP"
+            echo ""
+            
+            # Mostra detalhes de cada MCP
+            for mcp in basic-memory context7 serena laravel-boost; do
+                local status
+                status=$(mcp_fallback_get_status "$mcp")
+                local fallback_cmd
+                fallback_cmd=$(mcp_fallback_get_fallback_command "$mcp")
+                
+                case "$status" in
+                    connected)
+                        echo "  ✅ $mcp - Conectado"
+                        ;;
+                    fallback)
+                        echo "  ⚠️  $mcp - Fallback ativo"
+                        echo "      Fallback: $fallback_cmd"
+                        ;;
+                    *)
+                        echo "  ❓ $mcp - Desconhecido"
+                        ;;
+                esac
+            done
+            
+            echo ""
+            if [ $result -eq 0 ]; then
+                print_success "Todos os MCPs operacional"
+            else
+                print_warning "Alguns MCPs em modo fallback. Funcionalidade preservada."
+            fi
+            ;;
+        suggest|list)
             mcp_bridge_suggest
             ;;
         exec)
@@ -2442,8 +2494,14 @@ cmd_mcp() {
                 exit 1
             fi
             ;;
+        keys|import)
+            # Importa chaves de API de configurações existentes
+            source "$AIDEV_LIB_DIR/mcp-keys-import.sh"
+            mcp_keys_import antigravity
+            return 0
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel)"
+            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys)"
             exit 1
             ;;
     esac

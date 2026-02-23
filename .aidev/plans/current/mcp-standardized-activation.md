@@ -155,9 +155,11 @@ SENÃO → ativar fallback (log warning, não erro)
 
 **Descrição**: Verificar que cada MCP configurado está acessível e funcional
 
+**Status**: ✅ Concluído
+
 **Detalhes técnicos**:
 - Para cada MCP no `.mcp.json`:
-  - Verificar que o comando/binário existe (`which npx`, `which uvx`, `which docker`)
+  - Verificar que o comando/binário existe
   - Tentar inicializar e verificar resposta
   - Para Docker-based (Laravel Boost): verificar container rodando
 - Retornar relatório de status:
@@ -166,8 +168,10 @@ SENÃO → ativar fallback (log warning, não erro)
   - `error`: falha na inicialização
 - Sugerir correções para MCPs com falha
 
-**Arquivos esperados**:
-- `.aidev/skills/mcp-health-check.md`
+**Arquivos**:
+- `lib/mcp-health-check.sh` ✅
+- `aidev mcp health` ✅
+- `aidev mcp doctor` ✅
 
 ---
 

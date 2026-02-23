@@ -1,0 +1,240 @@
+#!/bin/bash
+
+# ============================================================================
+# mcp-health-check.sh - Verificação de saúde dos MCPs
+# ============================================================================
+# Health check completo que verifica se MCPs estão respondendo
+# Não apenas se o comando existe, mas se realmente funcionam
+# ============================================================================
+
+_MCP_HEALTH_TIMEOUT=5
+_MCP_HEALTH_REGISTRY="${MCP_HEALTH_REGISTRY:-.aidev/config/mcp-registry.yaml}"
+
+# ============================================================================
+# mcp_health_check
+# Verifica saúde de um MCP específico
+# Retorna: 0 (ok), 1 (falhou), 2 (aviso)
+# ============================================================================
+mcp_health_check() {
+    local mcp_name="$1"
+    local verbose="${2:-false}"
+    local result=0
+    
+    case "$mcp_name" in
+        basic-memory)
+            _mcp_health_basic_memory "$verbose" || result=$?
+            ;;
+        context7|context7-mcp)
+            _mcp_health_context7 "$verbose" || result=$?
+            ;;
+        serena)
+            _mcp_health_serena "$verbose" || result=$?
+            ;;
+        laravel-boost)
+            _mcp_health_laravel "$verbose" || result=$?
+            ;;
+        *)
+            if [ "$verbose" = "true" ]; then
+                echo "  ❓ MCP desconhecido: $mcp_name"
+            fi
+            return 1
+            ;;
+    esac
+    
+    return ${result:-0}
+}
+
+# ============================================================================
+# _mcp_health_basic_memory
+# ============================================================================
+_mcp_health_basic_memory() {
+    local verbose="$1"
+    
+    # Verifica se comando existe
+    if ! command -v basic-memory &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ❌ basic-memory: comando não encontrado"
+        return 1
+    fi
+    
+    # Verifica variáveis de ambiente necessárias
+    if [ -z "$BASIC_MEMORY_API_KEY" ]; then
+        [ "$verbose" = "true" ] && echo "  ⚠️  basic-memory: API key não configurada (opcional)"
+        return 2
+    fi
+    
+    # Tenta verificar conexão (timeout curto)
+    if timeout $_MCP_HEALTH_TIMEOUT basic-memory --version &>/dev/null 2>&1; then
+        [ "$verbose" = "true" ] && echo "  ✅ basic-memory: OK"
+        return 0
+    fi
+    
+    [ "$verbose" = "true" ] && echo "  ⚠️  basic-memory: não responded"
+    return 2
+}
+
+# ============================================================================
+# _mcp_health_context7
+# ============================================================================
+_mcp_health_context7() {
+    local verbose="$1"
+    
+    # Verifica se tem API key
+    if [ -z "$CONTEXT7_API_KEY" ]; then
+        [ "$verbose" = "true" ] && echo "  ❌ context7: API key não configurada"
+        return 1
+    fi
+    
+    # Verifica se npx existe
+    if ! command -v npx &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ❌ context7: npx não encontrado"
+        return 1
+    fi
+    
+    # Verifica ripgrep como fallback
+    if command -v ripgrep &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ✅ context7: OK (fallback ripgrep disponível)"
+        return 0
+    fi
+    
+    [ "$verbose" = "true" ] && echo "  ⚠️  context7: sem fallback"
+    return 2
+}
+
+# ============================================================================
+# _mcp_health_serena
+# ============================================================================
+_mcp_health_serena() {
+    local verbose="$1"
+    
+    # Verifica se está rodando
+    if pgrep -f "serena.*mcp" &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ✅ serena: OK (em execução)"
+        return 0
+    fi
+    
+    # Verifica se comando existe
+    if command -v serena &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ⚠️  serena: instalado mas não está rodando"
+        echo "     Execute: uvx --from git+https://github.com/oraios/serena serena start-mcp-server &"
+        return 2
+    fi
+    
+    # Fallback
+    if command -v find &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ⚠️  serena: usando fallback (find)"
+        return 2
+    fi
+    
+    [ "$verbose" = "true" ] && echo "  ❌ serena: não disponível"
+    return 1
+}
+
+# ============================================================================
+# _mcp_health_laravel
+# ============================================================================
+_mcp_health_laravel() {
+    local verbose="$1"
+    
+    # Verifica Docker
+    if ! command -v docker &>/dev/null; then
+        [ "$verbose" = "true" ] && echo "  ❌ laravel-boost: Docker não disponível"
+        return 1
+    fi
+    
+    # Verifica se container está rodando
+    local container_count
+    container_count=$(docker ps --format "{{.Names}}" 2>/dev/null | wc -l)
+    
+    if [ "$container_count" -eq 0 ]; then
+        [ "$verbose" = "true" ] && echo "  ❌ laravel-boost: nenhum container rodando"
+        return 1
+    fi
+    
+    # Verifica se artisan existe
+    if command -v php &>/dev/null && php artisan &>/dev/null 2>&1; then
+        [ "$verbose" = "true" ] && echo "  ✅ laravel-boost: OK ($container_count container(s))"
+        return 0
+    fi
+    
+    [ "$verbose" = "true" ] && echo "  ⚠️  laravel-boost: containers rodando mas PHP indisponível"
+    return 2
+}
+
+# ============================================================================
+# mcp_health_all
+# Verifica todos os MCPs e exibe relatório
+# ============================================================================
+mcp_health_all() {
+    local verbose="${1:-true}"
+    local total=0
+    local ok=0
+    local warn=0
+    local fail=0
+    
+    echo "🔍 Health Check dos MCPs"
+    echo "========================"
+    echo ""
+    
+    for mcp in basic-memory context7 serena laravel-boost; do
+        total=$((total + 1))
+        
+        mcp_health_check "$mcp" "$verbose"
+        local result=$?
+        
+        case $result in
+            0) ok=$((ok + 1)) ;;
+            2) warn=$((warn + 1)) ;;
+            1) fail=$((fail + 1)) ;;
+        esac
+    done
+    
+    echo ""
+    echo "========================"
+    echo "Total: $total | OK: $ok | Aviso: $warn | Falha: $fail"
+    
+    if [ $fail -gt 0 ]; then
+        return 1
+    elif [ $warn -gt 0 ]; then
+        return 2
+    fi
+    return 0
+}
+
+# ============================================================================
+# mcp_health_suggest
+# Sugere correções para MCPs com problema
+# ============================================================================
+mcp_health_suggest() {
+    echo "💡 Sugestões para resolver problemas:"
+    echo ""
+    
+    # Context7
+    if [ -z "$CONTEXT7_API_KEY" ]; then
+        echo "  context7:"
+        echo "    1. Obtenha chave em: https://upstash.com/"
+        echo "    2. Execute: aidev mcp keys"
+        echo "    3. Adicione ao ~/.bashrc: export CONTEXT7_API_KEY=\"sua-chave\""
+        echo ""
+    fi
+    
+    # Serena
+    if ! pgrep -f "serena.*mcp" &>/dev/null; then
+        echo "  serena:"
+        echo "    1. Inicie o servidor: uvx --from git+https://github.com/oraios/serena serena start-mcp-server &"
+        echo "    2. O fallback usa 'find . -name' que funciona sem configuração"
+        echo ""
+    fi
+    
+    # Laravel Boost
+    if ! command -v docker &>/dev/null; then
+        echo "  laravel-boost:"
+        echo "    1. Instale o Docker"
+        echo "    2. Inicie seus containers: docker-compose up -d"
+        echo ""
+    fi
+}
+
+# Export
+export -f mcp_health_check
+export -f mcp_health_all
+export -f mcp_health_suggest

@@ -2522,8 +2522,22 @@ cmd_mcp() {
             mcp_generator_show "."
             return 0
             ;;
+        health|check)
+            # Health check dos MCPs
+            source "$AIDEV_LIB_DIR/mcp-health-check.sh"
+            mcp_health_all "true" || true
+            return 0
+            ;;
+        doctor|fix)
+            # Diagnóstico e sugestões
+            source "$AIDEV_LIB_DIR/mcp-health-check.sh"
+            mcp_health_all "true" || true
+            echo ""
+            mcp_health_suggest
+            return 0
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys, stack, generate, show)"
+            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys, stack, generate, show, health, doctor)"
             exit 1
             ;;
     esac

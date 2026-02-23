@@ -1212,6 +1212,33 @@ cmd_start() {
         exit 1
     fi
 
+    # Verifica se feature já está em execução (current/)
+    local current_dir=".aidev/plans/current"
+    if [ -f "$current_dir/${feature_id}.md" ] 2>/dev/null; then
+        print_warning "⚠️  Feature '$feature_id' ja esta em execucao!"
+        print_info "Execute: aidev complete $feature_id"
+        return 1
+    fi
+    
+    # Verifica se feature já foi concluída (history/)
+    local history_dir=".aidev/plans/history"
+    local already_done=false
+    if [ -d "$history_dir" ]; then
+        for month_dir in "$history_dir"/*/; do
+            if [ -f "${month_dir}${feature_id}"*.md ] 2>/dev/null; then
+                already_done=true
+                break
+            fi
+        done
+    fi
+    
+    if [ "$already_done" = "true" ]; then
+        print_warning "⚠️  Feature '$feature_id' ja foi concluida!"
+        print_info "Verifique o historico em: $history_dir/"
+        print_info "Para iniciar uma nova feature, use um ID diferente"
+        exit 0
+    fi
+
     load_module "feature-lifecycle" 2>/dev/null || \
         source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
         print_error "Modulo feature-lifecycle nao encontrado"
@@ -1233,6 +1260,17 @@ cmd_done() {
         print_error "Uso: aidev done <sprint-id> [descricao]"
         print_info "Ex: aidev done sprint-1 \"Implementacao concluida\""
         exit 1
+    fi
+
+    # Verifica se há feature em execução
+    local current_dir=".aidev/plans/current"
+    if [ ! -f "$current_dir"/*.md ] 2>/dev/null || [ -f "$current_dir/README.md" ]; then
+        local active_feature=$(find "$current_dir" -name "*.md" ! -name "README.md" -type f 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")
+        if [ -z "$active_feature" ]; then
+            print_warning "⚠️  Nenhuma feature em execucao!"
+            print_info "Execute: aidev start <feature-id>"
+            exit 0
+        fi
     fi
 
     load_module "feature-lifecycle" 2>/dev/null || \
@@ -1260,6 +1298,44 @@ cmd_complete() {
         print_error "Uso: aidev complete <feature-id>"
         print_info "Ex: aidev complete feature-lifecycle-automation"
         exit 1
+    fi
+
+    # Verifica se feature já está concluída (em history/)
+    local history_dir=".aidev/plans/history"
+    local current_dir=".aidev/plans/current"
+    
+    # Busca em history/ por mês
+    local already_completed=false
+    for month_dir in "$history_dir"/*/; do
+        if [ -f "${month_dir}${feature_id}"*.md ] 2>/dev/null; then
+            already_completed=true
+            break
+        fi
+    done
+    
+    if [ "$already_completed" = "true" ]; then
+        print_warning "⚠️  Feature '$feature_id' ja foi concluida anteriormente!"
+        print_info "Verifique o historico em: $history_dir/"
+        echo ""
+        print_info "Para verificar o status atual, use: aidev status"
+        exit 0
+    fi
+
+    # Verifica se feature está em current/
+    local in_current=false
+    if [ -f "$current_dir/${feature_id}.md" ] 2>/dev/null; then
+        in_current=true
+    elif find "$current_dir" -name "*${feature_id}*.md" -type f 2>/dev/null | grep -q .; then
+        in_current=true
+    fi
+
+    if [ "$in_current" = "false" ]; then
+        print_warning "⚠️  Feature '$feature_id' nao esta em execucao (current/)."
+        print_info "Features em execucao:"
+        ls "$current_dir"/*.md 2>/dev/null | grep -v README | xargs -n1 basename 2>/dev/null || print_info "  (nenhuma)"
+        echo ""
+        print_info "Para iniciar uma feature: aidev start <feature-id>"
+        return 1
     fi
 
     load_module "feature-lifecycle" 2>/dev/null || \

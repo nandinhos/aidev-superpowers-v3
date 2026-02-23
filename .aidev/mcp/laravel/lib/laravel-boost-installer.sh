@@ -223,19 +223,18 @@ bootstrap_container() {
         return 1
     fi
     
-    if ! docker exec "$container_name" test -d vendor 2>/dev/null; then
-        log_error "[$container_name] vendor/ não encontrado. Execute 'composer install' primeiro"
+    # Passo 2: Instalar Laravel Boost
+    log_info "[$container_name] Instalando Laravel Boost..."
+    if ! install_laravel_boost "$container_name"; then
+        log_error "[$container_name] Falha ao instalar Laravel Boost"
         return 1
     fi
     
-    # Verificar versão do Laravel
-    local laravel_version
-    laravel_version=$(docker exec "$container_name" php artisan --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1)
-    log_success "[$container_name] Laravel $laravel_version detectado"
-    
-    # Passo 2: Ajustar permissões (se necessário)
-    log_info "[$container_name] Verificando permissões..."
-    docker exec "$container_name" chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+    # Passo 3: Configurar
+    log_info "[$container_name] Configurando..."
+    if ! configure_laravel_boost "$container_name"; then
+        log_warn "[$container_name] Falha na configuração pós-instalação, mas prosseguindo..."
+    fi
     
     log_success "=========================================="
     log_success "[$container_name] Laravel pronto para MCP!"

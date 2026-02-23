@@ -1,0 +1,5 @@
+{
+  "tasks": [
+    { "task_id": "task-1", "name": "Implementar funcionalidade X" }
+  ]
+}

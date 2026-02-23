@@ -167,9 +167,18 @@ generate_mcp_config() {
     log_info "  Container: $container_name" >&2
     log_info "  Server name: $server_name" >&2
 
-    # Separar boost_command em partes (ex: "mcp:start laravel-boost" -> 2 args)
+    # Separar boost_command em partes
     local args_json
-    args_json=$(printf '        "exec",\n        "-i",\n        "%s",\n        "php",\n        "%s"' "$container_name" "$artisan_path")
+
+    # Padrao recomendado pelo Gemini CLI para Sail
+    if [[ "$container_name" == *"-laravel.test-1" ]]; then
+        # Se for Sail, usamos docker exec mas com os argumentos recomendados (-T, -u, WWWUSER)
+        # para garantir compatibilidade e acesso total
+        args_json=$(printf '        "exec",\n        "-i",\n        "-T",\n        "-u",\n        "1000:1000",\n        "-e",\n        "WWWUSER=1000",\n        "-e",\n        "WWWGROUP=1000",\n        "%s",\n        "php",\n        "%s"' "$container_name" "$artisan_path")
+    else
+        # Container generic
+        args_json=$(printf '        "exec",\n        "-i",\n        "-T",\n        "%s",\n        "php",\n        "%s"' "$container_name" "$artisan_path")
+    fi
 
     # Adicionar cada parte do boost_command como argumento separado
     local cmd_part
@@ -187,8 +196,11 @@ generate_mcp_config() {
 $args_json
       ],
       "env": {
-        "LARAVEL_CONTAINER": "$container_name"
-      }
+        "LARAVEL_CONTAINER": "$container_name",
+        "WWWUSER": "1000",
+        "WWWGROUP": "1000"
+      },
+      "description": "Laravel Boost MCP server running inside Docker container"
     }
   }
 }

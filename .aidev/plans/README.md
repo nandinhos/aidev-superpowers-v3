@@ -40,10 +40,10 @@ history/YYYY-MM/ (arquivado)
 
 ## 📊 Status Atual
 
-- **Backlog**: 1 ideia(s)
-- **Features**: 1 planejada(s)
+- **Backlog**: 3 ideia(s)
+- **Features**: 0 planejada(s)
 - **Current**: 0 em execução
-- **History**: 9 concluída(s) em 2026-02 + legado
+- **History**: 21 concluída(s) em 2026-02 + legado
 
 ---
 
@@ -56,4 +56,4 @@ history/YYYY-MM/ (arquivado)
 
 ---
 
-*Estrutura v4.2.0 - Organização de Planejamento*
+*Estrutura v4.6.0 - Organização de Planejamento*

@@ -74,11 +74,11 @@ SENÃO → ativar fallback (log warning, não erro)
 | Laravel Boost | `php artisan` direto |
 
 **Critérios**:
-- [ ] Nenhum erro fatal se MCP não disponível
-- [ ] Warning claro indicando fallback ativo
-- [ ] Verificação a cada término de task
-- [ ] Recovery automático quando MCP volta
-- [ ] Sincronizador mantém estado alinhado
+- [x] Nenhum erro fatal se MCP não disponível
+- [x] Warning claro indicando fallback ativo
+- [x] Verificação a cada término de task
+- [x] Recovery automático quando MCP volta
+- [x] Sincronizador mantém estado alinhado
 
 ### 1. [HIGH] Implementar Classificação de MCPs
 
@@ -94,15 +94,17 @@ SENÃO → ativar fallback (log warning, não erro)
   - Outros futuros: Django MCP → `requirements.txt` com Django, etc.
 - Criar schema de registro em `.aidev/config/mcp-registry.yaml`
 
-**Arquivos esperados**:
-- `.aidev/config/mcp-registry.yaml`
-- `.aidev/skills/mcp-activation.md` (documentação do skill)
+**Status**: ✅ Concluído (mcp-registry.yaml criado)
+**Arquivos**:
+- `.aidev/config/mcp-registry.yaml` ✅
 
 ---
 
 ### 2. [HIGH] Implementar Detector de Stack
 
 **Descrição**: Criar lógica de detecção automática da stack do projeto para ativar MCPs condicionais
+
+**Status**: ✅ Concluído
 
 **Detalhes técnicos**:
 - Analisar arquivos-chave no diretório raiz do projeto:
@@ -117,8 +119,9 @@ SENÃO → ativar fallback (log warning, não erro)
   - Comando MCP específico: `php artisan boost:mcp`
 - Retornar lista de MCPs condicionais a ativar
 
-**Arquivos esperados**:
-- `.aidev/skills/stack-detector.md`
+**Arquivos**:
+- `lib/stack-detector.sh` ✅
+- `aidev mcp stack` ✅
 
 ---
 

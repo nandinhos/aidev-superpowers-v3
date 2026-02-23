@@ -2500,8 +2500,14 @@ cmd_mcp() {
             mcp_keys_import antigravity
             return 0
             ;;
+        stack|detect)
+            # Detecta stack do projeto
+            source "$AIDEV_LIB_DIR/stack-detector.sh"
+            stack_show "."
+            return 0
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys)"
+            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys, stack)"
             exit 1
             ;;
     esac

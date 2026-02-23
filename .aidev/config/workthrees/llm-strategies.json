@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "strategies": {
+    "balanced": {
+      "description": "Equilibrio entre custo e qualidade",
+      "rules": [
+        { "max_complexity": 20, "model": "claude-haiku-3-5" },
+        { "max_complexity": 50, "model": "claude-sonnet-4-20250514" },
+        { "max_complexity": 80, "model": "claude-opus-4-20250514" },
+        { "max_complexity": 100, "model": "claude-opus-4-20250514" }
+      ]
+    },
+    "quality": {
+      "description": "Prioriza qualidade maxima",
+      "rules": [
+        { "max_complexity": 30, "model": "claude-sonnet-4-20250514" },
+        { "max_complexity": 100, "model": "claude-opus-4-20250514" }
+      ]
+    },
+    "speed": {
+      "description": "Prioriza velocidade",
+      "rules": [
+        { "max_complexity": 100, "model": "claude-haiku-3-5" }
+      ]
+    },
+    "cost": {
+      "description": "Otimiza custo",
+      "rules": [
+        { "max_complexity": 15, "model": "claude-haiku-3-5" },
+        { "max_complexity": 40, "model": "claude-sonnet-4-20250514" },
+        { "max_complexity": 100, "model": "claude-opus-4-20250514" }
+      ]
+    }
+  },
+  "default_strategy": "balanced"
+}

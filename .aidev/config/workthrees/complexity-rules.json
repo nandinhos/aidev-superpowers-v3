@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "condition": "files_count > 10",
+      "score": 30,
+      "reason": "Alto numero de arquivos"
+    },
+    {
+      "condition": "files_count > 5",
+      "score": 20,
+      "reason": "Quantidade moderada de arquivos"
+    },
+    {
+      "condition": "files_count > 0",
+      "score": 10,
+      "reason": "Arquivos afetados"
+    },
+    {
+      "condition": "languages > 1",
+      "score": 15,
+      "reason": "Multiplas linguagens"
+    },
+    {
+      "condition": "type == refactor",
+      "score": 25,
+      "reason": "Refatoracao tem complexidade inerente"
+    },
+    {
+      "condition": "type == new",
+      "score": 10,
+      "reason": "Nova funcionalidade"
+    },
+    {
+      "condition": "has_tests == false",
+      "score": 15,
+      "reason": "Sem testes existentes"
+    },
+    {
+      "condition": "dependencies_external > 3",
+      "score": 20,
+      "reason": "Muitas dependencias externas"
+    },
+    {
+      "condition": "dependencies_external > 0",
+      "score": 10,
+      "reason": "Possui dependencias externas"
+    },
+    {
+      "condition": "breaking_changes == true",
+      "score": 30,
+      "reason": "Contem breaking changes"
+    }
+  ],
+  "complexity_thresholds": {
+    "low": 20,
+    "medium": 50,
+    "high": 80,
+    "critical": 100
+  }
+}

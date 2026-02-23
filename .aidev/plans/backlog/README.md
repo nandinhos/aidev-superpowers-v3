@@ -19,6 +19,17 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Ideias Pendentes
 
+### Workthrees - Orquestrador Inteligente de Execução Assistada
+
+**Arquivo:** [workthrees-orquestrador-inteligente.md](workthrees-orquestrador-inteligente.md)
+**Status:** Ideia
+**Prioridade:** Alta
+**Criado:** 2026-02-23
+
+**Descrição:** Implementar agente orquestrador inteligente com detecção de impacto, grafo de dependências, classificação de complexidade, seleção dinâmica de LLM, fila com prioridades e lock manager por arquivo. Viabilidade alta usando infraestrutura shell+JSON.
+
+---
+
 ### Fix: AIDEV_ROOT — Fonte Única de Verdade
 
 **Arquivo:** [fix-aidev-root-single-source.md](fix-aidev-root-single-source.md)
@@ -57,4 +68,4 @@ checkpoint e snapshot a cada transição e conclusão de task/sprint/milestone.
 
 ---
 
-*Ultima atualizacao: 2026-02-20*
+*Ultima atualizacao: 2026-02-23*

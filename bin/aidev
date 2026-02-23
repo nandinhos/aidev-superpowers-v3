@@ -2506,8 +2506,24 @@ cmd_mcp() {
             stack_show "."
             return 0
             ;;
+        generate|create)
+            # Gera .mcp.json automaticamente
+            source "$AIDEV_LIB_DIR/mcp-json-generator.sh"
+            local force="false"
+            if [ "$1" = "--force" ] || [ "$1" = "-f" ]; then
+                force="true"
+            fi
+            mcp_generator_create "." ".mcp.json" "$force"
+            return 0
+            ;;
+        show|preview)
+            # Mostra o que seria gerado
+            source "$AIDEV_LIB_DIR/mcp-json-generator.sh"
+            mcp_generator_show "."
+            return 0
+            ;;
         *)
-            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys, stack)"
+            print_error "Subcomando desconhecido: $subcommand (suggest, exec, list, add, remove, laravel, keys, stack, generate, show)"
             exit 1
             ;;
     esac

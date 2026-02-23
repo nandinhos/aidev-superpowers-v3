@@ -129,15 +129,21 @@ SENÃO → ativar fallback (log warning, não erro)
 
 **Descrição**: Gerar arquivo `.mcp.json` baseado na classificação + detecção
 
+**Status**: ✅ Concluído
+
 **Detalhes técnicos**:
 - Template base com MCPs universais (sempre presentes)
 - Merge com MCPs condicionais detectados
 - Para Laravel Boost via Docker Sail, resolver dinamicamente:
   - Nome do container (`docker ps --format`)
   - UID/GID do usuário (`id -u` / `id -g`)
-  - Comando: `docker exec -i -u {UID}:{GID} {CONTAINER} php artisan boost:mcp`
 - Validar que o arquivo gerado é JSON válido
 - Se `.mcp.json` já existir, fazer merge inteligente (não sobrescrever configs manuais)
+
+**Arquivos**:
+- `lib/mcp-json-generator.sh` ✅
+- `aidev mcp generate` ✅
+- `aidev mcp show` ✅
 
 **Arquivos esperados**:
 - `.aidev/templates/mcp-json-base.json`

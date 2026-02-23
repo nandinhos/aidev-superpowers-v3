@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-4.6.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-4.7.0-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-412%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -36,6 +36,41 @@ export PATH="$PATH:$(pwd)/aidev-superpowers-v3/bin"
 cd seu-projeto
 aidev init
 ```
+
+---
+
+## 🚀 Novidades da V4.7.0 (Sistema MCP Padronizado)
+
+### Sistema de Fallback para MCPs
+MCPs agora são **opcionais**. Se não instalados ou sem resposta, o sistema ativa fallback automaticamente sem erro:
+- **Basic Memory**: Fallback para `.aidev/memory/kb/`
+- **Context7**: Fallback para `ripgrep`
+- **Serena**: Fallback para `find . -name`
+- **Laravel Boost**: Fallback para `php artisan`
+
+### Novos Comandos MCP
+```bash
+aidev mcp status      # Ver status dos MCPs
+aidev mcp stack      # Detectar stack do projeto
+aidev mcp keys       # Importar chaves de API
+aidev mcp show       # Preview da configuração
+aidev mcp generate   # Gerar .mcp.json
+aidev mcp health     # Health check completo
+aidev mcp doctor     # Diagnóstico + sugestões
+```
+
+### Stack Detector
+Detecção automática de stack (Laravel, Node.js, Python, Rust, Go) para ativar MCPs condicionais automaticamente.
+
+### Tratamento de Erros Melhorado
+Mensagens amigáveis em vez de erros genéricos:
+- `aidev start`: Verifica se feature já está em execução ou concluída
+- `aidev complete`: Verifica se feature já foi concluída
+- `aidev done`: Verifica se há feature em execução
+
+### Unificação de Fluxos
+- Código morto removido (~1.800 linhas)
+- Fluxo único: `backlog/ → features/ → current/ → history/`
 
 ---
 

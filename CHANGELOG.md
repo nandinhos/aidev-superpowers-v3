@@ -5,6 +5,44 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.7.0] - 2026-02-23
+
+### Adicionado: Sistema MCP Standardizado
+
+- **`lib/mcp-fallback.sh`**: Sistema de fallback e resiliência para MCPs. Se MCP não responde, ativa fallback automaticamente sem erro.
+- **`lib/mcp-health-check.sh`**: Verificação de saúde dos MCPs com mensagens amigáveis.
+- **`lib/stack-detector.sh`**: Detecção automática de stack (Laravel, Node.js, Python, Rust, Go).
+- **`lib/mcp-json-generator.sh`**: Gera .mcp.json automaticamente baseado na stack.
+- **`lib/mcp-keys-import.sh`**: Importa chaves de API de configurações existentes (Antigravity).
+
+### Adicionado: Comandos MCP
+
+- **`aidev mcp status`**: Verifica status de todos os MCPs com fallback.
+- **`aidev mcp stack`**: Detecta stack do projeto.
+- **`aidev mcp keys`**: Importa chaves de API do Antigravity.
+- **`aidev mcp show`**: Preview da configuração que seria gerada.
+- **`aidev mcp generate`**: Gera .mcp.json automaticamente.
+- **`aidev mcp health`**: Health check completo.
+- **`aidev mcp doctor`**: Diagnóstico + sugestões.
+
+### Melhorado: Tratamento de Erros
+
+- **`aidev start`**: Verifica se feature já está em execução ou concluída.
+- **`aidev complete`**: Verifica se feature já foi concluída.
+- **`aidev done`**: Verifica se há feature em execução.
+- Mensagens amigáveis em vez de erros genéricos.
+
+### Refatorado: Unificação de Fluxos
+
+- Removido código morto `.aidev/lib/feature-lifecycle.sh` (549 linhas).
+- Deprecado `lib/plans.sh` e comando `aidev feature`.
+- Renomeado `feature-lifecycle-cli.sh` → `feature-lifecycle.sh`.
+- Aliases de compatibilidade (`flc_*` → `feature_*`).
+
+### Adicionado: Registry de MCPs
+
+- **`.aidev/config/mcp-registry.yaml`**: Classificação de MCPs universais e condicionais.
+
 ## [4.6.0] - 2026-02-21
 
 ### Otimizado: Ativação Ultra-Rápida do Agente

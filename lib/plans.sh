@@ -1,10 +1,39 @@
 #!/bin/bash
 
 # ============================================================================
-# AI Dev Superpowers V3 - Plans & Roadmap Module
+# AI Dev Superpowers V3 - Plans & Roadmap Module [DEPRECATED]
 # ============================================================================
-# Gestão de Roadmaps, Sprints e Features baseada na metodologia SGAITI
+# AVISO DE DEPRECACAO (2026-02-23):
+# Este modulo esta DEPRECADO e sera REMOVIDO em versao futura.
+# Use os comandos oficiais:
+#   - aidev plan <titulo>     -> cria backlog
+#   - aidev start <id>       -> inicia feature
+#   - aidev done <sprint>    -> marca sprint concluida
+#   - aidev complete <id>    -> conclui feature
+#
+# Este arquivo sera removido apos 1 release de aviso.
 # ============================================================================
+
+# Redirecionamento de compatibilidade: plans__feature_finish -> flc_feature_complete
+# Usado pelo comando 'aidev feature finish' (deprecado)
+plans__feature_finish() {
+    echo "AVISO: 'aidev feature finish' esta depreciado. Use 'aidev complete $1'" >&2
+    
+    # Tenta carregar o modulo ativo e redirecionar
+    if [ -f "${AIDEV_LIB_DIR:-./lib}/feature-lifecycle-cli.sh" ]; then
+        source "${AIDEV_LIB_DIR:-./lib}/feature-lifecycle-cli.sh"
+        flc_feature_complete "$1"
+    else
+        echo "ERRO: Modo ativo de lifecycle nao encontrado" >&2
+        return 1
+    fi
+}
+
+plans__feature_list() {
+    echo "AVISO: 'aidev feature list' esta depreciado. Use 'aidev status'" >&2
+    # Fallback para listar features
+    find .aidev/plans -name "*.md" ! -name "README*" 2>/dev/null | head -20
+}
 
 # Inicializa a estrutura de planos no projeto
 plans__init_structure() {

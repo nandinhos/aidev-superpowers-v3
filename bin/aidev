@@ -1212,9 +1212,9 @@ cmd_start() {
         exit 1
     fi
 
-    load_module "feature-lifecycle-cli" 2>/dev/null || \
-        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
-        print_error "Modulo feature-lifecycle-cli nao encontrado"
+    load_module "feature-lifecycle" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle nao encontrado"
         exit 1
     }
 
@@ -1235,9 +1235,9 @@ cmd_done() {
         exit 1
     fi
 
-    load_module "feature-lifecycle-cli" 2>/dev/null || \
-        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
-        print_error "Modulo feature-lifecycle-cli nao encontrado"
+    load_module "feature-lifecycle" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle nao encontrado"
         exit 1
     }
 
@@ -1256,9 +1256,9 @@ cmd_complete() {
         exit 1
     fi
 
-    load_module "feature-lifecycle-cli" 2>/dev/null || \
-        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
-        print_error "Modulo feature-lifecycle-cli nao encontrado"
+    load_module "feature-lifecycle" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle nao encontrado"
         exit 1
     }
 
@@ -1277,9 +1277,9 @@ cmd_plan() {
         exit 1
     fi
 
-    load_module "feature-lifecycle-cli" 2>/dev/null || \
-        source "$AIDEV_LIB_DIR/feature-lifecycle-cli.sh" 2>/dev/null || {
-        print_error "Modulo feature-lifecycle-cli nao encontrado"
+    load_module "feature-lifecycle" 2>/dev/null || \
+        source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
+        print_error "Modulo feature-lifecycle nao encontrado"
         exit 1
     }
 
@@ -2537,11 +2537,16 @@ cmd_guard() {
 }
 
 # ============================================================================
-# Subcomando: feature
+# Subcomando: feature [DEPRECATED]
 # ============================================================================
 cmd_feature() {
     local subcmd="${1:-status}"
     shift || true
+
+    # Aviso de deprecacao global
+    print_warning "ATENCAO: O comando 'aidev feature' esta DEPRECADO."
+    print_info "  Use: aidev plan | aidev start | aidev done | aidev complete"
+    echo ""
 
     load_module "plans" 2>/dev/null || source "$AIDEV_LIB_DIR/plans.sh"
 

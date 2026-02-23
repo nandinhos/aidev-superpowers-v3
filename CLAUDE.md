@@ -101,10 +101,21 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### Fluxo Obrigatório
 
 ```bash
-aidev start <feature-id>     # PASSO 1 — SEMPRE, antes de qualquer implementação
-aidev done <sprint-id>       # PASSO 2 — ao concluir cada sprint
-aidev complete <feature-id>  # PASSO 3 — SEMPRE ao encerrar, sem exceção
+aidev plan <titulo>        # Cria item em backlog/
+aidev start <feature-id>   # PASSO 1 — move para current/
+aidev done <sprint-id>     # PASSO 2 — ao concluir cada sprint
+aidev complete <feature-id> # PASSO 3 — move para history/
 ```
+
+### Fluxo
+
+```
+backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluida)
+```
+
+### DEPRECATED
+
+O comando `aidev feature` está depreciado. Use os comandos acima.
 
 ### PROIBIDO (sem exceção)
 

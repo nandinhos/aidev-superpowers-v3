@@ -148,10 +148,14 @@ cmd_run() {
     echo ""
     
     local files_count=$(echo "$impact_result" | jq '.files | length')
+    local modules=$(echo "$impact_result" | jq -r '.modules | join(", ")')
     
     echo "2. Classificando complexidade..."
     local complexity_result
-    complexity_result=$($COMPLEXITY_SCRIPT --files-count "$files_count" --type "$TYPE")
+    complexity_result=$($COMPLEXITY_SCRIPT \
+        --files-count "$files_count" \
+        --type "$TYPE" \
+        --has-tests)
     echo "$complexity_result" | jq .
     echo ""
     
@@ -176,6 +180,7 @@ cmd_run() {
     
     echo "=== Resumo ==="
     echo "Task: $TASK_ID"
+    echo "Arquivos afetados: $files_count ($modules)"
     echo "Complexidade: $complexity (score: $score)"
     echo "LLM: $model"
     echo "Estratégia: $STRATEGY"
@@ -205,6 +210,7 @@ cmd_exec() {
     
     local impact_result=$($IMPACT_SCRIPT --task-id "$task_id" --description "$description" 2>/dev/null || echo '{"files":[]}')
     local files=$(echo "$impact_result" | jq -r '.files | join(",")')
+    local files_count=$(echo "$impact_result" | jq '.files | length')
     
     if [[ -n "$files" ]]; then
         echo "Adquirindo locks em: $files"
@@ -216,19 +222,26 @@ cmd_exec() {
     fi
     
     echo ""
-    echo "=== Exemplo de execucao com LLM ==="
-    local complexity_result=$($COMPLEXITY_SCRIPT --files-count 5 --type new)
+    echo "=== Classificando complexidade..."
+    local complexity_result=$($COMPLEXITY_SCRIPT --files-count "$files_count" --type new)
     local score=$(echo "$complexity_result" | jq -r '.score')
-    local llm_result=$($LLM_SCRIPT --score "$score")
-    local model=$(echo "$llm_result" | jq -r '.model')
+    local complexity=$(echo "$complexity_result" | jq -r '.complexity')
+    echo "$complexity_result" | jq .
+    echo ""
     
-    echo "LLM selecionada: $model"
+    echo "=== Selecionando LLM..."
+    local llm_result=$($LLM_SCRIPT --score "$score" --strategy "$STRATEGY")
+    local model=$(echo "$llm_result" | jq -r '.model')
+    echo "$llm_result" | jq .
     echo ""
-    echo "# Comando para executar com LLM:"
-    echo "# claude --model $model -p '$description'"
+    
+    echo "=============================================="
+    echo "  Execute a tarefa com a LLM selecionada"
+    echo "  Model: $model"
+    echo "  Descricao: $description"
+    echo "=============================================="
     echo ""
-    echo "Aguardando conclusao..."
-    echo "(Digite 'done' quando concluir)"
+    echo "Pressione [Enter] quando concluir..."
     
     read -r response
     

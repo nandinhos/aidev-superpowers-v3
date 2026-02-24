@@ -69,7 +69,19 @@ EOF
     fi
 }
 
+cleanup_expired_locks() {
+    local max_age_seconds="${LOCK_TTL:-3600}"
+    local now=$(date +%s)
+    
+    local temp=$(mktemp)
+    local expired=0
+    
+    jq ".locks |= map(select(.acquired_at | fromdateiso8601) | .acquired_at | fromdateiso8601) | map(select(($now - (.acquired_at | fromdateiso8601)) < $max_age_seconds))" "$LOCKS_FILE" > "$temp" 2>/dev/null && mv "$temp" "$LOCKS_FILE" || true
+}
+
 cmd_acquire() {
+    cleanup_expired_locks
+    
     if [[ -z "$TASK_ID" ]]; then
         echo "ERROR: --task-id e obrigatorio" >&2
         exit 1

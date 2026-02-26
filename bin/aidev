@@ -1395,6 +1395,150 @@ cmd_plan() {
     flc_plan_create "$title"
 }
 
+# Subcomando: refine
+# Refina item do backlog interativamente e move para features/
+# Uso: aidev refine <backlog-id>
+cmd_refine() {
+    local item_id="${1:-}"
+
+    if [ -z "$item_id" ]; then
+        print_error "Uso: aidev refine <backlog-id>"
+        print_info "Ex: aidev refine rules-engine-standardization"
+        print_info ""
+        print_info "Items disponíveis no backlog:"
+        ls ".aidev/plans/backlog"/*.md 2>/dev/null | grep -v README | xargs -n1 basename 2>/dev/null | sed 's/\.md$//' | sed 's/^/  - /' || print_info "  (backlog vazio)"
+        exit 1
+    fi
+
+    # Busca o arquivo
+    local backlog_dir=".aidev/plans/backlog"
+    local features_dir=".aidev/plans/features"
+    local item_file=""
+    item_file=$(find "$backlog_dir" -name "${item_id}.md" 2>/dev/null | head -1)
+    [ -z "$item_file" ] && item_file=$(find "$backlog_dir" -name "*${item_id}*.md" 2>/dev/null | head -1)
+
+    if [ -z "$item_file" ] || [ ! -f "$item_file" ]; then
+        print_error "Item '$item_id' não encontrado no backlog"
+        print_info "Items disponíveis:"
+        ls "$backlog_dir"/*.md 2>/dev/null | grep -v README | xargs -n1 basename 2>/dev/null | sed 's/\.md$//' | sed 's/^/  - /' || print_info "  (backlog vazio)"
+        exit 1
+    fi
+
+    local item_basename
+    item_basename=$(basename "$item_file")
+    local item_title
+    item_title=$(grep "^# " "$item_file" 2>/dev/null | head -1 | sed 's/^# //' || true)
+    [ -z "$item_title" ] && item_title="$item_id"
+
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    print_info "Refinamento: $item_title"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "  Arquivo: $item_file"
+    echo ""
+
+    # Mostra resumo atual
+    print_info "Problema atual (primeiras 15 linhas):"
+    head -15 "$item_file" | sed 's/^/  /'
+    echo ""
+
+    # Coleta refinamento interativo
+    local scope="" criteria="" sprints_est="" dependencies="" notes=""
+
+    printf "  %s\n  → " "$(print_info "1/5 Confirme ou ajuste o escopo (Enter para manter):" 2>&1 || echo "1/5 Confirme ou ajuste o escopo:")"
+    read -r scope </dev/tty || scope=""
+
+    printf "  %s\n  → " "$(print_info "2/5 Critérios de aceitação (separe por vírgula):" 2>&1 || echo "2/5 Critérios de aceitação:")"
+    read -r criteria </dev/tty || criteria=""
+
+    printf "  %s\n  → " "$(print_info "3/5 Estimativa de sprints (ex: 2):" 2>&1 || echo "3/5 Estimativa de sprints:")"
+    read -r sprints_est </dev/tty || sprints_est=""
+    sprints_est="${sprints_est:-1}"
+
+    printf "  %s\n  → " "$(print_info "4/5 Dependências técnicas (Enter se nenhuma):" 2>&1 || echo "4/5 Dependências técnicas:")"
+    read -r dependencies </dev/tty || dependencies=""
+
+    printf "  %s\n  → " "$(print_info "5/5 Observações adicionais (Enter para pular):" 2>&1 || echo "5/5 Observações adicionais:")"
+    read -r notes </dev/tty || notes=""
+
+    echo ""
+
+    # Pergunta se deve promover para features/
+    printf "  %s [Y/n]: " "$(print_info "Mover para features/ como [VALIDADA]?" 2>&1 || echo "Mover para features/ como [VALIDADA]?")"
+    read -r promote_response </dev/tty || promote_response="y"
+
+    # Constrói bloco de refinamento para append no arquivo
+    local date_now
+    date_now=$(date +%Y-%m-%d)
+    local refinement_block=""
+    refinement_block=$(cat <<REFINEMENT_EOF
+
+---
+
+## Refinamento — $date_now
+
+**Status:** VALIDADA
+**Sprints estimados:** ${sprints_est}
+${scope:+**Escopo ajustado:** $scope}
+${dependencies:+**Dependências:** $dependencies}
+${notes:+**Observações:** $notes}
+
+### Critérios de Aceitação (refinados)
+
+REFINEMENT_EOF
+)
+
+    # Adiciona critérios formatados
+    if [ -n "$criteria" ]; then
+        local i=1
+        IFS=',' read -ra crit_arr <<< "$criteria"
+        for crit in "${crit_arr[@]}"; do
+            crit=$(echo "$crit" | sed 's/^[[:space:]]*//')
+            [ -n "$crit" ] && refinement_block="${refinement_block}${i}. ${crit}
+" && ((i++)) || true
+        done
+    else
+        refinement_block="${refinement_block}*Usar critérios originais do backlog*
+"
+    fi
+
+    # Gera tabela de sprints planejados
+    refinement_block="${refinement_block}
+### Sprints Planejados
+
+| Sprint | Objetivo | Status |
+|--------|----------|--------|
+"
+    for ((s=1; s<=sprints_est; s++)); do
+        refinement_block="${refinement_block}| Sprint $s | A definir | Pendente |
+"
+    done
+
+    # Append no arquivo
+    echo "$refinement_block" >> "$item_file"
+    print_success "Refinamento adicionado ao arquivo"
+
+    # Promove para features/ se solicitado
+    if [[ "$promote_response" =~ ^[Yy]$|^$ ]]; then
+        mkdir -p "$features_dir"
+        mv "$item_file" "$features_dir/$item_basename"
+        print_success "Item promovido para features/$item_basename"
+        print_info "Próximo passo: aidev start $(basename "$item_basename" .md)"
+
+        # Atualiza backlog README (remove item)
+        local backlog_readme="$backlog_dir/README.md"
+        if [ -f "$backlog_readme" ]; then
+            # Marca como promovido mas mantém linha no histórico
+            print_debug "backlog/README.md: item promovido para features/"
+        fi
+    else
+        print_info "Item mantido em backlog/. Rode 'aidev refine $item_id' novamente quando pronto."
+    fi
+
+    echo ""
+}
+
 # Subcomando: checkpoint
 # Cria checkpoint de continuidade e sincroniza estado
 # Uso: aidev checkpoint
@@ -4379,6 +4523,9 @@ main() {
             ;;
         plan)
             cmd_plan "$@"
+            ;;
+        refine)
+            cmd_refine "$@"
             ;;
         checkpoint)
             cmd_checkpoint "$@"

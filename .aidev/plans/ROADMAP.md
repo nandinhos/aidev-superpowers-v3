@@ -1,46 +1,58 @@
-# ROADMAP AI DEV SUPERPOWERS
+# 🗺️ ROADMAP DE IMPLEMENTAÇÃO - aidev-superpowers-v3
 
-> Indice de planejamento — conteudo detalhado em history/
-> Versao atual: **v4.7.0** | Atualizado: 2026-02-26
-
----
-
-## Estrutura de Planejamento
-
-| Pasta | Conteudo | Status |
-|-------|----------|--------|
-| [Backlog](backlog/) | Ideias futuras | Nao priorizadas |
-| [Features](features/) | Com plano completo | Prontas para execucao |
-| [Current](current/) | Em execucao AGORA | Sprint ativa |
-| [History](history/) | Concluidos | Arquivado por data |
-
-**Fluxo:** backlog/ → features/ → current/ → history/YYYY-MM/
-**Comandos:** `aidev plan` | `aidev start` | `aidev done` | `aidev complete`
+> Documento mestre de planejamento de funcionalidades
+> Formato: AI Dev Superpowers Sprint Planning
+> Status: Ativo
 
 ---
 
-## Feature em Execucao
+## 📋 VISÃO GERAL
 
-- *Nenhuma feature ativa no momento*
-
----
-
-## Backlog Priorizado
-
-| Feature | Prioridade |
-|---------|------------|
-| Backlog - Avaliação e Evolução das Skills Atuais | Media |
-| Backlog - Gap no Fluxo de Lições Aprendidas | Media |
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | Media |
+Este documento serve como **fonte única de verdade** para implementação de funcionalidades no projeto.
+- ✅ Continuidade entre sessões de desenvolvimento
+- ✅ Troca de LLM sem perda de contexto
+- ✅ Implementação gradual por sprints
+- ✅ Rastreabilidade de decisões
 
 ---
 
-## Historico de Releases
+## 🎯 SPRINTS PLANEJADOS
 
-| Periodo | Features | Detalhes |
-|---------|----------|---------|
-| 2026-02 | 31 feature(s) | [ver](history/2026-02/) |
+### 📅 SPRINT 1: [Nome da Sprint]
+**Objetivo:** [Objetivo principal]
+**Status:** 🟡 Não iniciado
+
+#### Funcionalidades:
+
+##### 1.1 - [Nome da Feature]
+**Prioridade:** 🔴 CRÍTICA
+**Status:** 🟡 Não iniciado
+
+**Requisitos de Negócio:**
+- [Requisito 1]
+- [Requisito 2]
+
+**Requisitos Técnicos:**
+- [ ] [Tarefa 1]
+- [ ] [Tarefa 2]
 
 ---
 
-*Este arquivo e gerado automaticamente por `aidev complete`. Nao edite manualmente.*
+## 📊 RESUMO DE PRIORIDADES
+
+| Sprint | Funcionalidade | Prioridade | Status |
+|--------|----------------|------------|--------|
+| 1 | [Feature] | 🔴 CRÍTICA | 🟡 Pendente |
+
+---
+
+## 🔄 FLUXO DE TRABALHO
+
+1. **Antes de começar**: Use `aidev feature add "nome"` para criar o documento da feature.
+2. **Durante**: Siga o checklist em `.aidev/plans/features/nome.md`.
+3. **Ao finalizar**: Use `aidev feature finish "nome"` para mover para o histórico.
+
+---
+
+**Versão:** 1.0 (v3.7)
+**Status:** Ativo

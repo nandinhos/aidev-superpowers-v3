@@ -1,4 +1,4 @@
-# 📁 Planejamento - AI Dev Superpowers
+# 📁 Planejamento - aidev-superpowers-v3
 
 > Estrutura de planejamento e desenvolvimento organizada
 
@@ -40,10 +40,10 @@ history/YYYY-MM/ (arquivado)
 
 ## 📊 Status Atual
 
-- **Backlog**: 3 ideia(s)
+- **Backlog**: 0 ideia(s)
 - **Features**: 0 planejada(s)
 - **Current**: 0 em execução
-- **History**: 21 concluída(s) em 2026-02 + legado
+- **History**: 0 concluída(s)
 
 ---
 
@@ -56,4 +56,4 @@ history/YYYY-MM/ (arquivado)
 
 ---
 
-*Estrutura v4.6.0 - Organização de Planejamento*
+*Estrutura  - Organização de Planejamento*

@@ -1,42 +1,32 @@
-# Features - Planejadas
+# 🚀 Features - Planejados
 
-> Features com plano completo, prontas para entrar em execução (current/).
-
----
-
-## Fluxo
-
-```
-backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluída)
-```
+> Features com planejamento completo, prontos para execução
 
 ---
 
-## Features Prontas para Execução
+## 📋 Features em Planejamento
 
-*Nenhuma feature aguardando execução.*
-
----
-
-## Features Em Execução
-
-*Nenhuma feature em execução no momento.*
+*Nenhuma feature planejada no momento.*
 
 ---
 
-## Features Concluídas (2026-02)
+## 🎯 Próximos Passos
 
-| Feature | History |
-|---------|---------|
-| Avaliação e Evolução das Skills | [history/2026-02/avaliacao-skills-ferramentas-26.md](../history/2026-02/avaliacao-skills-ferramentas-26.md) |
-| Sistema de Retroalimentação de Templates | [history/2026-02/retroalimentacao-templates-curadoria-licoes-26.md](../history/2026-02/retroalimentacao-templates-curadoria-licoes-26.md) |
-| Gap no Fluxo de Lições Aprendidas | [history/2026-02/](../history/2026-02/) |
-| Rules Engine | [history/2026-02/](../history/2026-02/) |
-| Refinamento Features com Sprints Estruturados | [history/2026-02/](../history/2026-02/) |
-| Automatização Sync Unificado | [history/2026-02/](../history/2026-02/) |
-| Onboarding Interativo | [history/2026-02/](../history/2026-02/) |
-| Bug: Instalador Global | [history/2026-02/](../history/2026-02/) |
+Quando uma feature for priorizada para execução:
+
+1. **Definir** sprint no ROADMAP.md
+2. **Criar** entrada em `../current/`
+3. **Atualizar** este README (mover para seção "Em Execução")
+4. **Iniciar** desenvolvimento
 
 ---
 
-*Ultima atualizacao: 2026-02-26*
+## 📊 Estatísticas
+
+- **Features planejadas:** 0
+- **Prontas para execução:** 0
+- **Em execução:** 0
+
+---
+
+*Última atualização: *

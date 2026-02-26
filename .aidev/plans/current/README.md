@@ -1,45 +1,45 @@
-# Current - Em Execucao
+# 🏃 Current - Em Execução
 
-> Feature sendo executada agora. Maximo 1 por vez.
-
----
-
-## Fluxo
-
-```
-backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluida)
-```
-
-**Regras:**
-- Apenas 1 feature ativa aqui por vez
-- Checkpoint atualizado a cada sprint concluida
-- Ao concluir: usar `aidev complete <id>`
+> Sprint ativa sendo executada no momento
 
 ---
 
-## Feature Ativa
+## 🎯 Sprint Ativa
 
-### Nenhuma feature ativa
-
-
-|---|---|---|
-| Sprint 1 | A definir | Em andamento |
-| Sprint 2 | A definir | Pendente |
-
-**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
+*Nenhuma sprint em execução no momento.*
 
 ---
 
-## Workflow TDD Ativo
+## 📝 Como iniciar uma sprint
 
-```
-RED   → Escreva o teste que falha primeiro
-GREEN → Implemente o mínimo para passar
-REFACTOR → Limpe sem quebrar os testes
-```
+Quando uma feature for priorizada para execução:
 
-Ao concluir cada sprint: `aidev done sprint-N "descricao"`
+1. **Copiar** ou linkar a feature de `../features/` para esta pasta
+2. **Definir** sprint no ROADMAP.md
+3. **Criar** `sprint-status.json` em `.aidev/state/`
+4. **Atualizar** `unified.json` com tasks
+5. **Iniciar** desenvolvimento
 
 ---
 
-*Ultima atualizacao: 2026-02-26*
+## ✅ Como concluir uma sprint
+
+Quando uma sprint for concluída:
+
+1. **Mover** feature arquivada para `../history/YYYY-MM/`
+2. **Limpar** esta pasta
+3. **Atualizar** ROADMAP.md (marcar como concluída)
+4. **Criar** release notes se necessário
+5. **Taggear** versão no git
+
+---
+
+## 📊 Status
+
+- **Sprint atual:** Nenhuma
+- **Fase:** -  
+- **Progresso:** 0%
+
+---
+
+*Última atualização: *

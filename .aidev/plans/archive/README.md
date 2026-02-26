@@ -7,9 +7,7 @@
 ## 📁 Conteúdo
 
 ### Templates
-- [Sprint Execution Protocol](templates/sprint-execution-protocol.md)
-  - Padrão de execução de sprints
-  - Metodologia e workflows
+*Nenhum template documentado no momento.*
 
 ---
 
@@ -33,10 +31,10 @@ Esta pasta contém **documentação de suporte**, não planos de desenvolvimento
 
 ## 📊 Conteúdo
 
-- **Templates:** 1
+- **Templates:** 0
 - **Documentação:** 0
 - **Referências:** 0
 
 ---
 
-*Última atualização: 2026-02-13*
+*Última atualização: *

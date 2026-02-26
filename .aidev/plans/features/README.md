@@ -10,46 +10,33 @@
 backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluída)
 ```
 
-**Regras:**
-- Feature aqui tem plano detalhado, sprints definidas e testes especificados
-- Ao iniciar execução: mover para `current/` e atualizar README de ambos
-- Máximo 1 feature em `current/` por vez
-
 ---
 
 ## Features Prontas para Execução
 
-*Nenhuma feature aguardando execução no momento.*
+*Nenhuma feature aguardando execução.*
 
 ---
 
 ## Features Em Execução
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | [current/](../current/retroalimentacao-templates-curadoria-licoes.md) | 2026-02-26 |
 
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | [current/](../current/retroalimentacao-templates-curadoria-licoes.md) | 2026-02-26 |
-| Feature | Arquivo | Movida para current em |
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | [current/](../current/retroalimentacao-templates-curadoria-licoes.md) | 2026-02-26 |
-|---|---|---|
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | [current/](../current/retroalimentacao-templates-curadoria-licoes.md) | 2026-02-26 |
-
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | [current/](../current/retroalimentacao-templates-curadoria-licoes.md) | 2026-02-26 |
----
-| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | [current/](../current/retroalimentacao-templates-curadoria-licoes.md) | 2026-02-26 |
-| Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
-| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
-| Backlog - Refinamento e Execução de Features com Sprints Estruturados | [current/](../current/refinamento-features-sprints-estruturados.md) | 2026-02-26 |
-| Backlog - Automatização do Sync de Estado Unificado | [current/](../current/automatizacao-sync-unified.md) | 2026-02-26 |
-| Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
-
-## Features Concluídas
-
-| Feature | History | Data |
-|---|---|---|
-| Refinamento Framework v4.4 | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
-| Sistema Atualização Interativa | [history/2026-02/](../history/2026-02/) | 2026-02-18 |
-| Fix: self-upgrade com segunda camada de verificação quando versões são iguais | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
-| Ideia: Automação do Ciclo de Vida de Features | [history/2026-02/](../history/2026-02/) | 2026-02-20 |
+*Nenhuma feature em execução no momento.*
 
 ---
 
-*Ultima atualizacao: 2026-02-20*
+## Features Concluídas (2026-02)
+
+| Feature | History |
+|---------|---------|
+| Avaliação e Evolução das Skills | [history/2026-02/avaliacao-skills-ferramentas-26.md](../history/2026-02/avaliacao-skills-ferramentas-26.md) |
+| Sistema de Retroalimentação de Templates | [history/2026-02/retroalimentacao-templates-curadoria-licoes-26.md](../history/2026-02/retroalimentacao-templates-curadoria-licoes-26.md) |
+| Gap no Fluxo de Lições Aprendidas | [history/2026-02/](../history/2026-02/) |
+| Rules Engine | [history/2026-02/](../history/2026-02/) |
+| Refinamento Features com Sprints Estruturados | [history/2026-02/](../history/2026-02/) |
+| Automatização Sync Unificado | [history/2026-02/](../history/2026-02/) |
+| Onboarding Interativo | [history/2026-02/](../history/2026-02/) |
+| Bug: Instalador Global | [history/2026-02/](../history/2026-02/) |
+
+---
+
+*Ultima atualizacao: 2026-02-26*

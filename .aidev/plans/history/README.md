@@ -21,6 +21,7 @@
 | Fix: Sincronizar feature-lifecycle-cli.sh para instalação global | 2026-02 | [ver](2026-02/fix-sync-feature-lifecycle-cli-global-20.md) |
 | Fix: Versão Hardcoded e MCP Merge em aidev upgrade | 2026-02 | [ver](2026-02/fix-version-hardcoded-mcp-merge-19.md) |
 | Backlog - Bug: Instalador Global Não Instala no Projeto | 2026-02 | [ver](2026-02/instalador-global-nao-instala-projeto-26.md) |
+| Feature - Gap no Fluxo de Lições Aprendidas | 2026-02 | [ver](2026-02/learned-lesson-trigger-gap-26.md) |
 | Feature: lifecycle 100 0x0p+0utomatizado - backlog para current sem fricção | 2026-02 | [ver](2026-02/lifecycle-100-automatizado-backlog-para-current-sem-friccao-20.md) |
 | Feature: MCP Laravel Boost Auto-Configuration | 2026-02 | [ver](2026-02/mcp-laravel-boost-auto-config-12.md) |
 | Feature: Configuração Dinâmica do MCP Laravel Boost em Docker | 2026-02 | [ver](2026-02/mcp-laravel-docker-auto-config-12.md) |

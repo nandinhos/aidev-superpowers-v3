@@ -39,7 +39,7 @@
 
 | Periodo | Features | Detalhes |
 |---------|----------|---------|
-| 2026-02 | 30 feature(s) | [ver](history/2026-02/) |
+| 2026-02 | 31 feature(s) | [ver](history/2026-02/) |
 
 ---
 

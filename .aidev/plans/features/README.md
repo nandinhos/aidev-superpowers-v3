@@ -24,15 +24,10 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 ---
 
 ## Features Em Execução
-| Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
 
-| Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
 | Feature | Arquivo | Movida para current em |
-| Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
 |---|---|---|
-| Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
 
-| Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
 ---
 | Feature - Gap no Fluxo de Lições Aprendidas | [current/](../current/learned-lesson-trigger-gap.md) | 2026-02-26 |
 | Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |

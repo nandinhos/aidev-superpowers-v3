@@ -4526,6 +4526,11 @@ main() {
         triggers)
             cmd_triggers "$@"
             ;;
+        skill)
+            [ -d ".aidev" ] && export AIDEV_ROOT="$(pwd)/.aidev"
+            source "$AIDEV_LIB_DIR/skill-runner.sh"
+            skill_main "$@"
+            ;;
         integrity)
             cmd_doctor "$@"
             ;;

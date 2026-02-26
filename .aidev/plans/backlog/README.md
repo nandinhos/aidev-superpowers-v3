@@ -77,15 +77,15 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 
 ---
 
-### 8. [PRIORIDADE MÉDIA] Avaliação e Evolução das Skills
+### 8. [CONCLUÍDO] Avaliação e Evolução das Skills
 
 **Arquivo:** [avaliacao-skills-ferramentas.md](avaliacao-skills-ferramentas.md)
-**Status:** backlog
+**Status:** CONCLUÍDO
 **Prioridade:** Média
 **Fase:** 5
 **Criado:** 2026-02-26
 
-**Descrição:** Transformar skills de arquivos .md passivos em ferramentas CLI acionáveis (skill start, skill step, skill complete).
+**Descrição:** Implementado: skill-runner.sh, comando `aidev skill`, inventory em .aidev/docs/skills-inventory.md.
 
 ---
 
@@ -104,6 +104,9 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 | Automatização do Sync de Estado Unificado | **CONCLUÍDO** | 2026-02-26 |
 | Refinamento Features com Sprints Estruturados | **CONCLUÍDO** | 2026-02-26 |
 | Sistema de Retroalimentação Templates | **CONCLUÍDO** | 2026-02-26 |
+| Gap no Fluxo de Lições Aprendidas | **CONCLUÍDO** | 2026-02-26 |
+| Rules Engine - Carregamento e Injeção | **CONCLUÍDO** | 2026-02-26 |
+| Avaliação e Evolução das Skills | **CONCLUÍDO** | 2026-02-26 |
 
 ---
 
@@ -114,18 +117,14 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 | 1 | Foundation (Instalação + Onboarding) | #4, #6 ✅ CONCLUÍDOS |
 | 2 | Infraestrutura (Sync + Workflow) | #5, #7 ✅ CONCLUÍDOS |
 | 3 | Base de Conhecimento (Rules + Triggers) | #2, #3 ✅ CONCLUÍDOS |
-| 4 | Ciclo Virtuoso (Retroalimentação) | #1 Pendente |
-| 5 | Evolução (Skills Ferramentas) | #8 Pendente |
+| 4 | Ciclo Virtuoso (Retroalimentação) | #1 ✅ CONCLUÍDO |
+| 5 | Evolução (Skills Ferramentas) | #8 ✅ CONCLUÍDO |
 
 ---
 
 ## Resumo de Implementação
 
-**Total de ideias no backlog:** 2 (antes: 8)
-
-### Items Remanescentes:
-- #1 Retroalimentação de Templates
-- #8 Avaliação de Skills
+**Total de ideias no backlog:** 0 (todos concluídos!)
 
 ---
 

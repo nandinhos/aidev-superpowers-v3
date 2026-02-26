@@ -135,7 +135,7 @@ get_checkpoint_info() {
     
     if [ -f "$checkpoint_file" ]; then
         local date=$(grep -m1 "^# Checkpoint" "$checkpoint_file" | sed 's/# Checkpoint - //')
-        local next_action=$(grep -A3 "Próxima Ação" "$checkpoint_file" 2>/dev/null | grep "^- " | head -1 | sed 's/^- //' | xargs 2>/dev/null || true)
+        local next_action=$(grep -A5 "Próxima Ação" "$checkpoint_file" 2>/dev/null | tail -1 | xargs 2>/dev/null || true)
         echo "{\"date\":\"$date\",\"next_action\":\"$next_action\"}"
     else
         echo "{\"date\":null,\"next_action\":null}"
@@ -226,21 +226,12 @@ generate_activation_snapshot() {
     local checkpoint_date=$(echo "$checkpoint_info" | jq -r '.date // empty')
     local next_action=$(echo "$checkpoint_info" | jq -r '.next_action // "none"')
     
-    # Obter sprints concluídos: conta "Concluida" no current/README.md (feature ativa)
-    # Fallback: lê sprint_context.completed_tasks do unified.json se sprint ativo
+    # Obter sprint concluídos do checkpoint
     local sprint_completed=0
-    local current_readme="$AIDEV_ROOT/plans/current/README.md"
-    local unified_file="$STATE_DIR/unified.json"
-    if [ -f "$current_readme" ] && grep -q "Concluida\|✅" "$current_readme" 2>/dev/null; then
-        sprint_completed=$(grep -cE "Concluida|✅" "$current_readme" 2>/dev/null || echo "0")
-        sprint_completed=$(echo "$sprint_completed" | grep -o '[0-9]*' | tail -1)
-    elif [ -f "$unified_file" ]; then
-        local uc_status=$(jq -r '.sprint_context.status // ""' "$unified_file" 2>/dev/null)
-        if [ "$uc_status" != "completed" ] && [ -n "$uc_status" ]; then
-            sprint_completed=$(jq -r '.sprint_context.completed_tasks // 0' "$unified_file" 2>/dev/null)
-        fi
+    if [ -f "$STATE_DIR/checkpoint.md" ]; then
+        sprint_completed=$(grep -c "Sprint" "$STATE_DIR/checkpoint.md" 2>/dev/null || echo "0")
+        sprint_completed=$((sprint_completed / 2))
     fi
-    sprint_completed="${sprint_completed:-0}"
     
     # Montar JSON final
     local snapshot=$(cat <<EOF

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-02-18T16:35:18-03:00",
-  "aidev_version": "4.5.0",
+  "generated_at": "2026-02-26T04:15:19-03:00",
+  "aidev_version": "4.7.1",
   "files": {
     ".aidev/agents/architect.md": {
       "checksum": "0ec81d35a8b26e899f4d2813f270b8b218320ab72be68680b64103110542bd6e"
@@ -18,13 +18,13 @@
       "checksum": "8e36d77f34c12c49aa54221e32d0e5e0bbb3b8a6728139e5bb4248ad8f25d795"
     },
     ".aidev/agents/knowledge-manager.md": {
-      "checksum": "892bff937d60d0af25d28ebf5f63c0c2c71566029a4f1ae2fac90bd1a64475e4"
+      "checksum": "dc1b9bce4c5089e2b9f99b8da9831fcdea3476d8170c383e955ce8c1378ee326"
     },
     ".aidev/agents/legacy-analyzer.md": {
       "checksum": "79f734e148125d60ddf124f50474d7e06c77eb03381e8e12af14e912060de42d"
     },
     ".aidev/agents/orchestrator.md": {
-      "checksum": "d6831e0e07c4c317936f46b1360bd6a57d2373b4f4359ceba3feff1f94c5db9b"
+      "checksum": "839caced1406e547f90fe18fe1c5f22f18e2a2cf26306300d4cadf7375c9b721"
     },
     ".aidev/agents/qa.md": {
       "checksum": "7086e811dd88d564e33f96cef6d7943719b9e8f131bc868393eb34baf68e1ada"
@@ -45,7 +45,10 @@
       "checksum": "d0d933c0babec0188eef323ee0de99b8524c3a2f90f7ad7431e56dbfafe8379a"
     },
     ".aidev/skills/learned-lesson/SKILL.md": {
-      "checksum": "542e9b08c3b275cc34075c44a6ec412344772c9e5743618f65a22260b1e7011f"
+      "checksum": "7e97b8af12032dac6f535a0a9d46bc0442eed1e9b802c11ae8f951720731333f"
+    },
+    ".aidev/skills/lesson-curation/SKILL.md": {
+      "checksum": "5cf3b8ae7d972f675359366b1c65d5561f40a454b09e99421718b70e0aec8f84"
     },
     ".aidev/skills/meta-planning/SKILL.md": {
       "checksum": "8abe97ff64608307b96a325a6013a1025273d5272e880ee2d13dc0d706b3adb1"
@@ -53,8 +56,14 @@
     ".aidev/skills/release-management/SKILL.md": {
       "checksum": "102fc918c75791c88213eaf838e833b2889ce4e3910e045a069cbe50aa93b0b3"
     },
+    ".aidev/skills/rules-doc-sync/SKILL.md": {
+      "checksum": "1adda9d72327f965597992626f50a72ab7f010828a890822d2040deb52c3e5c1"
+    },
+    ".aidev/skills/rules-injection/SKILL.md": {
+      "checksum": "e212f04b3a714fc2b18a8a8d8a41ab24786de5767cb86634cf6c006c0db604b4"
+    },
     ".aidev/skills/systematic-debugging/SKILL.md": {
-      "checksum": "292faba1f7c54792fa7bc15a7e54a71d87a12f12a289910322ca2f1d57baeb55"
+      "checksum": "51cdb0d93756c9a8ed68eac380eefef7a611cf735413dadfb2d89df62904af82"
     },
     ".aidev/skills/test-driven-development/SKILL.md": {
       "checksum": "af7c4e7b50b07dfb58f9e67d7eb13f46095d65f8b08f2027a935dbe08ad2f599"
@@ -63,7 +72,7 @@
       "checksum": "fb868690ea37325f437edb3752cc063834143b2eac82f77ac25dd45f96fd0059"
     },
     ".aidev/rules/generic.md": {
-      "checksum": "e308c7e939be38e87c79cb3e0c4276f27542f055dccab0f169d93cd77026ea48"
+      "checksum": "e6db918ed314848d90da6cce7fc329826e4e83184117692b704687f5527e8b25"
     },
     ".aidev/rules/llm-limits.md": {
       "checksum": "67737a2c72b179ba7910d67d541c144a479b8c257e08501901664ccaa6e2a6ca"

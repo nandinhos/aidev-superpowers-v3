@@ -214,6 +214,9 @@ run_pre_commit_check() {
     local result
     result=$(validate_commit_format "$commit_msg")
 
+    # Registrar evento no dashboard de compliance
+    _validator_dashboard_record "commit" "commit-format" "$result" "${commit_msg:0:60}"
+
     case "$result" in
         pass)
             echo "✓ rules-validator: formato de commit OK" >&2
@@ -241,4 +244,25 @@ run_pre_commit_check() {
             return 1
             ;;
     esac
+}
+
+# ============================================================================
+# _validator_dashboard_record <tipo> <regra> <resultado> [contexto]
+# Registra evento no log de compliance sem dependência circular com dashboard.sh
+# ============================================================================
+_validator_dashboard_record() {
+    local tipo="$1"
+    local regra="$2"
+    local resultado="$3"
+    local contexto="${4:-}"
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    local session_log
+    session_log="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}/state/compliance-session.log"
+
+    mkdir -p "$(dirname "$session_log")" 2>/dev/null || true
+    printf "%s\t%s\t%s\t%s\t%s\n" \
+        "$timestamp" "$tipo" "$regra" "$resultado" "$contexto" \
+        >> "$session_log" 2>/dev/null || true
 }

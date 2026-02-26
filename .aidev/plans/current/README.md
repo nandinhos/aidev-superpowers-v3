@@ -29,7 +29,7 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 |---|---|---|
 | Sprint 1 | Fundação: Taxonomia de regras + Loader por LLM | Concluida (2026-02-26) |
 | Sprint 2 | Enforcement: Validação pós-ação + Anti-duplicação | Concluida (2026-02-26) |
-| Sprint 3 | Inteligência: Sync com docs oficiais + Dashboard de compliance | Pendente |
+| Sprint 3 | Inteligência: Sync com docs oficiais + Dashboard de compliance | Concluida (2026-02-26) |
 
 **Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
 

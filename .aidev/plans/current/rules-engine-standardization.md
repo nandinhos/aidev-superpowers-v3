@@ -187,7 +187,15 @@ As regras de codificação do orquestrador existem como arquivos Markdown em `.a
 
 | Sprint | Objetivo | Status |
 |--------|----------|--------|
-| Sprint 1 | A definir | Pendente |
-| Sprint 2 | A definir | Pendente |
-| Sprint 3 | A definir | Pendente |
+| Sprint 1 | Fundação — Taxonomia + Loader de Regras | Concluído |
+| Sprint 2 | Enforcement — Validator + Anti-Duplicação + Hooks | Concluído |
+| Sprint 3 | Sincronização com Docs Oficiais + Dashboard de Compliance | Em andamento |
+
+### Sprint 3 — Detalhamento
+
+**Objetivo**: Fechar o ciclo do Rules Engine com validação contra documentação oficial e visibilidade de compliance.
+
+**Tarefas**:
+- Task 5: `rules-doc-sync.sh` + `skills/rules-doc-sync/SKILL.md` — sincroniza regras via Context7 MCP
+- Task 6: `rules-dashboard.sh` — dashboard de métricas de compliance por sessão
 

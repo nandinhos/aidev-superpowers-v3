@@ -188,6 +188,9 @@ rules_dedup_alert() {
     result=$(rules_dedup_check "$file_path")
 
     if [ "$result" = "violation" ]; then
+        # Registrar no dashboard de compliance
+        _dedup_dashboard_record "file-creation" "no-rules-outside-canonical" "error" "$file_path"
+
         echo ""
         echo "⚠️  ALERTA — Rules Anti-Dedup"
         echo ""
@@ -204,4 +207,25 @@ rules_dedup_alert() {
         return 1
     fi
     return 0
+}
+
+# ============================================================================
+# _dedup_dashboard_record <tipo> <regra> <resultado> [contexto]
+# Registra evento no log de compliance sem dependência circular com dashboard.sh
+# ============================================================================
+_dedup_dashboard_record() {
+    local tipo="$1"
+    local regra="$2"
+    local resultado="$3"
+    local contexto="${4:-}"
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || echo "unknown")
+
+    local session_log
+    session_log="${AIDEV_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}/state/compliance-session.log"
+
+    mkdir -p "$(dirname "$session_log")" 2>/dev/null || true
+    printf "%s\t%s\t%s\t%s\t%s\n" \
+        "$timestamp" "$tipo" "$regra" "$resultado" "$contexto" \
+        >> "$session_log" 2>/dev/null || true
 }

@@ -81,7 +81,7 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 **Fase:** 3
 **Criado:** 2026-02-26
 
-**Descrição:** Engine de triggers implementada em `lib/triggers.sh` + `lib/trigger-processor.sh`. State machine em `lib/lesson-state-machine.sh`.
+**Descrição:** Engine de triggers implementada em `lib/triggers.sh` (já existente). Integração com bin/aidev via `triggers__detect_intent` e `triggers__watch_errors`.
 
 ---
 

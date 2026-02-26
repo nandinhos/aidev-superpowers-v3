@@ -10,6 +10,7 @@
 
 | Feature | Período | Arquivo |
 |---------|---------|---------|
+| Backlog - Automatização do Sync de Estado Unificado | 2026-02 | [ver](2026-02/automatizacao-sync-unified-26.md) |
 | Plano: Integração Graceful do Basic Memory | 2026-02 | [ver](2026-02/basic-memory-graceful-integration.md) |
 | Consolidação de Debates — Fevereiro 2026 | 2026-02 | [ver](2026-02/consolidated-debates-2026-02.md) |
 | Feature: Monitor de Janela de Contexto | 2026-02 | [ver](2026-02/context-window-monitor-20.md) |

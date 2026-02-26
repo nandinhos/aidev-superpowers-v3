@@ -19,13 +19,9 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-### Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições
+### Nenhuma feature ativa
 
-**Arquivo:** [retroalimentacao-templates-curadoria-licoes.md](retroalimentacao-templates-curadoria-licoes.md)
-**Iniciada:** 2026-02-26
-**Sprints:** 2 planejados
 
-| Sprint | Objetivo | Status |
 |---|---|---|
 | Sprint 1 | A definir | Em andamento |
 | Sprint 2 | A definir | Pendente |

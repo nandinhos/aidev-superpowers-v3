@@ -19,9 +19,16 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-*Nenhuma feature em execucao no momento.*
+### Backlog - Automatização do Sync de Estado Unificado
 
-Use `aidev start <feature-id>` para iniciar uma feature de features/.
+**Arquivo:** [automatizacao-sync-unified.md](automatizacao-sync-unified.md)
+**Iniciada:** 2026-02-26
+
+| Sprint | Objetivo | Status |
+|---|---|---|
+| Sprint 1 | A definir | Pendente |
+
+**Proximo passo:** Iniciar Sprint 1
 
 ---
 

@@ -61,27 +61,19 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 
 ---
 
-### 2. [PRIORIDADE ALTA] Rules Engine - Carregamento e Injeção
+### 2. [CONCLUÍDO] Rules Engine - Carregamento e Injeção
 
-**Arquivo:** [rules-engine-standardization.md](rules-engine-standardization.md)
-**Status:** backlog
-**Prioridade:** Alta
+**Status:** ✅ CONCLUÍDO — Arquivado em `history/2026-02/`
 **Fase:** 3
-**Criado:** 2026-02-20
-
-**Descrição:** Mecanismo que carrega, injeta no contexto da LLM e valida o cumprimento de regras de codificação definidas em `.aidev/rules/`.
+**Descrição:** rules-loader.sh, rules-validator.sh, rules-dedup.sh, rules-dashboard.sh, rules-taxonomy.yaml.
 
 ---
 
 ### 3. [CONCLUÍDO] Gap no Fluxo de Lições Aprendidas
 
-**Arquivo:** [learned-lesson-trigger-gap.md](learned-lesson-trigger-gap.md)
-**Status:** CONCLUÍDO
-**Prioridade:** Alta
+**Status:** ✅ CONCLUÍDO — Arquivado em `history/2026-02/`
 **Fase:** 3
-**Criado:** 2026-02-26
-
-**Descrição:** Engine de triggers implementada em `lib/triggers.sh` (já existente). Integração com bin/aidev via `triggers__detect_intent` e `triggers__watch_errors`.
+**Descrição:** Módulo `lib/triggers.sh` v2.0 consolidado com state machine + validador. 14/14 testes passando.
 
 ---
 
@@ -121,21 +113,19 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 |------|-----------|-------|
 | 1 | Foundation (Instalação + Onboarding) | #4, #6 ✅ CONCLUÍDOS |
 | 2 | Infraestrutura (Sync + Workflow) | #5, #7 ✅ CONCLUÍDOS |
-| 3 | Base de Conhecimento (Rules + Triggers) | #2, #3 Pendentes |
-| 4 | Ciclo Virtuoso (Retroalimentação) | #1 ✅ CONCLUÍDO |
+| 3 | Base de Conhecimento (Rules + Triggers) | #2, #3 ✅ CONCLUÍDOS |
+| 4 | Ciclo Virtuoso (Retroalimentação) | #1 Pendente |
 | 5 | Evolução (Skills Ferramentas) | #8 Pendente |
 
 ---
 
 ## Resumo de Implementação
 
-**Total de ideias no backlog:** 4 (antes: 8)
-**Implementadas nesta sessão:** 5
+**Total de ideias no backlog:** 2 (antes: 8)
 
 ### Items Remanescentes:
-- #2 Rules Engine
-- #3 Learned Lesson Trigger  
-- #8 Avaliação Skills
+- #1 Retroalimentação de Templates
+- #8 Avaliação de Skills
 
 ---
 

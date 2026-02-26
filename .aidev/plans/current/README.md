@@ -19,9 +19,29 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-*Nenhuma feature em execucao no momento.*
+### Feature - Gap no Fluxo de Lições Aprendidas
 
-Use `aidev start <feature-id>` para iniciar uma feature de features/.
+**Arquivo:** [learned-lesson-trigger-gap.md](learned-lesson-trigger-gap.md)
+**Iniciada:** 2026-02-26
+**Sprints:** 1 planejados
+
+| Sprint | Objetivo | Status |
+|---|---|---|
+| Sprint 1 | A definir | Em andamento |
+
+**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
+
+---
+
+## Workflow TDD Ativo
+
+```
+RED   → Escreva o teste que falha primeiro
+GREEN → Implemente o mínimo para passar
+REFACTOR → Limpe sem quebrar os testes
+```
+
+Ao concluir cada sprint: `aidev done sprint-N "descricao"`
 
 ---
 

@@ -28,7 +28,7 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 | Sprint | Objetivo | Status |
 |---|---|---|
 | Sprint 1 | Consolidação: triggers.sh + state machine + validador | Concluida (2026-02-26) |
-| Sprint 2 | Testes de integração + finalização | Pendente |
+| Sprint 2 | Testes de integração + finalização | Concluida (2026-02-26) |
 
 **Proximo passo:** Executar Sprint 2 — testes de integração
 

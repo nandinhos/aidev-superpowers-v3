@@ -19,9 +19,30 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-*Nenhuma feature em execucao no momento.*
+### Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições
 
-Use `aidev start <feature-id>` para iniciar uma feature de features/.
+**Arquivo:** [retroalimentacao-templates-curadoria-licoes.md](retroalimentacao-templates-curadoria-licoes.md)
+**Iniciada:** 2026-02-26
+**Sprints:** 2 planejados
+
+| Sprint | Objetivo | Status |
+|---|---|---|
+| Sprint 1 | A definir | Em andamento |
+| Sprint 2 | A definir | Pendente |
+
+**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
+
+---
+
+## Workflow TDD Ativo
+
+```
+RED   → Escreva o teste que falha primeiro
+GREEN → Implemente o mínimo para passar
+REFACTOR → Limpe sem quebrar os testes
+```
+
+Ao concluir cada sprint: `aidev done sprint-N "descricao"`
 
 ---
 

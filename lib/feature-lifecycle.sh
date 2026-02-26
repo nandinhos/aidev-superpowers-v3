@@ -224,7 +224,7 @@ _flc_update_current_readme() {
     # Extrai sprints do arquivo da feature (linhas de dados, exclui cabecalho)
     local sprints_table
     sprints_table=$(grep -E "^\| Sprint [0-9]|\| Pré-Sprint|\| Pre-Sprint" \
-        "$_FLC_CURRENT_DIR/$feature_file" 2>/dev/null | head -20)
+        "$_FLC_CURRENT_DIR/$feature_file" 2>/dev/null | head -20 || true)
 
     cat > "$readme" <<EOF
 # Current - Em Execucao

@@ -1,4 +1,6 @@
-# Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições
+# Feature - Sistema de Retroalimentação de Templates com Curadoria de Lições
+
+> Status: **CONCLUÍDO** | Finalizado: 2026-02-26
 
 ## Visão Geral
 

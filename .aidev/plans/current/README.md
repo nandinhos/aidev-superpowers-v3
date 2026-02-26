@@ -19,31 +19,9 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-### Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM
+*Nenhuma feature em execucao no momento.*
 
-**Arquivo:** [rules-engine-standardization.md](rules-engine-standardization.md)
-**Iniciada:** 2026-02-26
-**Sprints:** 3 planejados
-
-| Sprint | Objetivo | Status |
-|---|---|---|
-| Sprint 1 | Fundação: Taxonomia de regras + Loader por LLM | Concluida (2026-02-26) |
-| Sprint 2 | Enforcement: Validação pós-ação + Anti-duplicação | Concluida (2026-02-26) |
-| Sprint 3 | Inteligência: Sync com docs oficiais + Dashboard de compliance | Concluida (2026-02-26) |
-
-**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
-
----
-
-## Workflow TDD Ativo
-
-```
-RED   → Escreva o teste que falha primeiro
-GREEN → Implemente o mínimo para passar
-REFACTOR → Limpe sem quebrar os testes
-```
-
-Ao concluir cada sprint: `aidev done sprint-N "descricao"`
+Use `aidev start <feature-id>` para iniciar uma feature de features/.
 
 ---
 

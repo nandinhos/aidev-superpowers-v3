@@ -32,7 +32,7 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 | 7. Automação Sync | - | #5 |
 | 8. Avaliação Skills | - | #1 |
 
-### Order de Implementação Proposta
+### Ordem de Implementação Proposta
 
 | Fase | Item | Motivo |
 |------|------|--------|
@@ -85,54 +85,6 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 
 ---
 
-### 4. [PRIORIDADE CRÍTICA] Bug: Instalador Global Não Instala no Projeto
-
-**Arquivo:** [instalador-global-nao-instala-projeto.md](instalador-global-nao-instala-projeto.md)
-**Status:** backlog
-**Prioridade:** CRÍTICA
-**Fase:** 1
-**Criado:** 2026-02-26
-
-**Descrição:** Ao executar `curl | bash` e aceitar inicializar, output mostra "0 Diretórios" mas nada é criado. Apenas `aidev init` manual funciona.
-
----
-
-### 5. [PRIORIDADE ALTA] Refinamento e Execução de Features com Sprints Estruturados
-
-**Arquivo:** [refinamento-features-sprints-estruturados.md](refinamento-features-sprints-estruturados.md)
-**Status:** backlog
-**Prioridade:** Alta
-**Fase:** 2
-**Criado:** 2026-02-26
-
-**Descrição:** Workflow rigoroso que força LLMs a seguir: backlog → refine (brainstorm) → features → current/sprints → history. Com snapshots frequentes para rate limit protection.
-
----
-
-### 6. [PRIORIDADE ALTA] Onboarding Interativo + Orquestrador Semântico
-
-**Arquivo:** [onboarding-interativo-orquestrador-semantico.md](onboarding-interativo-orquestrador-semantico.md)
-**Status:** backlog
-**Prioridade:** Alta
-**Fase:** 1 (depende de #4)
-**Criado:** 2026-02-26
-
-**Descrição:** Após instalação, processo interativo de descoberta com perguntas ao usuário. + Aumento da capacidade semântica do orquestrador para delegation correta.
-
----
-
-### 7. [PRIORIDADE MÉDIA] Automatização do Sync de Estado Unificado
-
-**Arquivo:** [automatizacao-sync-unified.md](automatizacao-sync-unified.md)
-**Status:** backlog
-**Prioridade:** Média
-**Fase:** 2
-**Criado:** 2026-02-26
-
-**Descrição:** Hooks automáticos para sync após done/complete/checkpoint. Alertas quando estado desatualizado.
-
----
-
 ### 8. [PRIORIDADE MÉDIA] Avaliação e Evolução das Skills
 
 **Arquivo:** [avaliacao-skills-ferramentas.md](avaliacao-skills-ferramentas.md)
@@ -155,6 +107,11 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 | Automação do Ciclo de Vida de Features | Concluido em history/ | 2026-02-20 |
 | Workthrees - Orquestrador Inteligente | Concluido em history/ | 2026-02-23 |
 | Fix: AIDEV_ROOT single source | Concluido em history/ | 2026-02-23 |
+| Bug: Instalador Global Não Instala no Projeto | **CONCLUÍDO** | 2026-02-26 |
+| Onboarding Interativo + Orquestrador Semântico | **CONCLUÍDO** | 2026-02-26 |
+| Automatização do Sync de Estado Unificado | **CONCLUÍDO** | 2026-02-26 |
+| Refinamento Features com Sprints Estruturados | **CONCLUÍDO** | 2026-02-26 |
+| Sistema de Retroalimentação Templates | **CONCLUÍDO** | 2026-02-26 |
 
 ---
 
@@ -162,11 +119,23 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 
 | Fase | Descrição | Items |
 |------|-----------|-------|
-| 1 | Foundation (Instalação + Onboarding) | #4, #6 |
-| 2 | Infraestrutura (Sync + Workflow) | #5, #7 |
-| 3 | Base de Conhecimento (Rules + Triggers) | #2, #3 |
-| 4 | Ciclo Virtuoso (Retroalimentação) | #1 |
-| 5 | Evolução (Skills Ferramentas) | #8 |
+| 1 | Foundation (Instalação + Onboarding) | #4, #6 ✅ CONCLUÍDOS |
+| 2 | Infraestrutura (Sync + Workflow) | #5, #7 ✅ CONCLUÍDOS |
+| 3 | Base de Conhecimento (Rules + Triggers) | #2, #3 Pendentes |
+| 4 | Ciclo Virtuoso (Retroalimentação) | #1 ✅ CONCLUÍDO |
+| 5 | Evolução (Skills Ferramentas) | #8 Pendente |
+
+---
+
+## Resumo de Implementação
+
+**Total de ideias no backlog:** 4 (antes: 8)
+**Implementadas nesta sessão:** 5
+
+### Items Remanescentes:
+- #2 Rules Engine
+- #3 Learned Lesson Trigger  
+- #8 Avaliação Skills
 
 ---
 

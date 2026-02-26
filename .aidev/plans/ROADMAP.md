@@ -32,7 +32,6 @@
 | Backlog - Avaliação e Evolução das Skills Atuais | Media |
 | Backlog - Gap no Fluxo de Lições Aprendidas | Media |
 | Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | Media |
-| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | Media |
 
 ---
 
@@ -40,7 +39,7 @@
 
 | Periodo | Features | Detalhes |
 |---------|----------|---------|
-| 2026-02 | 29 feature(s) | [ver](history/2026-02/) |
+| 2026-02 | 30 feature(s) | [ver](history/2026-02/) |
 
 ---
 

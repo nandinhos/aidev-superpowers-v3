@@ -30,6 +30,7 @@
 | Feature: polishing-methodology | 2026-02 | [ver](2026-02/polishing-methodology-06.md) |
 | Backlog - Refinamento e Execução de Features com Sprints Estruturados | 2026-02 | [ver](2026-02/refinamento-features-sprints-estruturados-26.md) |
 | Refinamento Framework v4.4 — 5 Sprints | 2026-02 | [ver](2026-02/refinamento-framework-v4.4-20.md) |
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | 2026-02 | [ver](2026-02/rules-engine-standardization-26.md) |
 | Sistema de Atualização Interativa Universal | 2026-02 | [ver](2026-02/sistema-atualizacao-interativa-20.md) |
 | Smart Upgrade: Merge Inteligente com Protecao de Customizacoes | 2026-02 | [ver](2026-02/smart-upgrade-merge.md) |
 | Sprint 5: Orquestracao por Estado Ubiquo | 2026-02 | [ver](2026-02/sprint-5-completed.md) |

@@ -19,29 +19,9 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-### Backlog - Refinamento e Execução de Features com Sprints Estruturados
+*Nenhuma feature em execucao no momento.*
 
-**Arquivo:** [refinamento-features-sprints-estruturados.md](refinamento-features-sprints-estruturados.md)
-**Iniciada:** 2026-02-26
-**Sprints:** 1 planejados
-
-| Sprint | Objetivo | Status |
-|---|---|---|
-| Sprint 1 | A definir | Concluida (2026-02-26) |
-
-**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
-
----
-
-## Workflow TDD Ativo
-
-```
-RED   → Escreva o teste que falha primeiro
-GREEN → Implemente o mínimo para passar
-REFACTOR → Limpe sem quebrar os testes
-```
-
-Ao concluir cada sprint: `aidev done sprint-N "descricao"`
+Use `aidev start <feature-id>` para iniciar uma feature de features/.
 
 ---
 

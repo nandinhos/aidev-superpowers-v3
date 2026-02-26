@@ -28,6 +28,7 @@
 | Backlog - Onboarding Interativo e Orquestrador Semântico | 2026-02 | [ver](2026-02/onboarding-interativo-orquestrador-semantico-26.md) |
 | Feature: Otimizar READMEs de backlog/ e features/ | 2026-02 | [ver](2026-02/otimizar-readmes-de-backlog-e-features-manter-apenas-5-mais-recentes-e-indice-consolidado-em-history-20.md) |
 | Feature: polishing-methodology | 2026-02 | [ver](2026-02/polishing-methodology-06.md) |
+| Backlog - Refinamento e Execução de Features com Sprints Estruturados | 2026-02 | [ver](2026-02/refinamento-features-sprints-estruturados-26.md) |
 | Refinamento Framework v4.4 — 5 Sprints | 2026-02 | [ver](2026-02/refinamento-framework-v4.4-20.md) |
 | Sistema de Atualização Interativa Universal | 2026-02 | [ver](2026-02/sistema-atualizacao-interativa-20.md) |
 | Smart Upgrade: Merge Inteligente com Protecao de Customizacoes | 2026-02 | [ver](2026-02/smart-upgrade-merge.md) |

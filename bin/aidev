@@ -63,6 +63,7 @@ load_module "lessons"
 load_module "kb"
 load_module "triggers"
 load_module "error-recovery" 2>/dev/null || true
+load_module "onboarding" 2>/dev/null || true
 
 # Carrega módulo de verificação de versão (silencioso)
 load_module "version-check" 2>/dev/null || true
@@ -231,6 +232,11 @@ EOF
     load_module "migration" 2>/dev/null || true
     if type migration_stamp &>/dev/null; then
         migration_stamp "$install_path" 2>/dev/null || true
+    fi
+
+    # Onboarding interativo (se --onboarding ou greenfield na primeira instalação)
+    if [ "${CLI_ONBOARDING:-false}" = "true" ] && type run_onboarding &>/dev/null; then
+        run_onboarding "$install_path" "$CLI_STACK" "$maturity"
     fi
 
     # Sumário final

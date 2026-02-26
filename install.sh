@@ -101,7 +101,7 @@ read -r response </dev/tty || response="n"
 
 if [[ "$response" =~ ^[yY] ]]; then
     echo ""
-    "$BIN_PATH/aidev" init --install-in "$ORIGINAL_PWD"
+    "$BIN_PATH/aidev" init --install-in "$ORIGINAL_PWD" --onboarding
 else
     echo ""
     print_info "Instalação concluída!"

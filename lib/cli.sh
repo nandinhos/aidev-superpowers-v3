@@ -181,6 +181,7 @@ parse_args() {
     CLI_AUTO_DETECT=true
     CLI_NO_MCP=false
     CLI_NO_HOOKS=false
+    CLI_ONBOARDING=false
     AIDEV_COMMAND=""
     AIDEV_FORCE=false
     AIDEV_DRY_RUN=false
@@ -231,6 +232,10 @@ parse_args() {
                 ;;
             --no-hooks)
                 CLI_NO_HOOKS=true
+                shift
+                ;;
+            --onboarding)
+                CLI_ONBOARDING=true
                 shift
                 ;;
             -h|--help)

@@ -73,15 +73,15 @@ backlog/ (ideia) → refine (brainstorm) → features/ (planejada) → current/ 
 
 ---
 
-### 3. [PRIORIDADE ALTA] Gap no Fluxo de Lições Aprendidas
+### 3. [CONCLUÍDO] Gap no Fluxo de Lições Aprendidas
 
 **Arquivo:** [learned-lesson-trigger-gap.md](learned-lesson-trigger-gap.md)
-**Status:** backlog
+**Status:** CONCLUÍDO
 **Prioridade:** Alta
 **Fase:** 3
-**Criado:** 2026-02-20
+**Criado:** 2026-02-26
 
-**Descrição:** Trigger YAML existe mas não há runtime que o consuma. Engine de triggers para ativar skill `learned-lesson` automaticamente.
+**Descrição:** Engine de triggers implementada em `lib/triggers.sh` + `lib/trigger-processor.sh`. State machine em `lib/lesson-state-machine.sh`.
 
 ---
 

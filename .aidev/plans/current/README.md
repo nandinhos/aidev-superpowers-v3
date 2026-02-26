@@ -23,13 +23,14 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 **Arquivo:** [learned-lesson-trigger-gap.md](learned-lesson-trigger-gap.md)
 **Iniciada:** 2026-02-26
-**Sprints:** 1 planejados
+**Sprints:** 2 planejados
 
 | Sprint | Objetivo | Status |
 |---|---|---|
-| Sprint 1 | A definir | Em andamento |
+| Sprint 1 | Consolidação: triggers.sh + state machine + validador | Em andamento |
+| Sprint 2 | Testes de integração + finalização | Pendente |
 
-**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
+**Proximo passo:** Executar Sprint 2 — testes de integração
 
 ---
 

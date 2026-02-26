@@ -1,16 +1,39 @@
 #!/bin/bash
 
 # ============================================================================
-# AI Dev Superpowers V3 - Triggers Module
+# AI Dev Superpowers V3 - Triggers Module (Consolidado v2.0)
 # ============================================================================
-# Engine de detecção automática de contextos e gatilhos
+# Engine de detecção automática de contextos, gatilhos, state machine de
+# lições aprendidas e validação pós-captura.
 #
-# Uso: source lib/triggers.sh
+# Componentes:
+#   1. Parser e carregamento de triggers YAML
+#   2. Monitoramento de erros e intenções do usuário
+#   3. State machine para rastreamento de lições
+#   4. Validador de lições salvas (formato, seções, tags)
+#
+# Uso: source lib/triggers.sh (ou via load_module "triggers")
 # Dependências: lib/core.sh, lib/kb.sh, jq, python3
 # ============================================================================
 
-# Arquivo de estado para cooldowns
+# Arquivos de estado
 readonly AIDEV_TRIGGERS_STATE="${CLI_INSTALL_PATH:-.}/.aidev/state/triggers.json"
+readonly AIDEV_LESSON_STATE="${CLI_INSTALL_PATH:-.}/.aidev/state/lesson-state.json"
+readonly AIDEV_LESSON_HISTORY="${CLI_INSTALL_PATH:-.}/.aidev/state/lesson-history.json"
+
+# Estados válidos da state machine de lições
+readonly LESSON_STATE_IDLE="idle"
+readonly LESSON_STATE_KEYWORD_DETECTED="keyword_detected"
+readonly LESSON_STATE_SKILL_SUGGESTED="skill_suggested"
+readonly LESSON_STATE_SKILL_ACTIVATED="skill_activated"
+readonly LESSON_STATE_LESSON_DRAFTED="lesson_drafted"
+readonly LESSON_STATE_LESSON_VALIDATED="lesson_validated"
+readonly LESSON_STATE_LESSON_SAVED="lesson_saved"
+
+# Estado atual em memória
+LESSON_CURRENT_STATE="$LESSON_STATE_IDLE"
+LESSON_CURRENT_CONTEXT=""
+LESSON_TRANSITION_COUNT=0
 
 # ============================================================================
 # Parser e Carregamento
@@ -206,3 +229,250 @@ triggers__search_similar() {
         print_error "Módulo KB não disponível para busca."
     fi
 }
+
+# ============================================================================
+# State Machine — Rastreamento de Lições Aprendidas
+# ============================================================================
+# Rastreia o fluxo completo: detecção → sugestão → ativação → validação → salvo
+# Transições são validadas, logadas e persistidas para diagnóstico.
+
+# Valida se uma transição de estado é permitida
+# Uso: triggers__validate_transition "from_state" "to_state"
+triggers__validate_transition() {
+    local from="$1"
+    local to="$2"
+
+    case "$from" in
+        "$LESSON_STATE_IDLE")
+            [[ "$to" == "$LESSON_STATE_KEYWORD_DETECTED" ]] && echo "valid" && return ;;
+        "$LESSON_STATE_KEYWORD_DETECTED")
+            [[ "$to" == "$LESSON_STATE_SKILL_SUGGESTED" || "$to" == "$LESSON_STATE_IDLE" ]] && echo "valid" && return ;;
+        "$LESSON_STATE_SKILL_SUGGESTED")
+            [[ "$to" == "$LESSON_STATE_SKILL_ACTIVATED" || "$to" == "$LESSON_STATE_IDLE" ]] && echo "valid" && return ;;
+        "$LESSON_STATE_SKILL_ACTIVATED")
+            [[ "$to" == "$LESSON_STATE_LESSON_DRAFTED" || "$to" == "$LESSON_STATE_IDLE" ]] && echo "valid" && return ;;
+        "$LESSON_STATE_LESSON_DRAFTED")
+            [[ "$to" == "$LESSON_STATE_LESSON_VALIDATED" || "$to" == "$LESSON_STATE_LESSON_SAVED" || "$to" == "$LESSON_STATE_IDLE" ]] && echo "valid" && return ;;
+        "$LESSON_STATE_LESSON_VALIDATED")
+            [[ "$to" == "$LESSON_STATE_LESSON_SAVED" || "$to" == "$LESSON_STATE_IDLE" ]] && echo "valid" && return ;;
+        "$LESSON_STATE_LESSON_SAVED")
+            [[ "$to" == "$LESSON_STATE_IDLE" ]] && echo "valid" && return ;;
+    esac
+
+    echo "invalid"
+}
+
+# Realiza transição de estado com validação e persistência
+# Uso: triggers__lesson_transition "novo_estado" "contexto opcional"
+triggers__lesson_transition() {
+    local new_state="$1"
+    local context="${2:-}"
+    local old_state="$LESSON_CURRENT_STATE"
+
+    local validation=$(triggers__validate_transition "$old_state" "$new_state")
+    if [ "$validation" = "invalid" ]; then
+        print_error "Transição inválida: $old_state → $new_state"
+        return 1
+    fi
+
+    LESSON_CURRENT_STATE="$new_state"
+    LESSON_CURRENT_CONTEXT="$context"
+    LESSON_TRANSITION_COUNT=$((LESSON_TRANSITION_COUNT + 1))
+
+    # Persistir estado
+    mkdir -p "$(dirname "$AIDEV_LESSON_STATE")"
+    cat > "$AIDEV_LESSON_STATE" <<EOF
+{
+  "state": "$LESSON_CURRENT_STATE",
+  "context": "$LESSON_CURRENT_CONTEXT",
+  "transition_count": $LESSON_TRANSITION_COUNT,
+  "from_state": "$old_state",
+  "updated_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+EOF
+
+    # Adicionar ao histórico
+    if command -v python3 &>/dev/null && [ -f "$AIDEV_LESSON_HISTORY" ]; then
+        python3 -c "
+import json
+try:
+    with open('$AIDEV_LESSON_HISTORY', 'r') as f:
+        history = json.load(f)
+except:
+    history = {'transitions': [], 'total_lessons_saved': 0}
+
+history['transitions'].append({
+    'timestamp': '$(date -u +"%Y-%m-%dT%H:%M:%SZ")',
+    'from': '$old_state',
+    'to': '$new_state',
+    'context': '$context',
+    'transition_number': $LESSON_TRANSITION_COUNT
+})
+
+if '$new_state' == 'lesson_saved':
+    history['total_lessons_saved'] = history.get('total_lessons_saved', 0) + 1
+
+with open('$AIDEV_LESSON_HISTORY', 'w') as f:
+    json.dump(history, f, indent=2)
+" 2>/dev/null
+    fi
+
+    print_debug "Transição: $old_state → $LESSON_CURRENT_STATE"
+    return 0
+}
+
+# Obtém estado atual da state machine
+# Uso: triggers__lesson_state
+triggers__lesson_state() {
+    echo "=== State Machine de Lições ==="
+    echo "Estado: $LESSON_CURRENT_STATE"
+    echo "Contexto: $LESSON_CURRENT_CONTEXT"
+    echo "Transições: $LESSON_TRANSITION_COUNT"
+}
+
+# Exibe histórico de transições
+# Uso: triggers__lesson_history
+triggers__lesson_history() {
+    [ ! -f "$AIDEV_LESSON_HISTORY" ] && { echo "Nenhum histórico encontrado."; return 0; }
+
+    python3 -c "
+import json
+with open('$AIDEV_LESSON_HISTORY') as f:
+    data = json.load(f)
+
+print(f\"Lições salvas: {data.get('total_lessons_saved', 0)}\")
+print(f\"Total de transições: {len(data.get('transitions', []))}\")
+print()
+for t in data.get('transitions', [])[-10:]:
+    print(f\"  [{t['timestamp']}] {t['from']} → {t['to']}\")
+    if t.get('context'):
+        print(f\"    Contexto: {t['context']}\")
+" 2>/dev/null || echo "Erro ao ler histórico."
+}
+
+# Reseta a state machine para idle
+triggers__lesson_reset() {
+    LESSON_CURRENT_STATE="$LESSON_STATE_IDLE"
+    LESSON_CURRENT_CONTEXT=""
+    LESSON_TRANSITION_COUNT=0
+
+    mkdir -p "$(dirname "$AIDEV_LESSON_STATE")"
+    cat > "$AIDEV_LESSON_STATE" <<EOF
+{
+  "state": "$LESSON_STATE_IDLE",
+  "context": "",
+  "transition_count": 0,
+  "initialized_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+EOF
+
+    # Inicializar histórico se não existir
+    if [ ! -f "$AIDEV_LESSON_HISTORY" ]; then
+        echo '{"transitions": [], "total_lessons_saved": 0}' > "$AIDEV_LESSON_HISTORY"
+    fi
+}
+
+# ============================================================================
+# Validador de Lições — Validação Pós-Captura
+# ============================================================================
+# Garante que lições salvas cumprem o formato canônico:
+#   - Diretório correto: .aidev/memory/kb/
+#   - Nome: YYYY-MM-DD-{slug}.md
+#   - Seções obrigatórias: Contexto, Problema, Causa Raiz, Solução, Prevenção
+#   - Tags preenchidas
+
+# Seções obrigatórias em lições
+readonly LESSON_REQUIRED_SECTIONS="Contexto Problema Solução Prevenção"
+
+# Valida uma lição salva
+# Uso: triggers__validate_lesson "/caminho/para/licao.md"
+# Retorno: 0 = válida, 1 = inválida (erros impressos)
+triggers__validate_lesson() {
+    local file="$1"
+    local errors=0
+    local warnings=0
+
+    [ ! -f "$file" ] && {
+        print_error "Arquivo não encontrado: $file"
+        return 1
+    }
+
+    # 1. Verificar diretório correto
+    local expected_dir="${CLI_INSTALL_PATH:-.}/.aidev/memory/kb"
+    local file_dir=$(dirname "$(realpath "$file" 2>/dev/null || echo "$file")")
+    if [[ "$file_dir" != *".aidev/memory/kb"* ]]; then
+        print_warning "  ⚠ Diretório incorreto: $file_dir (esperado: .aidev/memory/kb/)"
+        ((warnings++))
+    fi
+
+    # 2. Verificar formato do nome
+    local basename=$(basename "$file")
+    if ! echo "$basename" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+\.md$'; then
+        print_warning "  ⚠ Nome fora do padrão: $basename (esperado: YYYY-MM-DD-slug.md)"
+        ((warnings++))
+    fi
+
+    # 3. Verificar seções obrigatórias
+    local content=$(cat "$file")
+    for section in $LESSON_REQUIRED_SECTIONS; do
+        if ! echo "$content" | grep -qiE "^#+.*$section"; then
+            print_error "  ✗ Seção obrigatória ausente: $section"
+            ((errors++))
+        fi
+    done
+
+    # 4. Verificar tags
+    if ! echo "$content" | grep -qiE '(tags|tags:|\*\*tags\*\*)'; then
+        print_warning "  ⚠ Tags não encontradas"
+        ((warnings++))
+    fi
+
+    # 5. Verificar referência a commit (recomendado, não obrigatório)
+    if ! echo "$content" | grep -qiE '(commit|sha|hash)'; then
+        print_debug "  ℹ Sem referência a commit (recomendado)"
+    fi
+
+    # Resultado
+    if [ $errors -gt 0 ]; then
+        print_error "Validação FALHOU: $errors erro(s), $warnings aviso(s)"
+        return 1
+    elif [ $warnings -gt 0 ]; then
+        print_warning "Validação OK com $warnings aviso(s)"
+        return 0
+    else
+        print_info "✓ Lição válida: $basename"
+        return 0
+    fi
+}
+
+# Valida todas as lições no KB
+# Uso: triggers__validate_all_lessons
+triggers__validate_all_lessons() {
+    local kb_dir="${CLI_INSTALL_PATH:-.}/.aidev/memory/kb"
+    [ ! -d "$kb_dir" ] && {
+        print_info "Diretório KB não encontrado: $kb_dir"
+        return 0
+    }
+
+    local total=0
+    local valid=0
+    local invalid=0
+
+    echo "=== Validação do KB de Lições ==="
+    for file in "$kb_dir"/*.md; do
+        [ ! -f "$file" ] && continue
+        ((total++))
+        echo ""
+        echo "--- $(basename "$file") ---"
+        if triggers__validate_lesson "$file"; then
+            ((valid++))
+        else
+            ((invalid++))
+        fi
+    done
+
+    echo ""
+    echo "=== Resumo ==="
+    echo "Total: $total | Válidas: $valid | Inválidas: $invalid"
+}
+

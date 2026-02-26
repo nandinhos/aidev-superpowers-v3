@@ -226,6 +226,20 @@ _flc_update_current_readme() {
     sprints_table=$(grep -E "^\| Sprint [0-9]|\| Pré-Sprint|\| Pre-Sprint" \
         "$_FLC_CURRENT_DIR/$feature_file" 2>/dev/null | head -20 || true)
 
+    # Marca Sprint 1 como "Em andamento" automaticamente
+    local sprints_rendered=""
+    if [ -n "$sprints_table" ]; then
+        # Substitui Pendente da primeira linha por "Em andamento"
+        sprints_rendered=$(echo "$sprints_table" | awk 'NR==1{sub(/Pendente/, "Em andamento")} {print}')
+    else
+        sprints_rendered="| Sprint 1 | A definir | Em andamento |"
+    fi
+
+    # Conta total de sprints
+    local total_sprints
+    total_sprints=$(echo "$sprints_rendered" | grep -cE "^\| Sprint" || true)
+    total_sprints="${total_sprints:-1}"
+
     cat > "$readme" <<EOF
 # Current - Em Execucao
 
@@ -252,12 +266,25 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 **Arquivo:** [$feature_file]($feature_file)
 **Iniciada:** $started_date
+**Sprints:** $total_sprints planejados
 
 | Sprint | Objetivo | Status |
 |---|---|---|
-$(if [ -n "$sprints_table" ]; then echo "$sprints_table"; else echo "| Sprint 1 | A definir | Pendente |"; fi)
+$sprints_rendered
 
-**Proximo passo:** Iniciar Sprint 1
+**Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
+
+---
+
+## Workflow TDD Ativo
+
+\`\`\`
+RED   → Escreva o teste que falha primeiro
+GREEN → Implemente o mínimo para passar
+REFACTOR → Limpe sem quebrar os testes
+\`\`\`
+
+Ao concluir cada sprint: \`aidev done sprint-N "descricao"\`
 
 ---
 

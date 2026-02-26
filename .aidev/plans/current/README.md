@@ -19,16 +19,9 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-### Bug: Instalador Global Nao Instala no Projeto
+*Nenhuma feature em execucao no momento.*
 
-**Arquivo:** [instalador-global-nao-instala-projeto.md](instalador-global-nao-instala-projeto.md)
-**Iniciada:** 2026-02-26
-
-| Sprint | Objetivo | Status |
-|---|---|---|
-| Sprint 1 | Diagnosticar e corrigir instalacao via curl | Pendente |
-
-**Proximo passo:** Iniciar Sprint 1
+Use `aidev start <feature-id>` para iniciar uma feature de features/.
 
 ---
 

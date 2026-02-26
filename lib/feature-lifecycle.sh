@@ -596,7 +596,7 @@ _flc_history_index_rebuild() {
         for f in "$month_dir"/*.md; do
             [ -f "$f" ] || continue
             local title
-            title=$(grep "^# " "$f" 2>/dev/null | head -1 | sed 's/^# //')
+            title=$(grep "^# " "$f" 2>/dev/null | head -1 | sed 's/^# //' || true)
             [ -z "$title" ] && title=$(basename "$f" .md)
             local file_date
             file_date=$(grep -E "^\*\*Concluido\*\*:|^\*\*Data\*\*:" "$f" 2>/dev/null | head -1 | sed 's/.*: //' | tr -d ' ' || echo "$month_name")
@@ -652,9 +652,9 @@ _flc_roadmap_rebuild() {
     for f in "$_FLC_BACKLOG_DIR"/*.md; do
         [ -f "$f" ] && [ "$(basename "$f")" != "README.md" ] || continue
         local item_title
-        item_title=$(grep "^# " "$f" 2>/dev/null | head -1 | sed 's/^# //' | sed 's/Ideia: //')
+        item_title=$(grep "^# " "$f" 2>/dev/null | head -1 | sed 's/^# //' | sed 's/Ideia: //' || true)
         local item_prio
-        item_prio=$(grep -iE "^\*\*Prioridade\*\*:|^\*\*Priority\*\*:" "$f" 2>/dev/null | head -1 | sed 's/.*: //' | tr -d '**' | tr -d '\n')
+        item_prio=$(grep -iE "^\*\*Prioridade\*\*:|^\*\*Priority\*\*:" "$f" 2>/dev/null | head -1 | sed 's/.*: //' | tr -d '**' | tr -d '\n' || true)
         [ -z "$item_prio" ] && item_prio="Media"
         backlog_items="${backlog_items}| $item_title | $item_prio |\n"
     done

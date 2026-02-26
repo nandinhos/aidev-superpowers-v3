@@ -221,8 +221,15 @@ cmd_release() {
     echo "10. Criando GitHub Release..."
     create_github_release "$new_version" "$changelog"
     
-    # 11. Sincronizar snapshot
-    echo "11. Sincronizando snapshot..."
+    # 11. Limpar active_intent e sincronizar snapshot
+    echo "11. Limpando estado de release e sincronizando snapshot..."
+    local unified_file="${PROJECT_ROOT}/.aidev/state/unified.json"
+    if [ -f "$unified_file" ] && command -v jq &>/dev/null; then
+        local tmp_file=$(mktemp)
+        jq '.active_intent = null | .active_skill = null | .intent_description = null | .rollback_stack = []' \
+            "$unified_file" > "$tmp_file" && mv "$tmp_file" "$unified_file"
+        echo "   ✅ Estado de release limpo"
+    fi
     generate_activation_snapshot
     
     echo ""

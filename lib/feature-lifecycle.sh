@@ -345,17 +345,42 @@ flc_sprint_done() {
 
     print_success "Sprint '$sprint_id' marcada como concluida"
 
-    # Verifica se todas as sprints estão concluídas
+    # Verifica se todas as sprints estão concluídas e determina próxima ação
     local pending_lines
     pending_lines=$(grep -cE "Pendente|Em andamento|PROXIMO|PRÓXIMO" "$readme" 2>/dev/null || true)
     pending_lines=$(echo "$pending_lines" | grep -o '[0-9]*' | tail -1)
+
+    local next_sprint_action=""
     if [ "${pending_lines:-1}" = "0" ]; then
         print_info ""
         print_info "Todas as sprints concluidas!"
         local feature_file
         feature_file=$(find "$_FLC_CURRENT_DIR" -name "*.md" ! -name "README.md" 2>/dev/null | head -1 | xargs basename 2>/dev/null)
-        local feature_id="${feature_file%.md}"
-        print_info "Execute: aidev complete $feature_id"
+        local feature_id_next="${feature_file%.md}"
+        next_sprint_action="aidev complete $feature_id_next"
+        print_info "Execute: $next_sprint_action"
+    else
+        # Extrai próximo sprint pendente da tabela do README
+        local next_sprint_line
+        next_sprint_line=$(grep -E "Pendente|PROXIMO|PRÓXIMO" "$readme" 2>/dev/null | head -1)
+        local next_sprint_name
+        next_sprint_name=$(echo "$next_sprint_line" | grep -oE 'Sprint [0-9]+[^|]*' | sed 's/[[:space:]]*$//' | head -1)
+        [ -n "$next_sprint_name" ] && next_sprint_action="Iniciar: $next_sprint_name"
+    fi
+
+    # Persiste next_action no checkpoint.md para recuperação entre sessões
+    local checkpoint_file="${_FLC_STATE_DIR:-$(dirname "$_FLC_CURRENT_DIR")}/checkpoint.md"
+    if [ -z "$checkpoint_file" ] || [ ! -d "$(dirname "$checkpoint_file")" ]; then
+        checkpoint_file="$(dirname "$_FLC_CURRENT_DIR")/checkpoint.md"
+    fi
+    if [ -n "$next_sprint_action" ] && [ -f "$checkpoint_file" ]; then
+        # Atualiza ou insere seção "Próxima Ação"
+        if grep -q "Próxima Ação" "$checkpoint_file" 2>/dev/null; then
+            sed -i "/Próxima Ação/{ n; s/.*/- $next_sprint_action/; }" "$checkpoint_file" 2>/dev/null || true
+        else
+            printf '\n## Próxima Ação\n- %s\n' "$next_sprint_action" >> "$checkpoint_file"
+        fi
+        print_info "Próxima ação registrada: $next_sprint_action"
     fi
 
     # Checkpoint automático

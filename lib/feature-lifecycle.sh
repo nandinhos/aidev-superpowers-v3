@@ -331,9 +331,15 @@ flc_sprint_done() {
     local date_now
     date_now=$(date +%Y-%m-%d)
 
-    # Atualiza status na tabela: busca linha com sprint_id e muda "Pendente" → "Concluida"
+    # Atualiza status na tabela: extrai número do sprint e busca linha "Sprint N"
+    local sprint_num
+    sprint_num=$(echo "$sprint_id" | grep -oE '[0-9]+' | head -1)
     local safe_sprint
-    safe_sprint=$(echo "$sprint_id" | sed 's/[\/&]/\\&/g')
+    if [ -n "$sprint_num" ]; then
+        safe_sprint="Sprint $sprint_num"
+    else
+        safe_sprint=$(echo "$sprint_id" | sed 's/[\/&]/\\&/g')
+    fi
 
     sed -i "/${safe_sprint}/s/Pendente\|Em andamento\|PROXIMO\|PRÓXIMO/Concluida ($date_now)/g" "$readme" 2>/dev/null || true
 

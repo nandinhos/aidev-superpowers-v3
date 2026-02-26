@@ -27,7 +27,7 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 | Sprint | Objetivo | Status |
 |---|---|---|
-| Sprint 1 | A definir | Em andamento |
+| Sprint 1 | A definir | Concluida (2026-02-26) |
 
 **Proximo passo:** Executar Sprint 1 — RED → GREEN → REFACTOR
 

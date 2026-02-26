@@ -1,0 +1,169 @@
+# AI Dev Superpowers - Taxonomia de Regras
+# Gerado por: rules-engine-standardization Sprint 1
+# Versão: 1.0.0
+#
+# Define a hierarquia, schema e catálogo de regras injetadas no contexto da LLM.
+# Precedência: projeto > stack > global (mais específico vence)
+
+version: "1.0.0"
+
+# ============================================================================
+# HIERARQUIA DE CAMADAS
+# ============================================================================
+
+layers:
+  global:
+    description: "Regras universais — aplicáveis a qualquer projeto e stack"
+    file: ".aidev/rules/generic.md"
+    load_always: true
+    precedence: 1
+
+  stack:
+    description: "Regras específicas da stack detectada no projeto"
+    file_pattern: ".aidev/rules/{stack}.md"
+    load_always: false
+    precedence: 2
+    known_stacks:
+      - id: livewire
+        detect_files: ["composer.json"]
+        detect_pattern: "livewire"
+        file: ".aidev/rules/livewire.md"
+      - id: nextjs
+        detect_files: ["package.json"]
+        detect_pattern: "next"
+        file: ".aidev/rules/nextjs.md"
+      - id: django
+        detect_files: ["manage.py", "requirements.txt"]
+        detect_pattern: "django"
+        file: ".aidev/rules/django.md"
+      - id: generic
+        detect_files: []
+        detect_pattern: ""
+        file: ".aidev/rules/generic.md"
+
+  project:
+    description: "Overrides específicos do projeto — sobrescreve global e stack"
+    file: ".aidev/rules/project.md"
+    load_always: false
+    precedence: 3
+
+  limits:
+    description: "Limites operacionais da LLM — sempre carregado"
+    file: ".aidev/rules/llm-limits.md"
+    load_always: true
+    precedence: 0
+
+# ============================================================================
+# SCHEMA DE REGRA
+# ============================================================================
+# Cada regra nos arquivos .md pode ter metadados opcionais no frontmatter.
+# Sem frontmatter, os defaults abaixo são aplicados.
+
+rule_schema:
+  fields:
+    id:
+      type: string
+      description: "Identificador único da regra (ex: commit-format)"
+      required: true
+
+    layer:
+      type: enum
+      values: [global, stack, project, limits]
+      description: "Camada à qual a regra pertence"
+      required: true
+
+    severity:
+      type: enum
+      values: [error, warning, info]
+      description: "Gravidade da violação"
+      default: warning
+
+    scope:
+      type: list
+      description: "Contextos onde a regra se aplica"
+      values: [commit, file-creation, code-edit, architecture, always]
+      default: [always]
+
+    validatable:
+      type: boolean
+      description: "Se existe função de validação automática para esta regra"
+      default: false
+
+    validator:
+      type: string
+      description: "Nome da função de validação em rules-validator.sh"
+      required_if: "validatable: true"
+
+# ============================================================================
+# CATÁLOGO DE REGRAS (referência — fonte de verdade nos arquivos .md)
+# ============================================================================
+
+catalog:
+  global:
+    - id: commit-format
+      description: "Commits em português, Conventional Commits, sem emoji, sem co-autoria"
+      severity: error
+      scope: [commit]
+      validatable: true
+      validator: validate_commit_format
+
+    - id: tdd-mandatory
+      description: "RED → GREEN → REFACTOR obrigatório"
+      severity: warning
+      scope: [code-edit]
+      validatable: false
+
+    - id: yagni
+      description: "Implementar somente o que foi solicitado"
+      severity: warning
+      scope: [code-edit, architecture]
+      validatable: false
+
+    - id: feature-lifecycle
+      description: "Lifecycle via CLI: start → done → complete"
+      severity: error
+      scope: [file-creation]
+      validatable: true
+      validator: validate_no_manual_plan_move
+
+    - id: language-pt
+      description: "Comunicação com usuário em português (Brasil)"
+      severity: warning
+      scope: [always]
+      validatable: false
+
+  limits:
+    - id: max-files-per-cycle
+      description: "Máximo 10 arquivos por ciclo LLM"
+      severity: error
+      scope: [file-creation]
+      validatable: true
+      validator: validate_file_count
+
+    - id: protected-paths
+      description: "Caminhos core/state/user protegidos contra edição direta"
+      severity: error
+      scope: [file-creation, code-edit]
+      validatable: true
+      validator: validate_protected_path
+
+# ============================================================================
+# CONFIGURAÇÃO DE INJEÇÃO POR LLM
+# ============================================================================
+
+injection:
+  claude_code:
+    target_file: "CLAUDE.md"
+    section_marker: "## Regras Injetadas pelo Rules Engine"
+    format: markdown
+    include_source_ref: true
+
+  cursor:
+    target_file: ".cursorrules"
+    format: plain
+    include_source_ref: false
+
+  generic:
+    format: markdown
+    output: stdout
+    include_source_ref: true

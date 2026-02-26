@@ -38,8 +38,22 @@ aidev init
 ```
 
 ---
-
-## 🚀 Novidades da V4.7.0 (Sistema MCP Padronizado)
+ 
+ ## 🚀 Novidades da V4.7.1 (Retroalimentação de Templates & Curadoria)
+ 
+ ### Sistema de Retroalimentação de Templates
+ Agora o framework possui um **ciclo virtuoso de aprendizado**, transformando lições aprendidas em regras de stack automaticamente:
+ - **Lesson Classifier**: Classifica lições em 3 níveis (Local, Global, Universal) usando análise semântica e keywords.
+ - **Lesson Promoter**: Converte lições validadas em regras oficiais de desenvolvimento em `.aidev/rules/{stack}.md`.
+ - **Lesson Curator**: Novo motor de curadoria (heurística + suporte a MCPs) para garantir que apenas lições de alta qualidade virem regras.
+ - **Lesson Dashboard**: Visualize a saúde do seu Knowledge Base com métricas de classificação e taxas de curadoria.
+ 
+ ### Novo Skill: `lesson-curation`
+ Skill especializada para guiar IAs na validação de lições contra documentação oficial (Context7/Laravel Boost) antes da promoção.
+ 
+ ---
+ 
+ ## 🚀 Novidades da V4.7.0 (Sistema MCP Padronizado)
 
 ### Sistema de Fallback para MCPs
 MCPs agora são **opcionais**. Se não instalados ou sem resposta, o sistema ativa fallback automaticamente sem erro:

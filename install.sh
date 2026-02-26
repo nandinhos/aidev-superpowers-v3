@@ -17,6 +17,7 @@ NC='\033[0m' # No Color
 
 INSTALL_DIR="$HOME/.aidev-core"
 REPO_URL="https://github.com/nandinhos/aidev-superpowers-v3.git"
+ORIGINAL_PWD="$PWD"
 
 print_header() {
     echo -e "${BLUE}================================================================${NC}"
@@ -100,7 +101,7 @@ read -r response </dev/tty || response="n"
 
 if [[ "$response" =~ ^[yY] ]]; then
     echo ""
-    "$BIN_PATH/aidev" init --install-in "$PWD"
+    "$BIN_PATH/aidev" init --install-in "$ORIGINAL_PWD"
 else
     echo ""
     print_info "Instalação concluída!"

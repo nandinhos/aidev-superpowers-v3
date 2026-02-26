@@ -174,7 +174,8 @@ get_framework_checksums() {
 # ============================================================================
 check_unified_sync() {
     local unified_file="$STATE_DIR/unified.json"
-    local framework_version="${AIDEV_VERSION:-$(cat "$AIDEV_ROOT/../VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    local framework_version
+    framework_version=$(cat "$AIDEV_ROOT/../VERSION" 2>/dev/null | tr -d '[:space:]')
     framework_version="${framework_version:-4.5.1}"
     
     if [ ! -f "$unified_file" ]; then
@@ -198,7 +199,8 @@ check_unified_sync() {
 generate_activation_snapshot() {
     local runtime=$(detect_runtime)
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-    local framework_version="${AIDEV_VERSION:-$(cat "$AIDEV_ROOT/../VERSION" 2>/dev/null | tr -d '[:space:]')}"
+    local framework_version
+    framework_version=$(cat "$AIDEV_ROOT/../VERSION" 2>/dev/null | tr -d '[:space:]')
     framework_version="${framework_version:-4.5.1}"
 
     # Detecta disponibilidade do Basic Memory (Sprint 1)

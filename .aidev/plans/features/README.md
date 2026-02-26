@@ -24,11 +24,17 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 ---
 
 ## Features Em Execução
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
 
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
 | Feature | Arquivo | Movida para current em |
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
 |---|---|---|
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
 
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
 ---
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | [current/](../current/rules-engine-standardization.md) | 2026-02-26 |
 | Backlog - Refinamento e Execução de Features com Sprints Estruturados | [current/](../current/refinamento-features-sprints-estruturados.md) | 2026-02-26 |
 | Backlog - Automatização do Sync de Estado Unificado | [current/](../current/automatizacao-sync-unified.md) | 2026-02-26 |
 | Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |

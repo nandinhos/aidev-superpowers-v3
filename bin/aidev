@@ -1427,9 +1427,17 @@ cmd_plan() {
 # Uso: aidev refine <backlog-id>
 cmd_refine() {
     local item_id="${1:-}"
+    local auto_mode=false
+
+    # Detecta flag --auto (permite execução não-interativa para itens já detalhados)
+    if [ "$item_id" = "--auto" ]; then
+        auto_mode=true
+        item_id="${2:-}"
+    fi
 
     if [ -z "$item_id" ]; then
         print_error "Uso: aidev refine <backlog-id>"
+        print_error "     aidev refine --auto <backlog-id>   # modo não-interativo"
         print_info "Ex: aidev refine rules-engine-standardization"
         print_info ""
         print_info "Items disponíveis no backlog:"
@@ -1470,30 +1478,42 @@ cmd_refine() {
     head -15 "$item_file" | sed 's/^/  /'
     echo ""
 
-    # Coleta refinamento interativo
+    # Coleta refinamento interativo (ou auto a partir do arquivo existente)
     local scope="" criteria="" sprints_est="" dependencies="" notes=""
+    local promote_response="y"
 
-    printf "  %s\n  → " "$(print_info "1/5 Confirme ou ajuste o escopo (Enter para manter):" 2>&1 || echo "1/5 Confirme ou ajuste o escopo:")"
-    read -r scope </dev/tty || scope=""
+    if [ "$auto_mode" = "true" ]; then
+        print_info "Modo --auto: usando conteúdo existente do backlog como refinamento"
+        # Extrai sprints estimados das tarefas HIGH/MEDIUM existentes
+        local task_count
+        task_count=$(grep -cE "^\### [0-9]+\. \[(HIGH|MEDIUM)\]" "$item_file" 2>/dev/null || echo "3")
+        sprints_est=$(( (task_count + 1) / 2 ))
+        [ "$sprints_est" -lt 1 ] && sprints_est=1
+        dependencies=$(grep -A2 "^## Dependências" "$item_file" 2>/dev/null | grep "^-" | head -3 | tr '\n' ',' | sed 's/,$//' || true)
+        notes="Auto-aprovado: spec já detalhada com tarefas, critérios e dependências definidos"
+    else
+        printf "  %s\n  → " "$(print_info "1/5 Confirme ou ajuste o escopo (Enter para manter):" 2>&1 || echo "1/5 Confirme ou ajuste o escopo:")"
+        read -r scope </dev/tty || scope=""
 
-    printf "  %s\n  → " "$(print_info "2/5 Critérios de aceitação (separe por vírgula):" 2>&1 || echo "2/5 Critérios de aceitação:")"
-    read -r criteria </dev/tty || criteria=""
+        printf "  %s\n  → " "$(print_info "2/5 Critérios de aceitação (separe por vírgula):" 2>&1 || echo "2/5 Critérios de aceitação:")"
+        read -r criteria </dev/tty || criteria=""
 
-    printf "  %s\n  → " "$(print_info "3/5 Estimativa de sprints (ex: 2):" 2>&1 || echo "3/5 Estimativa de sprints:")"
-    read -r sprints_est </dev/tty || sprints_est=""
-    sprints_est="${sprints_est:-1}"
+        printf "  %s\n  → " "$(print_info "3/5 Estimativa de sprints (ex: 2):" 2>&1 || echo "3/5 Estimativa de sprints:")"
+        read -r sprints_est </dev/tty || sprints_est=""
+        sprints_est="${sprints_est:-1}"
 
-    printf "  %s\n  → " "$(print_info "4/5 Dependências técnicas (Enter se nenhuma):" 2>&1 || echo "4/5 Dependências técnicas:")"
-    read -r dependencies </dev/tty || dependencies=""
+        printf "  %s\n  → " "$(print_info "4/5 Dependências técnicas (Enter se nenhuma):" 2>&1 || echo "4/5 Dependências técnicas:")"
+        read -r dependencies </dev/tty || dependencies=""
 
-    printf "  %s\n  → " "$(print_info "5/5 Observações adicionais (Enter para pular):" 2>&1 || echo "5/5 Observações adicionais:")"
-    read -r notes </dev/tty || notes=""
+        printf "  %s\n  → " "$(print_info "5/5 Observações adicionais (Enter para pular):" 2>&1 || echo "5/5 Observações adicionais:")"
+        read -r notes </dev/tty || notes=""
 
-    echo ""
+        echo ""
 
-    # Pergunta se deve promover para features/
-    printf "  %s [Y/n]: " "$(print_info "Mover para features/ como [VALIDADA]?" 2>&1 || echo "Mover para features/ como [VALIDADA]?")"
-    read -r promote_response </dev/tty || promote_response="y"
+        # Pergunta se deve promover para features/
+        printf "  %s [Y/n]: " "$(print_info "Mover para features/ como [VALIDADA]?" 2>&1 || echo "Mover para features/ como [VALIDADA]?")"
+        read -r promote_response </dev/tty || promote_response="y"
+    fi
 
     # Constrói bloco de refinamento para append no arquivo
     local date_now

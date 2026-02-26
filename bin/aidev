@@ -577,6 +577,15 @@ cmd_status() {
         fi
     fi
     
+    # Aviso de estado desatualizado (threshold: 7 dias)
+    local unified_age_warn=""
+    if [ -f "$unified_state_file" ]; then
+        if find "$unified_state_file" -mtime +7 -type f 2>/dev/null | grep -q .; then
+            unified_age_warn=$(find "$unified_state_file" -printf "%T+" 2>/dev/null | cut -d+ -f1 || echo "")
+            print_warning "Estado desatualizado! unified.json tem mais de 7 dias. Execute: aidev sync"
+        fi
+    fi
+
     # Histórico Git Recente
     if [ -d "$install_path/.git" ]; then
         print_section "Histórico Recente (Git)"
@@ -1286,11 +1295,17 @@ cmd_done() {
     }
 
     flc_sprint_done "$sprint_id" "$description"
-    
+
     # MCP Fallback Check - Hook pós-sprint
     source "$AIDEV_LIB_DIR/mcp-fallback.sh" 2>/dev/null || true
     if type mcp_fallback_hook_sprint_done &>/dev/null; then
         mcp_fallback_hook_sprint_done || true
+    fi
+
+    # Sync automático de estado após sprint concluida
+    local sync_script=".aidev/lib/workflow-sync.sh"
+    if [ -f "$sync_script" ]; then
+        bash "$sync_script" sync true 2>/dev/null || true
     fi
 }
 
@@ -1351,6 +1366,12 @@ cmd_complete() {
     }
 
     flc_feature_complete "$feature_id"
+
+    # Sync automático de estado após feature concluida
+    local sync_script=".aidev/lib/workflow-sync.sh"
+    if [ -f "$sync_script" ]; then
+        bash "$sync_script" sync true 2>/dev/null || true
+    fi
 }
 
 # Subcomando: plan

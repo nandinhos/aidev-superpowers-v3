@@ -19,16 +19,9 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 
 ## Feature Ativa
 
-### Backlog - Onboarding Interativo e Orquestrador Semântico
+*Nenhuma feature em execucao no momento.*
 
-**Arquivo:** [onboarding-interativo-orquestrador-semantico.md](onboarding-interativo-orquestrador-semantico.md)
-**Iniciada:** 2026-02-26
-
-| Sprint | Objetivo | Status |
-|---|---|---|
-| Sprint 1 | A definir | Pendente |
-
-**Proximo passo:** Iniciar Sprint 1
+Use `aidev start <feature-id>` para iniciar uma feature de features/.
 
 ---
 

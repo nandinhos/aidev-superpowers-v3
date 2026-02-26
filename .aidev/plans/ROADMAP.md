@@ -1,7 +1,7 @@
 # ROADMAP AI DEV SUPERPOWERS
 
 > Indice de planejamento — conteudo detalhado em history/
-> Versao atual: **v4.5.6** | Atualizado: 2026-02-20
+> Versao atual: **v4.7.0** | Atualizado: 2026-02-26
 
 ---
 
@@ -29,7 +29,12 @@
 
 | Feature | Prioridade |
 |---------|------------|
-
+| Backlog - Automatização do Sync de Estado Unificado | Media |
+| Backlog - Avaliação e Evolução das Skills Atuais | Media |
+| Backlog - Gap no Fluxo de Lições Aprendidas | Media |
+| Backlog - Refinamento e Execução de Features com Sprints Estruturados | Media |
+| Backlog - Sistema de Retroalimentação de Templates com Curadoria de Lições | Media |
+| Backlog - Rules Engine: Carregamento, Injeção e Validação de Regras por LLM | Media |
 
 ---
 
@@ -37,7 +42,7 @@
 
 | Periodo | Features | Detalhes |
 |---------|----------|---------|
-| 2026-02 | 21 feature(s) | [ver](history/2026-02/) |
+| 2026-02 | 27 feature(s) | [ver](history/2026-02/) |
 
 ---
 

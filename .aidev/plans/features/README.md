@@ -24,15 +24,10 @@ backlog/ (ideia) → features/ (planejada) → current/ (executando) → history
 ---
 
 ## Features Em Execução
-| Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
 
-| Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
 | Feature | Arquivo | Movida para current em |
-| Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
 |---|---|---|
-| Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
 
-| Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
 ---
 | Backlog - Onboarding Interativo e Orquestrador Semântico | [current/](../current/onboarding-interativo-orquestrador-semantico.md) | 2026-02-26 |
 

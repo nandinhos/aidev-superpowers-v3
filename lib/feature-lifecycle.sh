@@ -148,17 +148,17 @@ flc_feature_start() {
     source_file=$(find "$_FLC_FEATURES_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
     [ -z "$source_file" ] && source_file=$(find "$_FLC_FEATURES_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
 
-    # Fallback: busca em backlog/ e promove automaticamente para features/ antes de iniciar
+    # Gate: se não está em features/, verifica se está em backlog/ e bloqueia
     if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
         local backlog_file
         backlog_file=$(find "$_FLC_BACKLOG_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
         [ -z "$backlog_file" ] && backlog_file=$(find "$_FLC_BACKLOG_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
 
         if [ -n "$backlog_file" ] && [ -f "$backlog_file" ]; then
-            print_info "Feature encontrada em backlog/ - promovendo para features/..."
-            mkdir -p "$_FLC_FEATURES_DIR"
-            mv "$backlog_file" "$_FLC_FEATURES_DIR/$(basename "$backlog_file")"
-            source_file="$_FLC_FEATURES_DIR/$(basename "$backlog_file")"
+            print_error "Feature '$feature_id' esta em backlog/ e ainda nao foi refinada."
+            print_info "Execute primeiro: aidev refine $feature_id"
+            print_info "O refinamento garante que a ideia tenha escopo, criterios e sprints definidos."
+            return 1
         fi
     fi
 

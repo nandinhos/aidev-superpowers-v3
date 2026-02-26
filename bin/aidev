@@ -1313,11 +1313,20 @@ cmd_done() {
 # Finaliza feature: move current/ -> history/, atualiza todos os READMEs e ROADMAP
 # Uso: aidev complete <feature-id>
 cmd_complete() {
-    local feature_id="${1:-}"
+    local feature_id=""
+    local force=false
+
+    for arg in "$@"; do
+        case "$arg" in
+            --force) force=true ;;
+            *) [ -z "$feature_id" ] && feature_id="$arg" ;;
+        esac
+    done
 
     if [ -z "$feature_id" ]; then
         print_error "Uso: aidev complete <feature-id>"
         print_info "Ex: aidev complete feature-lifecycle-automation"
+        print_info "Para forcar conclusao com sprints pendentes: aidev complete <id> --force"
         exit 1
     fi
 
@@ -1357,6 +1366,24 @@ cmd_complete() {
         echo ""
         print_info "Para iniciar uma feature: aidev start <feature-id>"
         return 1
+    fi
+
+    # Gate: verifica se todos os sprints estão concluídos (a menos que --force)
+    local readme_file="$current_dir/README.md"
+    if [ "$force" = "false" ] && [ -f "$readme_file" ]; then
+        local pending_lines
+        pending_lines=$(grep -E "\| Sprint[^|]*\|[^|]*\| (Em andamento|Pendente) \|" "$readme_file" 2>/dev/null || true)
+        if [ -n "$pending_lines" ]; then
+            local pending_count
+            pending_count=$(echo "$pending_lines" | wc -l)
+            print_warning "⚠️  Ha $pending_count sprint(s) ainda nao concluido(s)!"
+            print_info "Sprints pendentes:"
+            echo "$pending_lines" | sed 's/^/  /'
+            echo ""
+            print_info "Conclua cada sprint com: aidev done sprint-N \"descricao\""
+            print_info "Ou force a conclusao com: aidev complete $feature_id --force"
+            return 1
+        fi
     fi
 
     load_module "feature-lifecycle" 2>/dev/null || \

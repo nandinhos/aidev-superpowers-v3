@@ -289,25 +289,47 @@ O fluxo de desenvolvimento ganhou dois novos passos para evitar features mal def
 backlog/ → brainstorm/ → features/ → current/ → history/
 ```
 
-**Novos comandos:**
+**Fluxo completo (5 passos):**
 ```bash
-aidev brainstorm <backlog-id>     # Explora ideia → .aidev/plans/brainstorm/
-aidev create-feature <id>         # Promove brainstorm → .aidev/plans/features/
+aidev plan <titulo>           # Registra ideia bruta em backlog/
+aidev brainstorm <backlog-id> # Explora ideia → .aidev/plans/brainstorm/
+aidev create-feature <id>     # Promove brainstorm → .aidev/plans/features/
+aidev start <feature-id>      # Inicia execução → current/
+aidev done <sprint-id>        # Conclui sprint
+aidev complete <feature-id>   # Arquiva → history/YYYY-MM/
 ```
 
-O `aidev brainstorm` cria um documento estruturado com problema, abordagens, riscos e decisão preliminar. O `aidev create-feature` converte o brainstorm em plano formal com sprints e critérios de aceite.
+- **`aidev brainstorm`**: cria documento estruturado com problema, abordagens, riscos e decisão preliminar. Suporta `--auto` para template sem interação.
+- **`aidev create-feature`**: converte brainstorm em plano formal com sprints e critérios de aceite.
 
 ### Gate de proteção
 
-`aidev start` agora bloqueia se a feature ainda está em `brainstorm/`, orientando ao próximo comando correto.
+`aidev start` agora bloqueia se a feature ainda está em `brainstorm/`, orientando o próximo comando correto. Idem para `backlog/`.
 
 ### Regra de sessão
 
-Ao iniciar qualquer sessão, verificar `current/` primeiro. Se houver feature ativa, retomar antes de qualquer outra tarefa.
+Ao iniciar qualquer sessão, verificar `current/` primeiro. Se houver feature ativa, retomar antes de qualquer outra tarefa. Essa regra foi incorporada ao `orchestrator.md`, `CLAUDE.md`, `rules/generic.md` e `QUICKSTART.md`.
+
+### Novos triggers de ativação
+
+Palavras `"backlog"` e `"brainstorm"` adicionadas como triggers em todos os runtimes suportados (claude_code, opencode, claude_desktop, gemini, antigravity). Intents `backlog_add` e `brainstorm` incluídos na classificação do orchestrator.
+
+### Renomeação: backlog.sh → error-tracker.sh
+
+`lib/backlog.sh` renomeado para `lib/error-tracker.sh` para refletir seu escopo real (rastreamento de erros, não gestão de backlog de ideias). O backlog de ideias é responsabilidade exclusiva da pasta `plans/backlog/`.
+
+### Índice de regras
+
+Novo arquivo `rules/INDEX.md` com referência rápida a todas as regras do sistema e resumo das 6 inegociáveis.
+
+### Skills: paths de artefatos corrigidos
+
+- `brainstorming/SKILL.md`: artefatos salvos em `.aidev/plans/brainstorm/` (era `docs/plans/`)
+- `writing-plans/SKILL.md`: artefatos salvos em `.aidev/plans/features/` (era `docs/plans/`)
 
 ### Limpeza automática de checkpoints
 
-Nova função `_flc_cleanup_checkpoints()` mantém apenas os últimos 5 checkpoints JSON, evitando acumulação indefinida.
+Nova função `_flc_cleanup_checkpoints()` mantém apenas os últimos 5 checkpoints JSON, evitando acumulação indefinida. 49 checkpoints antigos foram removidos nesta release.
 
 ---
 

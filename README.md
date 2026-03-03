@@ -2,7 +2,7 @@
 
 > Transforme qualquer IA de codigo em um desenvolvedor senior com praticas TDD e padroes profissionais.
 
-[![Version](https://img.shields.io/badge/version-4.7.1-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-4.8.0-blue.svg)]()
 [![Tests](https://img.shields.io/badge/tests-412%20passing-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
@@ -279,7 +279,39 @@ Instruções otimizadas para diferentes comportamentos de LLMs:
  
  ---
  
- ## Novidades da V3.1 `(Greenfield & Brownfield)`
+ ## Novidades da v4.8.0 — Fluxo Fluido de Ideias
+
+### Brainstorm integrado ao ciclo de vida
+
+O fluxo de desenvolvimento ganhou dois novos passos para evitar features mal definidas chegando ao código:
+
+```
+backlog/ → brainstorm/ → features/ → current/ → history/
+```
+
+**Novos comandos:**
+```bash
+aidev brainstorm <backlog-id>     # Explora ideia → .aidev/plans/brainstorm/
+aidev create-feature <id>         # Promove brainstorm → .aidev/plans/features/
+```
+
+O `aidev brainstorm` cria um documento estruturado com problema, abordagens, riscos e decisão preliminar. O `aidev create-feature` converte o brainstorm em plano formal com sprints e critérios de aceite.
+
+### Gate de proteção
+
+`aidev start` agora bloqueia se a feature ainda está em `brainstorm/`, orientando ao próximo comando correto.
+
+### Regra de sessão
+
+Ao iniciar qualquer sessão, verificar `current/` primeiro. Se houver feature ativa, retomar antes de qualquer outra tarefa.
+
+### Limpeza automática de checkpoints
+
+Nova função `_flc_cleanup_checkpoints()` mantém apenas os últimos 5 checkpoints JSON, evitando acumulação indefinida.
+
+---
+
+## Novidades da V3.1 `(Greenfield & Brownfield)`
 
 ### Contexto Inteligente (Smart Context)
 O `aidev init` agora detecta automaticamente o estado do projeto:

@@ -5,6 +5,49 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere au [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [4.8.0] - 2026-03-02
+
+### Adicionado: Fluxo Fluido de Ideias (Brainstorm)
+
+- **`.aidev/plans/brainstorm/`**: Nova pasta no ciclo de vida para exploração estruturada de ideias antes de criar o plano formal.
+- **`aidev brainstorm <backlog-id>`**: Novo comando que transforma um item do backlog em documento de brainstorm. Suporta modo `--auto` (template pré-preenchido sem interação).
+- **`aidev create-feature <brainstorm-id>`**: Novo comando que promove um brainstorm para `features/` com template de plano detalhado (objetivo, sprints, critérios de aceite).
+- **`lib/flc_brainstorm_create()`**: Função que gera o documento de brainstorm com campos pré-preenchidos a partir do item de backlog.
+- **`lib/flc_feature_from_brainstorm()`**: Função que converte brainstorm em plano de feature com estrutura completa.
+- **`lib/_flc_cleanup_checkpoints()`**: Função que mantém apenas os últimos N checkpoints JSON (padrão: 5), evitando acumulação.
+- **`rules/INDEX.md`**: Novo índice leve de todas as regras do sistema com resumo das inegociáveis.
+
+### Melhorado: Ciclo de Vida de Features (5 passos)
+
+Fluxo expandido de 3 para 5 passos:
+```
+backlog/ → brainstorm/ → features/ → current/ → history/
+```
+- Gate atualizado em `flc_feature_start()`: bloqueia se feature ainda está em `brainstorm/` com instrução clara do próximo comando.
+- CLAUDE.md, orchestrator.md, rules/generic.md e QUICKSTART.md atualizados com o novo fluxo.
+- Regra de sessão: verificar `current/` ao iniciar antes de qualquer outra tarefa.
+
+### Melhorado: Triggers de Ativação
+
+- Triggers `"backlog"` e `"brainstorm"` adicionados para todos os runtimes (opencode, claude_code, claude_desktop, gemini, antigravity).
+- Intents `backlog_add` e `brainstorm` adicionados à tabela de classificação do orchestrator.
+
+### Renomeado: backlog.sh → error-tracker.sh
+
+- **`lib/error-tracker.sh`**: Script renomeado para refletir escopo real (rastreamento de erros, não backlog de ideias).
+- Backlog passa a ser responsabilidade exclusiva da pasta `plans/backlog/`.
+- `validation-pipeline.sh` e `tests/error-tracker.test.sh` atualizados.
+
+### Melhorado: Skills (Artefatos)
+
+- `brainstorming/SKILL.md`: artefatos agora salvos em `.aidev/plans/brainstorm/` (era `docs/plans/`).
+- `writing-plans/SKILL.md`: artefatos agora salvos em `.aidev/plans/features/` (era `docs/plans/`).
+
+### Limpeza
+
+- 49 checkpoints JSON antigos removidos (de 54 para 5).
+- `docs/feature-lifecycle.md`: comandos `aidev feature` deprecated removidos, substituídos pelo fluxo atual.
+
 ## [4.7.1] - 2026-02-26
 
 ## [4.7.0] - 2026-02-23

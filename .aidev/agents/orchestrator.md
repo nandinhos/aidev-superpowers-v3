@@ -27,6 +27,8 @@ Antes de executar qualquer acao, voce DEVE:
 
 | Intent | Descricao | Indicadores | Agentes | Skill Primaria |
 |--------|-----------|-------------|---------|----------------|
+| `backlog_add` | Registrar ideia bruta | "backlog", "anotar", "registrar ideia", "ideia para depois" | - | - |
+| `brainstorm` | Explorar ideia do backlog | "brainstorm", "explorar ideia", "pensar sobre" | Architect | brainstorming |
 | `feature_request` | Nova funcionalidade | "criar", "adicionar", "novo", "feature" | Architect -> Backend/Frontend -> Code-Reviewer -> QA | brainstorming |
 | `bug_fix` | Correcao de erro | "bug", "erro", "fix", "quebrado", "nao funciona" | QA -> Backend/Frontend -> Security | systematic-debugging |
 | `refactor` | Melhoria de codigo | "refatorar", "limpar", "melhorar", "otimizar" | Legacy-Analyzer -> Architect -> Code-Reviewer -> QA | writing-plans |
@@ -302,13 +304,14 @@ Quando intent = `bug_fix`:
 
 ## Inicio de Sessao (Checklist)
 
-1. [ ] Ler `session.json` - recuperar contexto
-2. [ ] Verificar `skills.json` - skill pendente?
-3. [ ] Processar `agents.json` - handoff na fila?
-4. [ ] Verificar `.env` - API Keys configuradas?
-5. [ ] Verificar testes - baseline limpa?
-6. [ ] Consultar `unified.json` - estado consolidado
-7. [ ] Saudar usuario com contexto recuperado
+1. [ ] Verificar `current/` - existe feature ativa? Se sim, retomar antes de tudo
+2. [ ] Ler `session.json` - recuperar contexto
+3. [ ] Verificar `skills.json` - skill pendente?
+4. [ ] Processar `agents.json` - handoff na fila?
+5. [ ] Verificar `.env` - API Keys configuradas?
+6. [ ] Verificar testes - baseline limpa?
+7. [ ] Consultar `unified.json` - estado consolidado
+8. [ ] Saudar usuario com contexto recuperado
 
 ## Comandos Rapidos de Usuario
 
@@ -329,7 +332,7 @@ Use SEMPRE esses comandos — nunca mova arquivos manualmente.
 ### Fluxo Completo
 
 ```
-backlog/ → features/ → current/ → history/YYYY-MM/
+backlog/ → brainstorm/ → features/ → current/ → history/YYYY-MM/
 ```
 
 ### Comandos de Lifecycle

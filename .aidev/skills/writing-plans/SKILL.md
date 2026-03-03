@@ -7,14 +7,14 @@ triggers:
   - "quebrar em tarefas"
   - "implementation plan"
 globs:
-  - "docs/plans/*-implementation.md"
+  - ".aidev/plans/features/*-implementation.md"
 steps: 4
 checkpoints:
   - prerequisites_verified
   - tasks_defined
   - plan_documented
   - plan_approved
-artifact: "docs/plans/YYYY-MM-DD-<topic>-implementation.md"
+artifact: ".aidev/plans/features/YYYY-MM-DD-<topic>-implementation.md"
 previous_skill: brainstorming
 next_skill: test-driven-development
 ---
@@ -25,7 +25,7 @@ next_skill: test-driven-development
 - **Total de Steps**: 4
 - **Tempo Estimado**: 20-40 minutos
 - **Prerequisito**: Design aprovado (skill: brainstorming)
-- **Artefato Final**: `docs/plans/YYYY-MM-DD-<topic>-implementation.md`
+- **Artefato Final**: `.aidev/plans/features/YYYY-MM-DD-<topic>-implementation.md`
 - **Proxima Skill**: `test-driven-development`
 
 ## Quando Usar
@@ -47,7 +47,7 @@ Quebrar o trabalho em tarefas que um "desenvolvedor junior entusiasmado, sem con
 Antes de criar o plano, verificar:
 
 ```bash
-validation_check "file_exists" "docs/plans/*-design.md"
+validation_check "file_exists" ".aidev/plans/brainstorm/*-design.md"
 validation_check "tests_pass"
 ```
 
@@ -129,7 +129,7 @@ type(scope): descricao breve
 **Checkpoint**: `plan_documented`
 
 ### Acoes
-Criar documento em: `docs/plans/YYYY-MM-DD-<topic>-implementation.md`
+Criar documento em: `.aidev/plans/features/YYYY-MM-DD-<topic>-implementation.md`
 
 ### Template do Plano
 
@@ -143,7 +143,7 @@ Criar documento em: `docs/plans/YYYY-MM-DD-<topic>-implementation.md`
 
 ## Prerequisitos
 
-- [ ] Design aprovado: `docs/plans/YYYY-MM-DD-<topic>-design.md`
+- [ ] Design aprovado: `.aidev/plans/brainstorm/YYYY-MM-DD-<topic>-design.md`
 - [ ] Dependencias instaladas
 - [ ] Baseline de testes limpa
 - [ ] Branch criada: `feature/<nome>`
@@ -267,7 +267,7 @@ Quando ativado por rate limit, fim de sessao, ou milestone concluido:
 
 ### Ao Completar com Sucesso
 ```bash
-skill_add_artifact "writing-plans" "docs/plans/YYYY-MM-DD-<topic>-implementation.md" "plan"
+skill_add_artifact "writing-plans" ".aidev/plans/features/YYYY-MM-DD-<topic>-implementation.md" "plan"
 skill_complete "writing-plans"
 agent_handoff "architect" "backend" "Executar plano de implementacao" "<path>"
 # Iniciar: test-driven-development
@@ -289,7 +289,7 @@ skill_set_steps "writing-plans" 4
 
 # Step 1: Verificar prerequisitos
 skill_advance "writing-plans" "Verificar prerequisitos"
-validation_check "file_exists" "docs/plans/*-design.md"
+validation_check "file_exists" ".aidev/plans/brainstorm/*-design.md"
 validation_check "tests_pass"
 skill_validate_checkpoint "writing-plans"
 
@@ -306,9 +306,9 @@ skill_validate_checkpoint "writing-plans"
 # Step 4: Aprovar plano
 skill_advance "writing-plans" "Aprovar plano"
 # ... apresentar e obter aprovacao ...
-skill_add_artifact "writing-plans" "docs/plans/2024-01-15-login-implementation.md" "plan"
+skill_add_artifact "writing-plans" ".aidev/plans/features/2024-01-15-login-implementation.md" "plan"
 skill_validate_checkpoint "writing-plans"
 
 skill_complete "writing-plans"
-agent_handoff "architect" "backend" "Implementar conforme plano" "docs/plans/2024-01-15-login-implementation.md"
+agent_handoff "architect" "backend" "Implementar conforme plano" ".aidev/plans/features/2024-01-15-login-implementation.md"
 ```

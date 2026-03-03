@@ -87,20 +87,34 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 Todo ciclo de desenvolvimento de feature DEVE ser executado via scripts CLI. Movimentacoes manuais de arquivo sao PROIBIDAS.
 
+### Regra de Sessao
+
+**Ao iniciar sessao:** verificar `current/` primeiro. Se houver feature ativa, retomar antes de iniciar nova.
+
+### Fluxo Completo (5 passos)
+
+```
+backlog/ (ideia) → brainstorm/ (exploracao) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluida)
+```
+
 ### Ordem de Execucao Obrigatoria
 
 ```
-1. aidev start <feature-id>     # move backlog/ → current/, cria checkpoint
-2. [desenvolver — TDD: RED → GREEN → REFACTOR]
-3. aidev done <sprint-id>       # marca sprint concluida no current/README.md
-4. [repetir steps 2-3 para cada sprint da feature]
-5. aidev complete <feature-id>  # move current/ → history/, atualiza READMEs e ROADMAP
+1. aidev plan <titulo>            # cria item em backlog/
+2. aidev brainstorm <backlog-id>  # explora ideia → brainstorm/
+3. aidev create-feature <id>      # promove brainstorm → features/
+4. aidev start <feature-id>       # move features/ → current/, cria checkpoint
+5. [desenvolver — TDD: RED → GREEN → REFACTOR]
+6. aidev done <sprint-id>         # marca sprint concluida no current/README.md
+7. [repetir steps 5-6 para cada sprint da feature]
+8. aidev complete <feature-id>    # move current/ → history/, atualiza READMEs e ROADMAP
 ```
 
 ### Regras Inegociaveis
 
 - **NUNCA** mover arquivos de plano manualmente (`cp`, `mv` direto)
 - **NUNCA** editar status nos arquivos de plano manualmente
+- **SEMPRE** verificar `current/` ao iniciar sessao
 - **SEMPRE** usar `aidev start` antes de qualquer trabalho de implementacao
 - **SEMPRE** usar `aidev complete` ao encerrar — nunca arquivar manualmente
 - Checkpoints automaticos sao criados pelos scripts em cada transicao

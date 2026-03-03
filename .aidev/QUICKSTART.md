@@ -20,6 +20,8 @@
 
 | Palavra-chave | Skill | Agente Principal |
 |---------------|-------|------------------|
+| "backlog", "registrar ideia" | - (aidev plan) | - |
+| "brainstorm", "explorar ideia" | brainstorming | architect |
 | "nova feature", "criar", "adicionar" | brainstorming -> writing-plans -> tdd | architect -> backend/frontend |
 | "bug", "erro", "nao funciona" | systematic-debugging | backend/frontend -> qa |
 | "refatorar", "melhorar", "limpar" | writing-plans -> tdd | architect -> backend/frontend |
@@ -60,10 +62,11 @@ Tipos: `feat` | `fix` | `refactor` | `test` | `docs` | `chore`
 
 ## Checklist de Inicio de Sessao
 
-1. [ ] Identifiquei o intent do usuario
-2. [ ] Selecionei skill apropriada
-3. [ ] Deleguei para agente especializado
-4. [ ] TDD: teste ANTES do codigo
+1. [ ] Verificar `current/` — existe feature ativa? Retomar se sim
+2. [ ] Identifiquei o intent do usuario
+3. [ ] Selecionei skill apropriada
+4. [ ] Deleguei para agente especializado
+5. [ ] TDD: teste ANTES do codigo
 
 ---
 

@@ -1,8 +1,8 @@
 #!/bin/bash
-# Testes para backlog.sh
+# Testes para error-tracker.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../lib/backlog.sh"
+source "$SCRIPT_DIR/../lib/error-tracker.sh"
 
 TESTS_PASSED=0
 TESTS_FAILED=0

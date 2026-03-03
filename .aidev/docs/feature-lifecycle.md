@@ -72,29 +72,18 @@ O Sistema de Lifecycle de Features resolve o problema de **automação da transi
 
 ## Uso
 
-### Comandos Disponíveis
+### Fluxo Atual (v4.7+)
 
 ```bash
-# Listar features ativas
-aidev feature list
-aidev feature ls
-
-# Concluir uma feature
-aidev feature complete <feature-id> [notas]
-aidev feature done <feature-id> [notas]
-aidev feature finish <feature-id> [notas]
-
-# Ver status de features
-aidev feature status              # Status geral
-aidev feature status <id>         # Status específico
-
-# Ver conteúdo de uma feature
-aidev feature show <id>
-aidev feature view <id>
-
-# Ajuda
-aidev feature help
+aidev plan <titulo>           # Registra ideia em backlog/
+aidev brainstorm <backlog-id> # Explora ideia → brainstorm/
+aidev create-feature <id>     # Promove brainstorm → features/
+aidev start <feature-id>      # Inicia execução → current/
+aidev done <sprint-id>        # Conclui sprint
+aidev complete <feature-id>   # Arquiva → history/YYYY-MM/
 ```
+
+> **DEPRECATED**: O comando `aidev feature` foi removido. Use os comandos acima.
 
 ### Exemplo de Uso
 

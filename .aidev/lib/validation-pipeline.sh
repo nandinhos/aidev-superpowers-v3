@@ -4,7 +4,7 @@
 
 source "${BASH_SOURCE%/*}/validators.sh" 2>/dev/null || true
 source "${BASH_SOURCE%/*}/validation-engine.sh" 2>/dev/null || true
-source "${BASH_SOURCE%/*}/backlog.sh" 2>/dev/null || true
+source "${BASH_SOURCE%/*}/error-tracker.sh" 2>/dev/null || true
 source "${BASH_SOURCE%/*}/kb-search.sh" 2>/dev/null || true
 
 VALIDATION_CONFIG="${VALIDATION_CONFIG:-.aidev/config/validation.conf}"

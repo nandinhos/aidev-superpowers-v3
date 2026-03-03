@@ -4579,6 +4579,22 @@ main() {
         refine)
             cmd_refine "$@"
             ;;
+        brainstorm)
+            load_module "feature-lifecycle" 2>/dev/null || \
+                source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
+                print_error "Modulo feature-lifecycle nao encontrado"
+                exit 1
+            }
+            flc_brainstorm_create "$@"
+            ;;
+        create-feature)
+            load_module "feature-lifecycle" 2>/dev/null || \
+                source "$AIDEV_LIB_DIR/feature-lifecycle.sh" 2>/dev/null || {
+                print_error "Modulo feature-lifecycle nao encontrado"
+                exit 1
+            }
+            flc_feature_from_brainstorm "$@"
+            ;;
         checkpoint)
             cmd_checkpoint "$@"
             ;;

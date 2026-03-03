@@ -6,22 +6,32 @@
     "opencode": [
       "aidev agent",
       "superpowers",
-      "aidev"
+      "aidev",
+      "backlog",
+      "brainstorm"
     ],
     "claude_code": [
       "aidev agent",
       "superpowers",
-      "aidev"
+      "aidev",
+      "backlog",
+      "brainstorm"
     ],
     "claude_desktop": [
       "aidev agent",
-      "superpowers"
+      "superpowers",
+      "backlog",
+      "brainstorm"
     ],
     "gemini": [
-      "aidev agent"
+      "aidev agent",
+      "backlog",
+      "brainstorm"
     ],
     "antigravity": [
-      "aidev agent"
+      "aidev agent",
+      "backlog",
+      "brainstorm"
     ]
   },
   

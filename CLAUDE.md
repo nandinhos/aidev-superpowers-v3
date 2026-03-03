@@ -98,24 +98,26 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 **OBRIGATÓRIO: TODA feature DEVE ser executada rigorosamente via scripts CLI, sem exceção.**
 
+### Regra de Sessão
+
+**Ao iniciar qualquer sessão:** verificar `current/` primeiro. Se houver feature ativa, retomá-la antes de qualquer outra tarefa.
+
 ### Fluxo Obrigatório
 
 ```bash
-aidev plan <titulo>        # Cria item em backlog/
-aidev start <feature-id>   # PASSO 1 — move para current/
-aidev done <sprint-id>     # PASSO 2 — ao concluir cada sprint
-aidev complete <feature-id> # PASSO 3 — move para history/
+aidev plan <titulo>           # Cria item em backlog/
+aidev brainstorm <backlog-id> # PASSO 1 — explora ideia em brainstorm/
+aidev create-feature <id>     # PASSO 2 — promove brainstorm → features/
+aidev start <feature-id>      # PASSO 3 — move para current/
+aidev done <sprint-id>        # PASSO 4 — ao concluir cada sprint
+aidev complete <feature-id>   # PASSO 5 — move para history/
 ```
 
 ### Fluxo
 
 ```
-backlog/ (ideia) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluida)
+backlog/ (ideia) → brainstorm/ (exploração) → features/ (planejada) → current/ (executando) → history/YYYY-MM/ (concluida)
 ```
-
-### DEPRECATED
-
-O comando `aidev feature` está depreciado. Use os comandos acima.
 
 ### PROIBIDO (sem exceção)
 
@@ -123,6 +125,7 @@ O comando `aidev feature` está depreciado. Use os comandos acima.
 - NUNCA alterar status (`Status: Concluido`, etc.) manualmente nos `.md`
 - NUNCA pular o `aidev start` e começar a implementar diretamente
 - NUNCA arquivar feature sem executar `aidev complete`
+- NUNCA iniciar nova feature sem verificar `current/` primeiro
 
 ### Por que isso é crítico
 

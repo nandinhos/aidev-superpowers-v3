@@ -8,7 +8,7 @@ triggers:
   - "arquitetura"
   - "ideia"
 globs:
-  - "docs/plans/*.md"
+  - ".aidev/plans/brainstorm/*.md"
   - "project-docs/**"
 steps: 4
 checkpoints:
@@ -16,7 +16,7 @@ checkpoints:
   - alternatives_explored
   - design_presented
   - design_documented
-artifact: "docs/plans/YYYY-MM-DD-<topic>-design.md"
+artifact: ".aidev/plans/brainstorm/YYYY-MM-DD-<topic>-design.md"
 next_skill: writing-plans
 ---
 
@@ -25,7 +25,7 @@ next_skill: writing-plans
 ## Metadata
 - **Total de Steps**: 4
 - **Tempo Estimado**: 15-30 minutos
-- **Artefato Final**: `docs/plans/YYYY-MM-DD-<topic>-design.md`
+- **Artefato Final**: `.aidev/plans/brainstorm/YYYY-MM-DD-<topic>-design.md`
 - **Proxima Skill**: `writing-plans`
 
 ## Quando Usar
@@ -120,7 +120,7 @@ Design completo aprovado incrementalmente.
 **Checkpoint**: `design_documented`
 
 ### Acoes
-Criar documento em: `docs/plans/YYYY-MM-DD-<topic>-design.md`
+Criar documento em: `.aidev/plans/brainstorm/YYYY-MM-DD-<topic>-design.md`
 
 ### Template do Documento
 ```markdown
@@ -221,10 +221,10 @@ skill_validate_checkpoint "brainstorming"
 # Step 4: Documentar
 skill_advance "brainstorming" "Documentar design"
 # ... criar documento ...
-skill_add_artifact "brainstorming" "docs/plans/2024-01-15-login-design.md" "design"
+skill_add_artifact "brainstorming" ".aidev/plans/brainstorm/2024-01-15-login-design.md" "design"
 skill_validate_checkpoint "brainstorming"
 
 # Finalizar
 skill_complete "brainstorming"
-agent_handoff "orchestrator" "architect" "Criar plano de implementacao" "docs/plans/2024-01-15-login-design.md"
+agent_handoff "orchestrator" "architect" "Criar plano de implementacao" ".aidev/plans/brainstorm/2024-01-15-login-design.md"
 ```

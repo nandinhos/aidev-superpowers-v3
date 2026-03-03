@@ -11,10 +11,13 @@ _SCRIPT_DIR_FLC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Diretórios (relativos ao CWD do projeto)
 _FLC_BACKLOG_DIR="${FLC_BACKLOG_DIR:-.aidev/plans/backlog}"
+_FLC_BRAINSTORM_DIR="${FLC_BRAINSTORM_DIR:-.aidev/plans/brainstorm}"
 _FLC_FEATURES_DIR="${FLC_FEATURES_DIR:-.aidev/plans/features}"
 _FLC_CURRENT_DIR="${FLC_CURRENT_DIR:-.aidev/plans/current}"
 _FLC_HISTORY_DIR="${FLC_HISTORY_DIR:-.aidev/plans/history}"
 _FLC_ROADMAP="${FLC_ROADMAP:-.aidev/plans/ROADMAP.md}"
+_FLC_CHECKPOINTS_DIR="${FLC_CHECKPOINTS_DIR:-.aidev/state/sprints/current/checkpoints}"
+_FLC_CHECKPOINTS_MAX="${FLC_CHECKPOINTS_MAX:-5}"
 
 # ============================================================================
 # UTILITÁRIOS INTERNOS
@@ -148,16 +151,27 @@ flc_feature_start() {
     source_file=$(find "$_FLC_FEATURES_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
     [ -z "$source_file" ] && source_file=$(find "$_FLC_FEATURES_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
 
-    # Gate: se não está em features/, verifica se está em backlog/ e bloqueia
+    # Gate: se não está em features/, verifica se está em brainstorm/ ou backlog/ e bloqueia
     if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
+        local brainstorm_file
+        brainstorm_file=$(find "$_FLC_BRAINSTORM_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
+        [ -z "$brainstorm_file" ] && brainstorm_file=$(find "$_FLC_BRAINSTORM_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
+
+        if [ -n "$brainstorm_file" ] && [ -f "$brainstorm_file" ]; then
+            print_error "Feature '$feature_id' esta em brainstorm/ e ainda nao foi promovida a features/."
+            print_info "Execute primeiro: aidev create-feature $feature_id"
+            print_info "Isso converte o brainstorm em plano detalhado com sprints definidos."
+            return 1
+        fi
+
         local backlog_file
         backlog_file=$(find "$_FLC_BACKLOG_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
         [ -z "$backlog_file" ] && backlog_file=$(find "$_FLC_BACKLOG_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
 
         if [ -n "$backlog_file" ] && [ -f "$backlog_file" ]; then
-            print_error "Feature '$feature_id' esta em backlog/ e ainda nao foi refinada."
-            print_info "Execute primeiro: aidev refine $feature_id"
-            print_info "O refinamento garante que a ideia tenha escopo, criterios e sprints definidos."
+            print_error "Feature '$feature_id' esta em backlog/ e ainda nao passou por brainstorm."
+            print_info "Execute: aidev brainstorm $feature_id"
+            print_info "Ou refine diretamente: aidev refine $feature_id"
             return 1
         fi
     fi
@@ -778,6 +792,241 @@ EOF
 }
 
 # ============================================================================
+# _flc_cleanup_checkpoints
+# Mantém apenas os últimos N checkpoints JSON (padrão: 5)
+# ============================================================================
+_flc_cleanup_checkpoints() {
+    local dir="${1:-$_FLC_CHECKPOINTS_DIR}"
+    local max="${2:-$_FLC_CHECKPOINTS_MAX}"
+
+    [ -d "$dir" ] || return 0
+
+    local total
+    total=$(find "$dir" -maxdepth 1 -name "*.json" 2>/dev/null | wc -l)
+
+    if [ "$total" -le "$max" ]; then
+        return 0
+    fi
+
+    local to_delete=$(( total - max ))
+    _flc_log "INFO" "Limpando checkpoints: $total encontrados, mantendo $max, removendo $to_delete"
+
+    find "$dir" -maxdepth 1 -name "*.json" -printf "%T+ %p\n" 2>/dev/null \
+        | sort \
+        | head -n "$to_delete" \
+        | awk '{print $2}' \
+        | xargs rm -f 2>/dev/null || true
+
+    _flc_log "INFO" "Checkpoints apos limpeza: $(find "$dir" -maxdepth 1 -name "*.json" 2>/dev/null | wc -l)"
+}
+
+# ============================================================================
+# flc_brainstorm_create <backlog-id> [--auto]
+# Cria documento de brainstorm a partir de um item do backlog
+# Modos: interativo (padrão) | --auto (template pré-preenchido)
+# ============================================================================
+flc_brainstorm_create() {
+    local item_id="${1:-}"
+    local auto_mode=false
+
+    # Detecta flag --auto
+    if [ "$item_id" = "--auto" ]; then
+        auto_mode=true
+        item_id="${2:-}"
+    elif [ "${2:-}" = "--auto" ]; then
+        auto_mode=true
+    fi
+
+    if [ -z "$item_id" ]; then
+        print_error "Uso: aidev brainstorm <backlog-id> [--auto]"
+        print_info "  --auto: cria template sem interação"
+        print_info "Items no backlog:"
+        ls "$_FLC_BACKLOG_DIR"/*.md 2>/dev/null | grep -v README | xargs -n1 basename 2>/dev/null | sed 's/\.md$//' | sed 's/^/  - /' || print_info "  (backlog vazio)"
+        return 1
+    fi
+
+    local safe_name
+    safe_name=$(_flc_safe_name "$item_id")
+
+    # Busca item no backlog
+    local source_file
+    source_file=$(find "$_FLC_BACKLOG_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
+    [ -z "$source_file" ] && source_file=$(find "$_FLC_BACKLOG_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
+
+    if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
+        print_error "Item '$item_id' nao encontrado no backlog"
+        return 1
+    fi
+
+    local item_title
+    item_title=$(grep "^# " "$source_file" 2>/dev/null | head -1 | sed 's/^# //' || echo "$item_id")
+
+    local dest_dir="$_FLC_BRAINSTORM_DIR"
+    local dest_file="$dest_dir/${safe_name}.md"
+    local date_now
+    date_now=$(date +%Y-%m-%d)
+
+    mkdir -p "$dest_dir"
+
+    if [ -f "$dest_file" ]; then
+        print_warning "Brainstorm '$safe_name' ja existe: $dest_file"
+        return 0
+    fi
+
+    # Lê problema do backlog para pré-preencher
+    local problema
+    problema=$(awk '/^## Problema/{flag=1; next} /^##/{flag=0} flag' "$source_file" 2>/dev/null \
+        | grep -v "^<!--" | grep -v "^-->" | head -3 | sed 's/^[[:space:]]*//' || true)
+
+    cat > "$dest_file" <<EOF
+# Brainstorm: $item_title
+
+**Status:** Brainstorm
+**Origem:** backlog/$safe_name.md
+**Data:** $date_now
+**Modo:** $( $auto_mode && echo "auto" || echo "interativo" )
+
+---
+
+## Problema
+
+${problema:-<!-- Descreva o problema central que esta ideia resolve -->}
+
+## Objetivo Principal
+
+<!-- O que queremos alcançar? Qual o resultado esperado? -->
+
+## Ideias e Abordagens
+
+<!-- Liste as diferentes formas de resolver o problema -->
+
+### Abordagem A
+<!-- Descreva -->
+
+### Abordagem B
+<!-- Descreva -->
+
+## Riscos e Incertezas
+
+<!-- O que pode dar errado? O que ainda não sabemos? -->
+
+## Decisão Preliminar
+
+<!-- Qual abordagem seguir e por quê? -->
+
+## Próximos Passos
+
+<!-- O que precisa ser detalhado antes de criar o plano formal? -->
+
+---
+
+*Gerado por \`aidev brainstorm\`. Promova com \`aidev create-feature $safe_name\`.*
+EOF
+
+    print_success "Brainstorm criado: $dest_file"
+    print_info "Edite o arquivo e depois execute: aidev create-feature $safe_name"
+
+    _flc_stage_and_show "$dest_file"
+}
+
+# ============================================================================
+# flc_feature_from_brainstorm <brainstorm-id>
+# Promove brainstorm → features/ com template de plano detalhado
+# ============================================================================
+flc_feature_from_brainstorm() {
+    local item_id="${1:-}"
+
+    if [ -z "$item_id" ]; then
+        print_error "Uso: aidev create-feature <brainstorm-id>"
+        print_info "Items em brainstorm:"
+        ls "$_FLC_BRAINSTORM_DIR"/*.md 2>/dev/null | grep -v README | xargs -n1 basename 2>/dev/null | sed 's/\.md$//' | sed 's/^/  - /' || print_info "  (nenhum brainstorm)"
+        return 1
+    fi
+
+    local safe_name
+    safe_name=$(_flc_safe_name "$item_id")
+
+    local source_file
+    source_file=$(find "$_FLC_BRAINSTORM_DIR" -name "${safe_name}.md" 2>/dev/null | head -1)
+    [ -z "$source_file" ] && source_file=$(find "$_FLC_BRAINSTORM_DIR" -name "*${safe_name}*.md" 2>/dev/null | head -1)
+
+    if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
+        print_error "Brainstorm '$item_id' nao encontrado em brainstorm/"
+        print_info "Execute primeiro: aidev brainstorm <backlog-id>"
+        return 1
+    fi
+
+    local item_title
+    item_title=$(grep "^# Brainstorm:" "$source_file" 2>/dev/null | head -1 | sed 's/^# Brainstorm: //' || echo "$item_id")
+
+    local dest_dir="$_FLC_FEATURES_DIR"
+    local dest_file="$dest_dir/${safe_name}.md"
+    local date_now
+    date_now=$(date +%Y-%m-%d)
+
+    mkdir -p "$dest_dir"
+
+    if [ -f "$dest_file" ]; then
+        print_warning "Feature '$safe_name' ja existe em features/: $dest_file"
+        return 0
+    fi
+
+    # Extrai decisão do brainstorm para pré-preencher
+    local decisao
+    decisao=$(awk '/^## Decisão Preliminar/{flag=1; next} /^##/{flag=0} flag' "$source_file" 2>/dev/null \
+        | grep -v "^<!--" | grep -v "^-->" | head -5 | sed 's/^[[:space:]]*//' || true)
+
+    cat > "$dest_file" <<EOF
+# $item_title
+
+**Status:** Planejada
+**Prioridade:** Media
+**Criado:** $date_now
+**Brainstorm:** brainstorm/$safe_name.md
+
+---
+
+## Objetivo
+
+${decisao:-<!-- Descreva o objetivo desta feature baseado no brainstorm -->}
+
+## Escopo
+
+<!-- O que está dentro e fora do escopo desta implementação -->
+
+## Criterios de Aceite
+
+- [ ] <!-- Criterio 1 -->
+- [ ] <!-- Criterio 2 -->
+- [ ] <!-- Criterio 3 -->
+
+## Sprints
+
+| Sprint | Objetivo | Status |
+|--------|----------|--------|
+| Sprint 1 | <!-- Objetivo --> | Pendente |
+| Sprint 2 | <!-- Objetivo --> | Pendente |
+
+## Dependencias
+
+<!-- Outros módulos ou features necessários -->
+
+## Notas Tecnicas
+
+<!-- Decisões técnicas e arquiteturais -->
+
+---
+
+*Promovida de brainstorm por \`aidev create-feature\`. Inicie com \`aidev start $safe_name\`.*
+EOF
+
+    print_success "Feature criada em features/: $dest_file"
+    print_info "Proximo passo: aidev start $safe_name"
+
+    _flc_stage_and_show "$dest_file"
+}
+
+# ============================================================================
 # ALIASES DE COMPATIBILIDADE (flc_* -> feature_*)
 # Mantidos para backward compatibility
 # ============================================================================
@@ -793,3 +1042,6 @@ export -f flc_plan_create
 export -f flc_feature_start
 export -f flc_sprint_done
 export -f flc_feature_complete
+export -f flc_brainstorm_create
+export -f flc_feature_from_brainstorm
+export -f _flc_cleanup_checkpoints

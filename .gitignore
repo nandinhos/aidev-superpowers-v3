@@ -74,3 +74,6 @@ AI_INSTRUCTIONS.md
 .env
 state/
 tests/.aidev/
+
+# IDE e editores
+.claude/

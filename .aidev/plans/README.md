@@ -8,10 +8,11 @@
 
 | Pasta | Conteúdo | Status |
 |-------|----------|--------|
-| [📋 Backlog](backlog/) | Ideias futuras | Não priorizadas |
-| [🚀 Features](features/) | Planejados com sprint | Prontos para execução |
+| [📋 Backlog](backlog/) | Ideias brutas | Aguardando refinamento |
+| [🧠 Brainstorm](brainstorm/) | Ideias refinadas | Aguardando aprovação |
+| [🚀 Features](features/) | Planejadas com sprints | Prontas para execução |
 | [🏃 Current](current/) | Em execução AGORA | Sprint ativa |
-| [✅ History](history/) | Concluídos | Arquivado por data |
+| [✅ History](history/) | Concluídas | Arquivado por data |
 | [📚 Archive](archive/) | Documentação | Referências |
 | [🗺️ ROADMAP](ROADMAP.md) | Visão estratégica | Direção geral |
 
@@ -20,27 +21,32 @@
 ## 🔄 Fluxo de Trabalho
 
 ```
-backlog/ (ideia) 
-    ↓ priorizada
-features/ (planejada)
-    ↓ sprint definida
+backlog/ (ideia bruta)
+    ↓ aidev brainstorm <id>
+brainstorm/ (ideia refinada)
+    ↓ aidev create-feature <id>
+features/ (feature com sprints definidos)
+    ↓ aidev start <feature-id>
 current/ (executando)
-    ↓ concluída
+    ↓ aidev done <sprint-id> [por sprint]
+    ↓ aidev complete <feature-id>
 history/YYYY-MM/ (arquivado)
 ```
 
 ### Regras:
-1. **Backlog**: Ideias sem sprint definida
-2. **Features**: Planejamento completo, sprint atribuída
-3. **Current**: Máximo 1 sprint ativa por vez
-4. **History**: Arquivado cronologicamente (YYYY-MM)
-5. **Archive**: Documentação, templates, referências
+1. **Backlog**: Ideias brutas — sem refinamento ainda
+2. **Brainstorm**: Ideias que passaram pelo processo de refinamento — revisão manual permitida
+3. **Features**: Planejamento completo, sprints definidas, prontas para execução
+4. **Current**: Máximo 1 feature ativa por vez
+5. **History**: Arquivado cronologicamente (YYYY-MM)
+6. **Archive**: Documentação, templates, referências
 
 ---
 
 ## 📊 Status Atual
 
-- **Backlog**: 0 ideia(s)
+- **Backlog**: 1 ideia(s)
+- **Brainstorm**: 0 em refinamento
 - **Features**: 0 planejada(s)
 - **Current**: 0 em execução
 - **History**: 0 concluída(s)
@@ -49,7 +55,8 @@ history/YYYY-MM/ (arquivado)
 
 ## 📝 Convenções de Nomenclatura
 
-- **Ideias**: `nome-da-ideia.md`
+- **Backlog**: `nome-da-ideia.md`
+- **Brainstorm**: `YYYY-MM-DD-nome-da-ideia-brainstorm.md`
 - **Features**: `nome-da-feature.md`
 - **Sprints**: `sprint-N-descricao-completed.md`
 - **Templates**: `nome-template.md`
